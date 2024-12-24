@@ -87,7 +87,7 @@ describe('Tasks', function() {
         };
         ko.tasks.schedule(func.bind(null, 1));
         ko.tasks.schedule(function() {
-            throw Error("test");
+            throw Error('test');
         });
         ko.tasks.schedule(func.bind(null, 2));
         expect(runValues).toEqual([]);
@@ -187,7 +187,7 @@ describe('Tasks', function() {
 
             ko.tasks.schedule(func.bind(null, 1));
             ko.tasks.schedule(function() {
-                throw Error("test");
+                throw Error('test');
             });
             ko.tasks.schedule(function() {
                 ko.tasks.cancel(handle);
@@ -280,7 +280,7 @@ describe('Tasks', function() {
                 ko.tasks.schedule(func.bind(null, 3));
             });
             ko.tasks.schedule(function() {
-                throw Error("test");
+                throw Error('test');
             });
             ko.tasks.schedule(func.bind(null, 2));
             expect(runValues).toEqual([]);

@@ -32,9 +32,12 @@
   "devDependencies": {
     "@types/jasmine": "^3.10.18",
     "@types/mocha": "^10.0.10",
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
     "chai": "^4.5.0",
     "electron": "^33.2.1",
     "esbuild": "^0.24.0",
+    "eslint": "^8.2.0",
     "fs-extra": "^11.2.0",
     "jquery": "^3.7.1",
     "karma": "^6.4.4",

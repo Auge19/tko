@@ -33,12 +33,12 @@ describe('arrayForEach', function () {
   it('Should go call the callback for each element of the array, in order', function () {
       var callback = jasmine.createSpy('callback');
 
-      ko.utils.arrayForEach(["a", "b", "c"], callback);
+      ko.utils.arrayForEach(['a', 'b', 'c'], callback);
 
       expect(callback.calls.length).toBe(3);
-      expect(callback.calls[0].args).toEqual(["a", 0, ["a", "b", "c"]]);
-      expect(callback.calls[1].args).toEqual(["b", 1, ["a", "b", "c"]]);
-      expect(callback.calls[2].args).toEqual(["c", 2, ["a", "b", "c"]]);
+      expect(callback.calls[0].args).toEqual(['a', 0, ['a', 'b', 'c']]);
+      expect(callback.calls[1].args).toEqual(['b', 1, ['a', 'b', 'c']]);
+      expect(callback.calls[2].args).toEqual(['c', 2, ['a', 'b', 'c']]);
   });
 
   it('Should do nothing with empty arrays', function () {
@@ -49,10 +49,10 @@ describe('arrayForEach', function () {
       expect(callback).not.toHaveBeenCalled();
   });
 
-  it('Should alter "this" context when defined as an argument', function() {
+  it('Should alter \'this\' context when defined as an argument', function() {
       var expectedContext = {};
       var actualContext = null;
-      ko.utils.arrayForEach(["a"], function() {
+      ko.utils.arrayForEach(['a'], function() {
           actualContext = this;
       }, expectedContext);
       expect(actualContext).toBe(expectedContext);
@@ -67,60 +67,60 @@ describe('arrayForEach', function () {
 
 describe('arrayIndexOf', function () {
   it('Should return the index if the element is found in the input array', function () {
-      var result = ko.utils.arrayIndexOf(["a", "b", "c"], "b");
+      var result = ko.utils.arrayIndexOf(['a', 'b', 'c'], 'b');
       expect(result).toBe(1);
   });
 
   it('Should return -1 for empty arrays', function () {
-      var result = ko.utils.arrayIndexOf([], "a");
+      var result = ko.utils.arrayIndexOf([], 'a');
       expect(result).toBe(-1);
   });
 
   it('Should return -1 if the element is not found', function () {
-      var result = ko.utils.arrayIndexOf(["a", "b", "c"], "d");
+      var result = ko.utils.arrayIndexOf(['a', 'b', 'c'], 'd');
       expect(result).toBe(-1);
   });
 
   it('Should return the first index if the element is found twice', function () {
-      var result = ko.utils.arrayIndexOf(["a", "b", "c", "c"], "c");
+      var result = ko.utils.arrayIndexOf(['a', 'b', 'c', 'c'], 'c');
       expect(result).toBe(2);
   });
 
   it('Should throw an error for a null array', function () {
       expect(function () {
-          ko.utils.arrayIndexOf(null, "a");
+          ko.utils.arrayIndexOf(null, 'a');
       }).toThrow();
   });
 });
 
 describe('arrayRemoveItem', function () {
   it('Should remove the matching element if found', function () {
-      var input = ["a", "b", "c"];
-      ko.utils.arrayRemoveItem(input, "a");
-      expect(input).toEqual(["b", "c"]);
+      var input = ['a', 'b', 'c'];
+      ko.utils.arrayRemoveItem(input, 'a');
+      expect(input).toEqual(['b', 'c']);
   });
 
   it('Should do nothing for empty arrays', function () {
       var input = [];
-      ko.utils.arrayRemoveItem(input, "a");
+      ko.utils.arrayRemoveItem(input, 'a');
       expect(input).toEqual([]);
   });
 
   it('Should do nothing if no matching element is found', function () {
-      var input = ["a", "b", "c"];
-      ko.utils.arrayRemoveItem(input, "d");
-      expect(input).toEqual(["a", "b", "c"]);
+      var input = ['a', 'b', 'c'];
+      ko.utils.arrayRemoveItem(input, 'd');
+      expect(input).toEqual(['a', 'b', 'c']);
   });
 
   it('Should remove only the first matching element', function () {
-      var input = ["a", "b", "b", "c"];
-      ko.utils.arrayRemoveItem(input, "b");
-      expect(input).toEqual(["a", "b", "c"]);
+      var input = ['a', 'b', 'b', 'c'];
+      ko.utils.arrayRemoveItem(input, 'b');
+      expect(input).toEqual(['a', 'b', 'c']);
   });
 
   it('Should throw an error for a null array', function () {
       expect(function () {
-          ko.utils.arrayRemoteItem(null, "a");
+          ko.utils.arrayRemoteItem(null, 'a');
       }).toThrow();
   });
 });
@@ -130,18 +130,18 @@ describe('arrayFirst', function () {
 
   beforeEach(function () {
       matchB = jasmine.createSpy('matchB').andCallFake(function (x) {
-          return x.charAt(0) === "b";
+          return x.charAt(0) === 'b';
       });
 
       matchD = jasmine.createSpy('matchD').andCallFake(function (x) {
-          return x.charAt(0) === "d";
+          return x.charAt(0) === 'd';
       });
   });
 
   it('Should return the first matching element from the input array', function () {
-      var result = ko.utils.arrayFirst(["a", "b", "c", "b2"], matchB);
+      var result = ko.utils.arrayFirst(['a', 'b', 'c', 'b2'], matchB);
 
-      expect(result).toBe("b");
+      expect(result).toBe('b');
   });
 
   it('Should return undefined with empty arrays, and not call the predicate', function () {
@@ -154,26 +154,26 @@ describe('arrayFirst', function () {
   });
 
   it('Should test the predicate on every element before the first matching element', function () {
-      ko.utils.arrayFirst(["a", "b", "c"], matchB);
+      ko.utils.arrayFirst(['a', 'b', 'c'], matchB);
 
       expect(matchB.calls.length).toBe(2);
-      expect(matchB.calls[0].args).toEqual(["a", 0, ["a", "b", "c"]]);
-      expect(matchB.calls[1].args).toEqual(["b", 1, ["a", "b", "c"]]);
+      expect(matchB.calls[0].args).toEqual(['a', 0, ['a', 'b', 'c']]);
+      expect(matchB.calls[1].args).toEqual(['b', 1, ['a', 'b', 'c']]);
   });
 
   it('Should return undefined if no element matches', function () {
-      var result = ko.utils.arrayFirst(["a", "b", "c"], matchD);
+      var result = ko.utils.arrayFirst(['a', 'b', 'c'], matchD);
 
       expect(result).toBe(undefined);
   });
 
   it('Should test every element if no element matches', function () {
-      ko.utils.arrayFirst(["a", "b", "c"], matchD);
+      ko.utils.arrayFirst(['a', 'b', 'c'], matchD);
 
       expect(matchD.calls.length).toBe(3);
-      expect(matchD.calls[0].args).toEqual(["a", 0, ["a", "b", "c"]]);
-      expect(matchD.calls[1].args).toEqual(["b", 1, ["a", "b", "c"]]);
-      expect(matchD.calls[2].args).toEqual(["c", 2, ["a", "b", "c"]]);
+      expect(matchD.calls[0].args).toEqual(['a', 0, ['a', 'b', 'c']]);
+      expect(matchD.calls[1].args).toEqual(['b', 1, ['a', 'b', 'c']]);
+      expect(matchD.calls[2].args).toEqual(['c', 2, ['a', 'b', 'c']]);
   });
 
   it('Should throw an error for a null array', function () {
@@ -185,8 +185,8 @@ describe('arrayFirst', function () {
 
 describe('arrayGetDistinctValues', function () {
   it('Should remove duplicates from an array of non-unique values', function () {
-      var result = ko.utils.arrayGetDistinctValues(["a", "b", "b", "c", "c"]);
-      expect(result).toEqual(["a", "b", "c"]);
+      var result = ko.utils.arrayGetDistinctValues(['a', 'b', 'b', 'c', 'c']);
+      expect(result).toEqual(['a', 'b', 'c']);
   });
 
   it('Should do nothing with an empty array', function () {
@@ -195,18 +195,18 @@ describe('arrayGetDistinctValues', function () {
   });
 
   it('Should do nothing with an array of unique values', function () {
-      var result = ko.utils.arrayGetDistinctValues(["a", "b", "c"]);
-      expect(result).toEqual(["a", "b", "c"]);
+      var result = ko.utils.arrayGetDistinctValues(['a', 'b', 'c']);
+      expect(result).toEqual(['a', 'b', 'c']);
   });
 
   it('Should copy the input array', function () {
-      var input = ["a", "b", "c", "c"];
+      var input = ['a', 'b', 'c', 'c'];
       var result = ko.utils.arrayGetDistinctValues(input);
       expect(result).not.toBe(input);
   });
 
-  it("Should copy the input array, even if it's unchanged", function () {
-      var input = ["a", "b", "c"];
+  it('Should copy the input array, even if it\'s unchanged', function () {
+      var input = ['a', 'b', 'c'];
       var result = ko.utils.arrayGetDistinctValues(input);
       expect(result).toEqual(input);
       expect(result).not.toBe(input);
@@ -224,9 +224,9 @@ describe('arrayMap', function () {
           return x + i;
       };
 
-      var result = ko.utils.arrayMap(["a", "b", "c"], appendIndex);
+      var result = ko.utils.arrayMap(['a', 'b', 'c'], appendIndex);
 
-      expect(result).toEqual(["a0", "b1", "c2"]);
+      expect(result).toEqual(['a0', 'b1', 'c2']);
   });
 
   it('Should return empty arrays for empty arrays, and not call the map function', function () {
@@ -243,14 +243,14 @@ describe('arrayMap', function () {
           return x;
       };
 
-      var input = ["a", "b", "c"];
+      var input = ['a', 'b', 'c'];
       var result = ko.utils.arrayMap(input, identityFunction);
 
       expect(result).toEqual(input);
       expect(result).not.toBe(input);
   });
 
-  it('Should alter "this" context when defined as an argument', function() {
+  it('Should alter \'this\' context when defined as an argument', function() {
       var expectedContext = {};
       var actualContext = null;
       var identityFunction = function(x) {
@@ -258,7 +258,7 @@ describe('arrayMap', function () {
           return x;
       };
 
-      ko.utils.arrayMap(["a"], identityFunction, expectedContext);
+      ko.utils.arrayMap(['a'], identityFunction, expectedContext);
 
       expect(actualContext).toBe(expectedContext);
   });
@@ -275,9 +275,9 @@ describe('arrayFilter', function () {
           return i % 2 == 0;
       };
 
-      var result = ko.utils.arrayFilter(["a", "b", "c", "d"], evenOnly);
+      var result = ko.utils.arrayFilter(['a', 'b', 'c', 'd'], evenOnly);
 
-      expect(result).toEqual(["a", "c"]);
+      expect(result).toEqual(['a', 'c']);
   });
 
   it('Should return empty arrays for empty arrays, and not call the filter function', function () {
@@ -294,14 +294,14 @@ describe('arrayFilter', function () {
           return true;
       };
 
-      var input = ["a", "b", "c"];
+      var input = ['a', 'b', 'c'];
       var result = ko.utils.arrayFilter(input, alwaysTrue);
 
       expect(result).toEqual(input);
       expect(result).not.toBe(input);
   });
 
-  it('Should alter "this" context when defined as an argument', function () {
+  it('Should alter \'this\' context when defined as an argument', function () {
       var expectedContext = {};
       var actualContext = null;
       var identityFunction = function(x) {
@@ -309,7 +309,7 @@ describe('arrayFilter', function () {
           return x;
       };
 
-      var result = ko.utils.arrayFilter(["a"], identityFunction, expectedContext);
+      var result = ko.utils.arrayFilter(['a'], identityFunction, expectedContext);
 
       expect(expectedContext).toEqual(actualContext);
   });
@@ -323,11 +323,11 @@ describe('arrayFilter', function () {
 describe('arrayPushAll', function () {
   it('appends the second array elements to the first array', function () {
       var targetArray = [1,2,3];
-      var extraArray = ["a", "b", "c"];
+      var extraArray = ['a', 'b', 'c'];
 
       ko.utils.arrayPushAll(targetArray, extraArray);
 
-      expect(targetArray).toEqual([1, 2, 3, "a", "b", "c"]);
+      expect(targetArray).toEqual([1, 2, 3, 'a', 'b', 'c']);
   });
 
   it('does nothing if the second array is empty', function () {
@@ -430,7 +430,7 @@ describe('Function.bind', function() {
 });
 
 describe('objectMap', function () {
-  it('Should alter "this" context when defined as an argument', function() {
+  it('Should alter \'this\' context when defined as an argument', function() {
       var expectedContext = {};
       var actualContext = null;
       var identityFunction = function(obj) {
