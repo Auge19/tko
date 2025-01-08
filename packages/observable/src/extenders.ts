@@ -9,20 +9,20 @@ import {
 
 import { deferUpdates } from './defer'
 
-var primitiveTypes = {
+const primitiveTypes = {
   'undefined': 1, 'boolean': 1, 'number': 1, 'string': 1
 }
 
 export function valuesArePrimitiveAndEqual (a, b) {
-  var oldValueIsPrimitive = (a === null) || (typeof (a) in primitiveTypes)
+  const oldValueIsPrimitive = (a === null) || (typeof (a) in primitiveTypes)
   return oldValueIsPrimitive ? (a === b) : false
 }
 
 export function applyExtenders (requestedExtenders) {
-  var target = this
+  let target = this
   if (requestedExtenders) {
     objectForEach(requestedExtenders, function (key, value) {
-      var extenderHandler = extenders[key]
+      const extenderHandler = extenders[key]
       if (typeof extenderHandler === 'function') {
         target = extenderHandler(target, value) || target
       } else {
@@ -52,7 +52,7 @@ export function deferred (target, option) {
 }
 
 export function rateLimit (target, options) {
-  var timeout, method, limitFunction
+  let timeout, method, limitFunction
 
   if (typeof options === 'number') {
     timeout = options

@@ -42,7 +42,7 @@ const BLANK_HTML = `
 describe('Cross-window support', function () {
   beforeEach(function () {
         // Set up the default binding handlers.
-    var provider = new DataBindProvider()
+    const provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
     provider.bindingHandlers.set(templateBindings)
@@ -55,7 +55,7 @@ describe('Cross-window support', function () {
   })
 
   it('Should work in another window', function () {
-    var body2
+    let body2
     const win2 = window.open('', '_blank', 'height=150,location=no,menubar=no,toolbar=no,width=250')
 
     if (!win2) { return }
@@ -80,7 +80,7 @@ describe('Cross-window support', function () {
     // foreach
     window.runs(function () {
       body2.innerHTML = "<div data-bind='foreach: someItems'><span data-bind='text: childProp'></span></div>"
-      var someItems = [
+      const someItems = [
                 { childProp: 'first child' },
                 { childProp: 'second child' }
       ]
@@ -93,7 +93,7 @@ describe('Cross-window support', function () {
     window.runs(function () {
       setTemplateEngine(new nativeTemplateEngine())
       body2.innerHTML = "<div id='tmpl'><span data-bind='text: childProp'></span></div><div data-bind='template: {name: \"tmpl\", foreach: someItems}'></div>"
-      var someItems = [
+      const someItems = [
             { childProp: 'first child' },
             { childProp: 'second child' }
       ]
@@ -104,7 +104,7 @@ describe('Cross-window support', function () {
 
     // with
     window.runs(function () {
-      var someItem = observable(undefined)
+      const someItem = observable(undefined)
       body2.innerHTML = "<div data-bind='with: someItem'><span data-bind='text: occasionallyExistentChildProp'></span></div>"
       applyBindings({ someItem: someItem }, body2)
 

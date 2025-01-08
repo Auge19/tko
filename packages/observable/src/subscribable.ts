@@ -114,7 +114,7 @@ var ko_subscribable_fn = {
     if (event) {
       return this._subscriptions[event] && this._subscriptions[event].length || 0
     } else {
-      var total = 0
+      let total = 0
       objectForEach(this._subscriptions, function (eventName, subscriptions) {
         if (eventName !== 'dirty') {
           total += subscriptions.length

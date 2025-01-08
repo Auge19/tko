@@ -3,7 +3,7 @@
 //
 import { arrayPushAll } from './array'
 
-var memos = {}
+const memos = {}
 
 function randomMax8HexChars () {
   return (((1 + Math.random()) * 0x100000000) | 0).toString(16).substring(1)
@@ -16,22 +16,22 @@ function generateRandomId () {
 function findMemoNodes (rootNode, appendToArray) {
   if (!rootNode) { return }
   if (rootNode.nodeType == 8) {
-    var memoId = parseMemoText(rootNode.nodeValue)
+    const memoId = parseMemoText(rootNode.nodeValue)
     if (memoId != null) { appendToArray.push({ domNode: rootNode, memoId: memoId }) }
   } else if (rootNode.nodeType == 1) {
-    for (var i = 0, childNodes = rootNode.childNodes, j = childNodes.length; i < j; i++) { findMemoNodes(childNodes[i], appendToArray) }
+    for (let i = 0, childNodes = rootNode.childNodes, j = childNodes.length; i < j; i++) { findMemoNodes(childNodes[i], appendToArray) }
   }
 }
 
 export function memoize (callback) {
   if (typeof callback !== 'function') { throw new Error('You can only pass a function to memoization.memoize()') }
-  var memoId = generateRandomId()
+  const memoId = generateRandomId()
   memos[memoId] = callback
   return '<!--[ko_memo:' + memoId + ']-->'
 }
 
 export function unmemoize (memoId, callbackParams) {
-  var callback = memos[memoId]
+  const callback = memos[memoId]
   if (callback === undefined) { throw new Error("Couldn't find any memo with ID " + memoId + ". Perhaps it's already been unmemoized.") }
   try {
     callback.apply(null, callbackParams || [])
@@ -40,11 +40,11 @@ export function unmemoize (memoId, callbackParams) {
 }
 
 export function unmemoizeDomNodeAndDescendants (domNode, extraCallbackParamsArray) {
-  var memos = new Array()
+  const memos = new Array()
   findMemoNodes(domNode, memos)
-  for (var i = 0, j = memos.length; i < j; i++) {
-    var node = memos[i].domNode
-    var combinedParams = [node]
+  for (let i = 0, j = memos.length; i < j; i++) {
+    const node = memos[i].domNode
+    const combinedParams = [node]
     if (extraCallbackParamsArray) { arrayPushAll(combinedParams, extraCallbackParamsArray) }
     unmemoize(memos[i].memoId, combinedParams)
     node.nodeValue = '' // Neuter this node so we don't try to unmemoize it again
@@ -53,6 +53,6 @@ export function unmemoizeDomNodeAndDescendants (domNode, extraCallbackParamsArra
 }
 
 export function parseMemoText (memoText) {
-  var match = memoText.match(/^\[ko_memo\:(.*?)\]$/)
+  const match = memoText.match(/^\[ko_memo\:(.*?)\]$/)
   return match ? match[1] : null
 }

@@ -15,11 +15,11 @@ import  '@tko/utils/helpers/jasmine-13-helper'
 
 import {} from "jasmine"
 
-declare var testNode : any
+declare let testNode : any
 
 function copyDomNodeChildren (domNode : HTMLElement) {
-  var copy = new Array()
-  for (var i = 0; i < domNode.childNodes.length; i++) { copy.push(domNode.childNodes[i]) }
+  const copy = new Array()
+  for (let i = 0; i < domNode.childNodes.length; i++) { copy.push(domNode.childNodes[i]) }
   return copy
 }
 
@@ -27,10 +27,10 @@ describe('Array to DOM node children mapping', function () {
   beforeEach(jasmine.prepareTestNode)
 
   it('Should populate the DOM node by mapping array elements', function () {
-    var array = ['A', 'B']
-    var mapping = function (arrayItem) {
-      var output1 = document.createElement('DIV')
-      var output2 = document.createElement('DIV')
+    const array = ['A', 'B']
+    const mapping = function (arrayItem) {
+      const output1 = document.createElement('DIV')
+      const output2 = document.createElement('DIV')
       output1.innerHTML = arrayItem + '1'
       output2.innerHTML = arrayItem + '2'
       return [output1, output2]
@@ -44,8 +44,8 @@ describe('Array to DOM node children mapping', function () {
   })
 
   it('Should only call the mapping function for new array elements', function () {
-    var mappingInvocations = new Array()
-    var mapping = function (arrayItem) {
+    let mappingInvocations = new Array()
+    const mapping = function (arrayItem) {
       mappingInvocations.push(arrayItem)
       return null
     }
@@ -58,29 +58,29 @@ describe('Array to DOM node children mapping', function () {
   })
 
   it('Should retain existing node instances if the array is unchanged', function () {
-    var array = ['A', 'B']
-    var mapping = function (arrayItem) {
-      var output1 = document.createElement('DIV')
-      var output2 = document.createElement('DIV')
+    const array = ['A', 'B']
+    const mapping = function (arrayItem) {
+      const output1 = document.createElement('DIV')
+      const output2 = document.createElement('DIV')
       output1.innerHTML = arrayItem + '1'
       output2.innerHTML = arrayItem + '2'
       return [output1, output2]
     }
 
     setDomNodeChildrenFromArrayMapping(testNode, array, mapping)
-    var existingInstances = copyDomNodeChildren(testNode)
+    const existingInstances = copyDomNodeChildren(testNode)
 
     setDomNodeChildrenFromArrayMapping(testNode, array, mapping)
-    var newInstances = copyDomNodeChildren(testNode)
+    const newInstances = copyDomNodeChildren(testNode)
 
     expect(newInstances).toEqual(existingInstances)
   })
 
   it('Should insert added nodes at the corresponding place in the DOM', function () {
-    var mappingInvocations = new Array()
-    var mapping = function (arrayItem) {
+    let mappingInvocations = new Array()
+    const mapping = function (arrayItem) {
       mappingInvocations.push(arrayItem)
-      var output = document.createElement('DIV')
+      const output = document.createElement('DIV')
       output.innerHTML = arrayItem
       return [output]
     }
@@ -96,10 +96,10 @@ describe('Array to DOM node children mapping', function () {
   })
 
   it('Should remove deleted nodes from the DOM', function () {
-    var mappingInvocations = new Array()
-    var mapping = function (arrayItem) {
+    let mappingInvocations = new Array()
+    const mapping = function (arrayItem) {
       mappingInvocations.push(arrayItem)
-      var output = document.createElement('DIV')
+      const output = document.createElement('DIV')
       output.innerHTML = arrayItem
       return [output]
     }
@@ -117,10 +117,10 @@ describe('Array to DOM node children mapping', function () {
   it('Should tolerate DOM nodes being removed manually, before the corresponding array entry is removed', function () {
         // Represents https://github.com/SteveSanderson/knockout/issues/413
         // Ideally, people wouldn't be mutating the generated DOM manually. But this didn't error in v2.0, so we should try to avoid introducing a break.
-    var mappingInvocations = new Array()
-    var mapping = function (arrayItem) {
+    const mappingInvocations = new Array()
+    const mapping = function (arrayItem) {
       mappingInvocations.push(arrayItem)
-      var output = document.createElement('DIV')
+      const output = document.createElement('DIV')
       output.innerHTML = arrayItem
       return [output]
     }
@@ -129,7 +129,7 @@ describe('Array to DOM node children mapping', function () {
     expect(testNode).toContainHtml('<div>a</div><div>b</div><div>c</div>')
 
         // Now kill the middle DIV manually, even though people shouldn't really do this
-    var elemToRemove = testNode.childNodes[1]
+    const elemToRemove = testNode.childNodes[1]
     expect(elemToRemove.innerHTML).toEqual('B') // Be sure it's the right one
     elemToRemove.parentNode.removeChild(elemToRemove)
 
@@ -139,14 +139,14 @@ describe('Array to DOM node children mapping', function () {
   })
 
   it('Should handle sequences of mixed insertions and deletions', function () {
-    var mappingInvocations = new Array(), countCallbackInvocations = 0
-    var mapping = function (arrayItem) {
+    let mappingInvocations = new Array(), countCallbackInvocations = 0
+    const mapping = function (arrayItem) {
       mappingInvocations.push(arrayItem)
-      var output = document.createElement('DIV')
+      const output = document.createElement('DIV')
       output.innerHTML = unwrap(arrayItem) || 'null'
       return [output]
     }
-    var callback = function (arrayItem, nodes?) {
+    const callback = function (arrayItem, nodes?) {
       ++countCallbackInvocations
       expect(mappingInvocations[mappingInvocations.length - 1]).toEqual(arrayItem)
     }
@@ -177,8 +177,8 @@ describe('Array to DOM node children mapping', function () {
         // Check that observable items can be added and unwrapped in the mapping function and will update the DOM.
         // Also check that observables accessed in the callback function do not update the DOM.
     mappingInvocations = new Array(), countCallbackInvocations = 0
-    var observable = Observable(1), callbackObservable = Observable(1)
-    var callback2 = function (arrayItem, nodes) {
+    const observable = Observable(1), callbackObservable = Observable(1)
+    const callback2 = function (arrayItem, nodes) {
       callbackObservable()
       callback(arrayItem, nodes)
     }

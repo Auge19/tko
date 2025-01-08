@@ -29,13 +29,13 @@ import { bindings as ifBindings } from '@tko/binding.if'
 import '@tko/utils/helpers/jasmine-13-helper'
 
 describe('BindingHandler behaviors', function () {
-  var bindingHandlers
+  let bindingHandlers
 
   beforeEach(jasmine.prepareTestNode)
 
   beforeEach(function () {
         // Set up the default binding handlers.
-    var provider = new MultiProvider({providers: [
+    const provider = new MultiProvider({providers: [
       new VirtualProvider(),
       new DataBindProvider()
     ]})
@@ -49,13 +49,13 @@ describe('BindingHandler behaviors', function () {
 
   describe('BindingHandler class', function () {
     it("has a .computed() property with the node's lifecycle", function () {
-      var instance
-      var xCalls = 0,
+      let instance
+      let xCalls = 0,
         yCalls = 0
       bindingHandlers.fnHandler = class extends BindingHandler {
         constructor (...args) {
           super(...args)
-          var v = this.v = koObservable(0)
+          const v = this.v = koObservable(0)
           instance = this
           this.x = this.computed(() => {
             xCalls++
@@ -93,7 +93,7 @@ describe('BindingHandler behaviors', function () {
     })
 
     it("has a .subscribe property with the node's lifecycle", function () {
-      var obs = koObservable(),
+      let obs = koObservable(),
         handlerInstance
       bindingHandlers.fnHandler = class extends BindingHandler {
         constructor (...args) {
@@ -121,7 +121,7 @@ describe('BindingHandler behaviors', function () {
 
   describe('Function binding handlers', function () {
     it('constructs the element with appropriate params', function () {
-      var obj = { 'canary': 42 },
+      const obj = { 'canary': 42 },
         viewModel = {param: obj}
       bindingHandlers.fnHandler = function (element, valueAccessor, allBindings, $data, $context) {
         expect(valueAccessor()).toEqual(obj)
@@ -137,7 +137,7 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('calls the `fn.dispose` when cleaned up', function () {
-      var viewModel = { x: koObservable(true) },
+      let viewModel = { x: koObservable(true) },
         instance = null,
         disposeCalled = 0
       bindingHandlers.fnHandler = function () {
@@ -155,7 +155,7 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('does not error without a `dispose` property', function () {
-      var viewModel = { x: koObservable(true) }
+      const viewModel = { x: koObservable(true) }
       bindingHandlers.fnHandler = function () {}
       testNode.innerHTML = '<b data-bind="if: x"><i data-bind="fnHandler"></i></b>'
       applyBindings(viewModel, testNode)
@@ -163,7 +163,7 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('virtual elements via fn::allowVirtualElements', function () {
-      var called = 0
+      let called = 0
       bindingHandlers.fnHandler = function () { called++ }
       bindingHandlers.fnHandler.allowVirtualElements = true
       testNode.innerHTML = '<b><!-- ko fnHandler --><!-- /ko --></b>'
@@ -172,7 +172,7 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('virtual elements via fn.allowVirtualElements', function () {
-      var called = 0
+      let called = 0
       bindingHandlers.fnHandler = function () { called++ }
       bindingHandlers.fnHandler.allowVirtualElements = true
       testNode.innerHTML = '<b><!-- ko fnHandler --><!-- /ko --></b>'
@@ -181,7 +181,7 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('errors when allowVirtualElements is not set', function () {
-      var called = 0
+      let called = 0
       bindingHandlers.fnHandler = function () { called++ }
       testNode.innerHTML = '<b><!-- ko fnHandler --><!-- /ko --></b>'
 

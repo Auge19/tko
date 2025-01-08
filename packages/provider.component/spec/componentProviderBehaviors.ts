@@ -29,12 +29,12 @@ import { ComponentProvider } from '../dist'
 import '@tko/utils/helpers/jasmine-13-helper'
 
 describe('Components: Provider', function () {
-  var bindingHandlers
+  let bindingHandlers
 
   describe('custom elements', function () {
         // Note: knockout/spec/components
     beforeEach(function () {
-      var provider = new MultiProvider({
+      const provider = new MultiProvider({
         providers: [new DataBindProvider(), new ComponentProvider()]
       })
       options.bindingProviderInstance = provider
@@ -50,8 +50,8 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      var initialMarkup = 'He: <helium></helium>'
-      var root = document.createElement('div')
+      const initialMarkup = 'He: <helium></helium>'
+      const root = document.createElement('div')
       root.innerHTML = initialMarkup
 
             // Since components are loaded asynchronously, it doesn't show up synchronously
@@ -63,7 +63,7 @@ describe('Components: Provider', function () {
     })
 
     it('interprets the params of custom elements', function () {
-      var called = false
+      let called = false
       components.register('argon', {
         viewModel: function (/* params */) {
           this.delta = 'G2k'
@@ -73,7 +73,7 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      var ce = document.createElement('argon')
+      const ce = document.createElement('argon')
       ce.setAttribute('params',
                 'alpha: 1, beta: [2], charlie: {x: 3}, delta: delta'
             )
@@ -100,24 +100,24 @@ describe('Components: Provider', function () {
         this.cvalue = params.value
       }
 
-      var ps = document.createElement('script')
+      const ps = document.createElement('script')
       ps.setAttribute('id', 'parent-44')
       ps.setAttribute('type', 'text/html')
       ps.innerHTML = '<div>Parent: <span data-bind="text: parentvalue"></span></div>' +
                 '<child params="value: parentvalue"></child>'
       document.body.appendChild(ps)
 
-      var cs = document.createElement('script')
+      const cs = document.createElement('script')
       cs.setAttribute('id', 'child-44')
       cs.setAttribute('type', 'text/html')
       cs.innerHTML = ''
       document.body.appendChild(cs)
 
-      var div = document.createElement('div')
+      const div = document.createElement('div')
       div.innerHTML = '<div data-bind="text: appvalue"></div>' +
                 '<parent params="value: appvalue"></parent>'
 
-      var viewModel = new AppViewModel('hello')
+      const viewModel = new AppViewModel('hello')
       components.register('parent', {
         template: {
           element: 'parent-44'
@@ -134,7 +134,7 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      var options = {
+      const options = {
         attribute: 'data-bind',
         globals: window,
         bindings: bindingHandlers,
@@ -156,7 +156,7 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      var ce = document.createElement('lithium')
+      const ce = document.createElement('lithium')
       ce.setAttribute('params', '   ')
       applyBindings({
         delta: 'QxE'
@@ -174,7 +174,7 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      var ne = document.createElement('neon')
+      const ne = document.createElement('neon')
       ne.setAttribute('params', 'text: "Knights of Ne."')
       applyBindings({}, ne)
             // No error raised.

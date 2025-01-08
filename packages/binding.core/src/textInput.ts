@@ -16,7 +16,7 @@ import {
   BindingHandler
 } from '@tko/bind'
 
-var parseVersion, operaVersion, safariVersion, firefoxVersion
+let parseVersion, operaVersion, safariVersion, firefoxVersion
 
 
 /**

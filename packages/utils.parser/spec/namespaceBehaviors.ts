@@ -36,7 +36,7 @@ function makeBindings (binding, context) {
 
 describe('Parser Namespace', function () {
   function trial (context, binding, expect) {
-    var p = makeBindings(binding, context)
+    const p = makeBindings(binding, context)
     assert.deepEqual(p.on(), expect)
   }
 
@@ -61,7 +61,7 @@ describe('Parser Namespace', function () {
   })
 
   describe('Specific handlers', function () {
-    var node
+    let node
     beforeEach(function () {
       options.bindingProviderInstance = new DataBindProvider()
       options.bindingProviderInstance.bindingHandlers.set(coreBindings)
@@ -69,8 +69,8 @@ describe('Parser Namespace', function () {
     })
 
     it('Supplies the event to event.click', function () {
-      var clickCalled = false
-      var model = { onClick: function () { clickCalled = true } }
+      let clickCalled = false
+      const model = { onClick: function () { clickCalled = true } }
       node.innerHTML = "<button data-bind='event.click: onClick'>hey</button>"
       applyBindings(model, node)
       triggerEvent(node.children[0], 'click')
@@ -78,7 +78,7 @@ describe('Parser Namespace', function () {
     })
 
     it('Should set css.classname', function () {
-      var observable1 = new observable();
+      const observable1 = new observable();
       node.innerHTML = "<div data-bind='css.myRule: someModelProperty'>Hallo</div>";
       applyBindings({ someModelProperty: observable1 }, node);
 
@@ -88,7 +88,7 @@ describe('Parser Namespace', function () {
     })
 
     it('Should set style with style.stylename', function () {
-      var myObservable = new observable('red');
+      const myObservable = new observable('red');
       node.innerHTML = "<div data-bind='style.backgroundColor: colorValue'>Hallo</div>";
       applyBindings({ colorValue: myObservable }, node);
 

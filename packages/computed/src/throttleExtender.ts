@@ -15,7 +15,7 @@ export function throttleExtender (target, timeout) {
 
     // (2) For writable targets (observables, or writable dependent observables), we throttle *writes*
     //     so the target cannot change value synchronously or faster than a certain rate
-  var writeTimeoutInstance = null
+  let writeTimeoutInstance = null
   return computed({
     read: target,
     write: function (value) {

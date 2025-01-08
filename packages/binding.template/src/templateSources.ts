@@ -29,7 +29,7 @@ import {
 // ---- ko.templateSources.domElement -----
 
 // template types
-var templateScript = 1,
+const templateScript = 1,
   templateTextArea = 2,
   templateTemplate = 3,
   templateElement = 4
@@ -38,7 +38,7 @@ export function domElement (element) {
   this.domElement = element
 
   if (!element) { return }
-  var tagNameLower = tagNameLowerFn(element)
+  const tagNameLower = tagNameLowerFn(element)
   this.templateType =
         tagNameLower === 'script' ? templateScript
         : tagNameLower === 'textarea' ? templateTextArea
@@ -48,19 +48,19 @@ export function domElement (element) {
 }
 
 domElement.prototype.text = function (/* valueToWrite */) {
-  var elemContentsProperty = this.templateType === templateScript ? 'text'
+  const elemContentsProperty = this.templateType === templateScript ? 'text'
                              : this.templateType === templateTextArea ? 'value'
                              : 'innerHTML'
 
   if (arguments.length == 0) {
     return this.domElement[elemContentsProperty]
   } else {
-    var valueToWrite = arguments[0]
+    const valueToWrite = arguments[0]
     if (elemContentsProperty === 'innerHTML') { setHtml(this.domElement, valueToWrite) } else { this.domElement[elemContentsProperty] = valueToWrite }
   }
 }
 
-var dataDomDataPrefix = domData.nextKey() + '_'
+const dataDomDataPrefix = domData.nextKey() + '_'
 domElement.prototype.data = function (key /*, valueToWrite */) {
   if (arguments.length === 1) {
     return domData.get(this.domElement, dataDomDataPrefix + key)
@@ -69,7 +69,7 @@ domElement.prototype.data = function (key /*, valueToWrite */) {
   }
 }
 
-var templatesDomDataKey = domData.nextKey()
+const templatesDomDataKey = domData.nextKey()
 function getTemplateDomData (element) {
   return domData.get(element, templatesDomDataKey) || {}
 }
@@ -78,7 +78,7 @@ function setTemplateDomData (element, data) {
 }
 
 domElement.prototype.nodes = function (/* valueToWrite */) {
-  var element = this.domElement
+  const element = this.domElement
   if (arguments.length == 0) {
     const templateData = getTemplateDomData(element)
     let nodes = templateData.containerData || (
@@ -100,7 +100,7 @@ domElement.prototype.nodes = function (/* valueToWrite */) {
 
     return nodes
   } else {
-    var valueToWrite = arguments[0]
+    const valueToWrite = arguments[0]
     setTemplateDomData(element, {containerData: valueToWrite})
   }
 }
@@ -118,11 +118,11 @@ anonymousTemplate.prototype = new domElement()
 anonymousTemplate.prototype.constructor = anonymousTemplate
 anonymousTemplate.prototype.text = function (/* valueToWrite */) {
   if (arguments.length == 0) {
-    var templateData = getTemplateDomData(this.domElement)
+    const templateData = getTemplateDomData(this.domElement)
     if (templateData.textData === undefined && templateData.containerData) { templateData.textData = templateData.containerData.innerHTML }
     return templateData.textData
   } else {
-    var valueToWrite = arguments[0]
+    const valueToWrite = arguments[0]
     setTemplateDomData(this.domElement, {textData: valueToWrite})
   }
 }

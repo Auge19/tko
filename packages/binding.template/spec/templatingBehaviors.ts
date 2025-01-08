@@ -33,14 +33,14 @@ import {
 } from '../helpers/dummyTemplateEngine'
 
 describe('Templating', function () {
-  var bindingHandlers
+  let bindingHandlers
 
   beforeEach(jasmine.prepareTestNode)
 
   beforeEach(function () {
     options.bindingGlobals = {}
       // Set up the default binding handlers.
-    var provider = new MultiProvider({
+    const provider = new MultiProvider({
       providers: [new DataBindProvider(), new VirtualProvider()],
       globals: options.bindingGlobals
     })
@@ -81,13 +81,13 @@ describe('Templating', function () {
   })
 
   it('Should be able to access newly rendered/inserted elements in \'afterRender\' callback', function () {
-    var passedElement, passedDataItem
-    var myCallback = function (elementsArray, dataItem) {
+    let passedElement, passedDataItem
+    const myCallback = function (elementsArray, dataItem) {
       expect(elementsArray.length).toEqual(1)
       passedElement = elementsArray[0]
       passedDataItem = dataItem
     }
-    var myModel = {}
+    const myModel = {}
     setTemplateEngine(new dummyTemplateEngine({ someTemplate: 'ABC' }))
     renderTemplate('someTemplate', myModel, { afterRender: myCallback }, testNode)
     expect(passedElement.nodeValue).toEqual('ABC')
@@ -95,7 +95,7 @@ describe('Templating', function () {
   })
 
   it('Should automatically rerender into DOM element when dependencies change', function () {
-    var dependency = observable('A')
+    const dependency = observable('A')
     setTemplateEngine(new dummyTemplateEngine({ someTemplate: function () {
       return 'Value = ' + dependency()
     }
@@ -111,11 +111,11 @@ describe('Templating', function () {
   })
 
   it('Should not rerender DOM element if observable accessed in \'afterRender\' callback is changed', function () {
-    var myObservable = observable('A'), count = 0
-    var myCallback = function (/* elementsArray, dataItem */) {
+    let myObservable = observable('A'), count = 0
+    const myCallback = function (/* elementsArray, dataItem */) {
       myObservable()   // access observable in callback
     }
-    var myTemplate = function () {
+    const myTemplate = function () {
       return 'Value = ' + (++count)
     }
     setTemplateEngine(new dummyTemplateEngine({ someTemplate: myTemplate }))
@@ -129,7 +129,7 @@ describe('Templating', function () {
   })
 
   it('If the supplied data item is observable, evaluates it and has subscription on it', function () {
-    var myObservable = observable('A')
+    const myObservable = observable('A')
     setTemplateEngine(new dummyTemplateEngine({ someTemplate: function (data) {
       return 'Value = ' + data
     }
@@ -142,8 +142,8 @@ describe('Templating', function () {
   })
 
   it('Should stop updating DOM nodes when the dependency next changes if the DOM node has been removed from the document', function () {
-    var dependency = observable('A')
-    var template = { someTemplate: function () { return 'Value = ' + dependency() } }
+    const dependency = observable('A')
+    const template = { someTemplate: function () { return 'Value = ' + dependency() } }
     setTemplateEngine(new dummyTemplateEngine(template))
 
     renderTemplate('someTemplate', null, null, testNode)
@@ -162,7 +162,7 @@ describe('Templating', function () {
       secondTemplate: 'Second template output'
     }))
 
-    var chosenTemplate = observable('firstTemplate')
+    const chosenTemplate = observable('firstTemplate')
     renderTemplate(chosenTemplate, null, null, testNode)
     expect(testNode.innerHTML).toEqual('First template output')
 
@@ -195,7 +195,7 @@ describe('Templating', function () {
     setTemplateEngine(new dummyTemplateEngine({ someTemplate: 'result = [js: nomangle$data.childProp]' }))
     testNode.innerHTML = "<div data-bind='template: { name: \"someTemplate\", data: someProp }'></div>"
 
-    var myData = observable({ childProp: 123 })
+    const myData = observable({ childProp: 123 })
     applyBindings({ someProp: myData }, testNode)
     expect(testNode.childNodes[0].innerHTML).toEqual('result = 123')
 
@@ -208,7 +208,7 @@ describe('Templating', function () {
   it('Should call a generic childrenComplete callback function', function () {
     setTemplateEngine(new dummyTemplateEngine({ someTemplate: 'result = [js: nomangle$data.childProp]' }))
     testNode.innerHTML = "<div data-bind='template: { name: \"someTemplate\", data: someItem }, childrenComplete: callback'></div>"
-    var someItem = observable({ childProp: 'child' }),
+    let someItem = observable({ childProp: 'child' }),
       callbacks = 0
     applyBindings({ someItem: someItem, callback: function () { callbacks++ } }, testNode)
     expect(callbacks).toEqual(1)
@@ -220,7 +220,7 @@ describe('Templating', function () {
   })
 
   it('Should stop tracking inner observables immediately when the container node is removed from the document', function () {
-    var innerObservable = observable('some value')
+    const innerObservable = observable('some value')
     setTemplateEngine(new dummyTemplateEngine({ someTemplate: 'result = [js: nomangle$data.childProp()]' }))
     testNode.innerHTML = "<div data-bind='template: { name: \"someTemplate\", data: someProp }'></div>"
     applyBindings({ someProp: { childProp: innerObservable} }, testNode)
@@ -236,7 +236,7 @@ describe('Templating', function () {
       secondTemplate: 'Second template output'
     }))
 
-    var chosenTemplate = observable('firstTemplate')
+    const chosenTemplate = observable('firstTemplate')
     testNode.innerHTML = "<div data-bind='template: chosenTemplate'></div>"
     applyBindings({ chosenTemplate: chosenTemplate }, testNode)
     expect(testNode.childNodes[0].innerHTML).toEqual('First template output')
@@ -251,7 +251,7 @@ describe('Templating', function () {
       secondTemplate: 'Second template output'
     }))
 
-    var chosenTemplate = observable('firstTemplate')
+    const chosenTemplate = observable('firstTemplate')
     testNode.innerHTML = "<div data-bind='template: { name: chosenTemplate }'></div>"
     applyBindings({ chosenTemplate: chosenTemplate }, testNode)
     expect(testNode.childNodes[0].innerHTML).toEqual('First template output')
@@ -266,7 +266,7 @@ describe('Templating', function () {
       secondTemplate: 'Second'
     }))
 
-    var chosenTemplate = observable('firstTemplate')
+    const chosenTemplate = observable('firstTemplate')
     testNode.innerHTML = "<div data-bind='template: { name: chosenTemplate, foreach: [1,2,3] }'></div>"
     applyBindings({ chosenTemplate: chosenTemplate }, testNode)
     expect(testNode.childNodes[0].innerHTML).toEqual('FirstFirstFirst')
@@ -276,7 +276,7 @@ describe('Templating', function () {
   })
 
   it('Should be able to pick template as a function of the data item using data-bind syntax, with the binding context available as a second parameter', function () {
-    var templatePicker = function (dataItem, bindingContext) {
+    const templatePicker = function (dataItem, bindingContext) {
             // Having the entire binding context available means you can read sibling or parent level properties
       expect(bindingContext.$parent.anotherProperty).toEqual(456)
       return dataItem.myTemplate
@@ -298,8 +298,8 @@ describe('Templating', function () {
   })
 
   it('Should rerender chained templates when their dependencies change, without rerendering parent templates', function () {
-    var myObservable = observable('ABC')
-    var timesRenderedOuter = 0, timesRenderedInner = 0
+    const myObservable = observable('ABC')
+    let timesRenderedOuter = 0, timesRenderedInner = 0
     setTemplateEngine(new dummyTemplateEngine({
       outerTemplate: function () { timesRenderedOuter++; return 'outer template output, [renderTemplate:innerTemplate]' }, // [renderTemplate:...] is special syntax supported by dummy template engine
       innerTemplate: function () { timesRenderedInner++; return myObservable() }
@@ -317,7 +317,7 @@ describe('Templating', function () {
   })
 
   it('Should stop tracking inner observables referenced by a chained template as soon as the chained template output node is removed from the document', function () {
-    var innerObservable = observable('some value')
+    const innerObservable = observable('some value')
     setTemplateEngine(new dummyTemplateEngine({
       outerTemplate: "outer template output, <span id='innerTemplateOutput'>[renderTemplate:innerTemplate]</span>",
       innerTemplate: 'result = [js: nomangle$data.childProp()]'
@@ -371,7 +371,7 @@ describe('Templating', function () {
   })
 
   it('Data binding syntax should be able to use $rawData in binding value to refer to a top level template\'s view model observable', function () {
-    var data = observable('value')
+    const data = observable('value')
     setTemplateEngine(new dummyTemplateEngine({ someTemplate: "<div data-bind='text: isObservable($rawData)'></div>" }))
 
     options.bindingGlobals.isObservable = isObservable
@@ -386,7 +386,7 @@ describe('Templating', function () {
 
         // Expose to access isObservable
     options.bindingGlobals.isObservable = isObservable
-    var viewModel = { someProp: observable('value') }
+    const viewModel = { someProp: observable('value') }
 
     applyBindings(viewModel, testNode)
 
@@ -416,7 +416,7 @@ describe('Templating', function () {
     setTemplateEngine(new dummyTemplateEngine({
       someTemplate: "<input data-bind='value:message' />[js: rt_options.templateRenderingVariablesInScope.message = 'goodbye'; undefined; ]"
     }))
-    var viewModel = { message: 'hello' }
+    const viewModel = { message: 'hello' }
     renderTemplate('someTemplate', viewModel, { templateRenderingVariablesInScope: viewModel }, testNode)
     expect(testNode.childNodes[0].value).toEqual('goodbye')
   })
@@ -425,12 +425,12 @@ describe('Templating', function () {
     setTemplateEngine(new dummyTemplateEngine({
       someTemplate: "<button data-bind='click: someFunctionOnModel'>click me</button>"
     }))
-    var viewModel = {
+    const viewModel = {
       didCallMyFunction: false,
       someFunctionOnModel: function () { this.didCallMyFunction = true }
     }
     renderTemplate('someTemplate', viewModel, null, testNode)
-    var buttonNode = testNode.childNodes[0]
+    const buttonNode = testNode.childNodes[0]
     expect(buttonNode.tagName).toEqual('BUTTON') // Be sure we're clicking the right thing
     buttonNode.click()
     expect(viewModel.didCallMyFunction).toEqual(true)
@@ -441,7 +441,7 @@ describe('Templating', function () {
 
         // Will verify that bindings are applied only once for both inline (rewritten) bindings,
         // and external (non-rewritten) ones
-    var originalBindingProvider = options.bindingProviderInstance
+    const originalBindingProvider = options.bindingProviderInstance
     options.bindingProviderInstance = {
       FOR_NODE_TYPES: [document.ELEMENT_NODE],
       bindingHandlers: originalBindingProvider.bindingHandlers,
@@ -487,7 +487,7 @@ describe('Templating', function () {
         // Will verify that bindings are applied only once for both inline (rewritten) bindings,
         // and external (non-rewritten) ones. Because getBindings actually gets called twice, we need
         // to expect two calls (but still it's a single binding).
-    var originalBindingProvider = options.bindingProviderInstance
+    const originalBindingProvider = options.bindingProviderInstance
     options.bindingProviderInstance = {
       bindingHandlers: originalBindingProvider.bindingHandlers,
       nodeHasBindings: function (node, bindingContext) {
@@ -519,7 +519,7 @@ describe('Templating', function () {
     }))
 
     testNode.innerHTML = "<div data-bind='template: { nodes: testNodes, data: testData, bypassDomNodeWrap: true }'></div>"
-    var model = {
+    const model = {
       testNodes: [
         document.createTextNode('begin'),
         document.createElement('span'),
@@ -539,7 +539,7 @@ describe('Templating', function () {
 
   it('Should accept a "nodes" option that gives the template nodes, and able to use the same nodes for multiple bindings', function () {
     testNode.innerHTML = "<div data-bind='template: { nodes: testNodes, data: testData1, bypassDomNodeWrap: true }'></div><div data-bind='template: { nodes: testNodes, data: testData2, bypassDomNodeWrap: true }'></div>"
-    var model = {
+    const model = {
       testNodes: [
             document.createTextNode('begin'),
             document.createElement('span'),
@@ -572,9 +572,9 @@ describe('Templating', function () {
 
         // This time we'll check that the nodes array doesn't have to be a real array - it can be the .childNodes
         // property of a DOM element, which is subtly different.
-    var templateContainer = document.createElement('div')
+    const templateContainer = document.createElement('div')
     templateContainer.innerHTML = "[<span data-bind='text: name'></span>]"
-    var model = {
+    const model = {
       testNodes: templateContainer.childNodes,
       testData: observableArray([{ name: observable('alpha') }, { name: 'beta' }, { name: 'gamma' }])
     }
@@ -620,7 +620,7 @@ describe('Templating', function () {
   xit('Should accept `jsx:...`', function () {
     testNode.innerHTML = "<div data-bind='template: { jsx: testJsx }'></div>"
     const obs = observable('alpha')
-    var model = {
+    const model = {
       testJsx: {
         elementName: 'begin',
         attributes: {},
@@ -648,14 +648,14 @@ describe('Templating', function () {
     })
 
     it('Should render for each item in an array but doesn\'t rerender everything if you push or splice', function () {
-      var myArray = observableArray([{ personName: 'Bob' }, { personName: 'Frank'}])
+      const myArray = observableArray([{ personName: 'Bob' }, { personName: 'Frank'}])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: '<div>The item is [js: nomangle$data.personName]</div>' }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection }'></div>"
 
       applyBindings({ myCollection: myArray }, testNode)
       expect(testNode.childNodes[0]).toContainHtml('<div>the item is bob</div><div>the item is frank</div>')
-      var originalBobNode = testNode.childNodes[0].childNodes[0]
-      var originalFrankNode = testNode.childNodes[0].childNodes[1]
+      const originalBobNode = testNode.childNodes[0].childNodes[0]
+      const originalFrankNode = testNode.childNodes[0].childNodes[1]
 
       myArray.push({ personName: 'Steve' })
       expect(testNode.childNodes[0]).toContainHtml('<div>the item is bob</div><div>the item is frank</div><div>the item is steve</div>')
@@ -664,7 +664,7 @@ describe('Templating', function () {
     })
 
     it('Should apply bindings within the context of each item in the array', function () {
-      var myArray = observableArray([{ personName: 'Bob' }, { personName: 'Frank'}])
+      const myArray = observableArray([{ personName: 'Bob' }, { personName: 'Frank'}])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: "The item is <span data-bind='text: personName'></span>" }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection }'></div>"
 
@@ -673,7 +673,7 @@ describe('Templating', function () {
     })
 
     it('Should only bind each group of output nodes once', function () {
-      var initCalls = 0
+      let initCalls = 0
       bindingHandlers.countInits = { init: function () { initCalls++ } }
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: "<span data-bind='countInits: true'></span>" }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection }'></div>"
@@ -690,7 +690,7 @@ describe('Templating', function () {
       testNode.innerHTML = "<div data-bind=\"template: { name: 'mytemplate', foreach: items }\"></div>"
 
             // Bind against initial array containing one entry. UI just shows "original"
-      var myArray = observableArray(['original'])
+      const myArray = observableArray(['original'])
       applyBindings({ items: myArray }, testNode)
       expect(testNode.childNodes[0]).toContainHtml('<div data-bind="text: $data">original</div>')
 
@@ -709,7 +709,7 @@ describe('Templating', function () {
       testNode.innerHTML = "<div data-bind=\"template: { name: 'outerTemplate', foreach: items }\"></div>"
 
             // Bind against initial array containing one entry.
-      var myArray = observableArray(['original'])
+      const myArray = observableArray(['original'])
       applyBindings({ items: myArray }, testNode)
       expect(testNode.childNodes[0]).toContainHtml('<div data-bind="text: $data">original</div>inner <span data-bind="text: 123">123</span>x')
 
@@ -726,7 +726,7 @@ describe('Templating', function () {
       testNode.innerHTML = "<div data-bind=\"template: { name: 'mytemplate', foreach: items }\"></div>"
 
             // Bind against array, referencing an observable property
-      var myItem = { name: observable('a') }
+      const myItem = { name: observable('a') }
       applyBindings({ items: [myItem] }, testNode)
       expect(testNode.childNodes[0]).toContainHtml('<div data-bind="attr: {}">a</div>')
 
@@ -737,7 +737,7 @@ describe('Templating', function () {
     })
 
     it('Should apply bindings with an $index in the context', function () {
-      var myArray = observableArray([{ personName: 'Bob' }, { personName: 'Frank'}])
+      const myArray = observableArray([{ personName: 'Bob' }, { personName: 'Frank'}])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: "The item # is <span data-bind='text: $index'></span>" }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection }'></div>"
 
@@ -746,14 +746,14 @@ describe('Templating', function () {
     })
 
     it('Should update bindings that reference an $index if the list changes', function () {
-      var myArray = observableArray([{ personName: 'Bob' }, { personName: 'Frank'}])
+      const myArray = observableArray([{ personName: 'Bob' }, { personName: 'Frank'}])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: "The item <span data-bind='text: personName'></span>is <span data-bind='text: $index'></span>" }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection }'></div>"
 
       applyBindings({ myCollection: myArray }, testNode)
       expect(testNode.childNodes[0]).toContainHtml('the item <span data-bind="text: personname">bob</span>is <span data-bind="text: $index">0</span>the item <span data-bind="text: personname">frank</span>is <span data-bind="text: $index">1</span>')
 
-      var frank = myArray.pop() // remove frank
+      const frank = myArray.pop() // remove frank
       expect(testNode.childNodes[0]).toContainHtml('the item <span data-bind="text: personname">bob</span>is <span data-bind="text: $index">0</span>')
 
       myArray.unshift(frank) // put frank in the front
@@ -761,7 +761,7 @@ describe('Templating', function () {
     })
 
     it('Should accept array with "undefined" and "null" items', function () {
-      var myArray = observableArray([undefined, null])
+      const myArray = observableArray([undefined, null])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: "The item is <span data-bind='text: String($data)'></span>" }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection }'></div>"
 
@@ -771,14 +771,14 @@ describe('Templating', function () {
     })
 
     it('Should update DOM nodes when a dependency of their mapping function changes', function () {
-      var myObservable = observable('Steve')
-      var myArray = observableArray([{ personName: 'Bob' }, { personName: myObservable }, { personName: 'Another' }])
+      const myObservable = observable('Steve')
+      const myArray = observableArray([{ personName: 'Bob' }, { personName: myObservable }, { personName: 'Another' }])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: '<div>The item is [js: unwrap(nomangle$data.personName)]</div>' }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection }'></div>"
 
       applyBindings({ myCollection: myArray }, testNode)
       expect(testNode.childNodes[0]).toContainHtml('<div>the item is bob</div><div>the item is steve</div><div>the item is another</div>')
-      var originalBobNode = testNode.childNodes[0].childNodes[0]
+      const originalBobNode = testNode.childNodes[0].childNodes[0]
 
       myObservable('Steve2')
       expect(testNode.childNodes[0]).toContainHtml('<div>the item is bob</div><div>the item is steve2</div><div>the item is another</div>')
@@ -793,7 +793,7 @@ describe('Templating', function () {
     })
 
     it('Should treat a null parameter as meaning \'no items\'', function () {
-      var myArray = observableArray(['A', 'B'])
+      const myArray = observableArray(['A', 'B'])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: 'hello' }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection }'></div>"
 
@@ -809,7 +809,7 @@ describe('Templating', function () {
     it('Should accept an \"as\" option to define an alias for the iteration variable', function () {
             // Note: There are more detailed specs (e.g., covering nesting) associated with the "foreach" binding which
             // uses this templating functionality internally.
-      var myArray = observableArray(['A', 'B'])
+      const myArray = observableArray(['A', 'B'])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: '[js:bindingContext.myAliasedItem]' }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection, as: \"myAliasedItem\" }'></div>"
 
@@ -818,8 +818,8 @@ describe('Templating', function () {
     })
 
     it('Should stop tracking inner observables when the container node is removed', function () {
-      var innerObservable = observable('some value')
-      var myArray = observableArray([{obsVal: innerObservable}, {obsVal: innerObservable}])
+      const innerObservable = observable('some value')
+      const myArray = observableArray([{obsVal: innerObservable}, {obsVal: innerObservable}])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: 'The item is [js: unwrap(nomangle$data.obsVal)]' }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection }'></div>"
 
@@ -831,8 +831,8 @@ describe('Templating', function () {
     })
 
     it('Should stop tracking inner observables related to each array item when that array item is removed', function () {
-      var innerObservable = observable('some value')
-      var myArray = observableArray([{obsVal: innerObservable}, {obsVal: innerObservable}])
+      const innerObservable = observable('some value')
+      const myArray = observableArray([{obsVal: innerObservable}, {obsVal: innerObservable}])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: 'The item is [js: unwrap(nomangle$data.obsVal)]' }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection }'></div>"
 
@@ -847,7 +847,7 @@ describe('Templating', function () {
 
     it('Should omit any items whose \'_destroy\' flag is set (unwrapping the flag if it is observable)', function () {
       options.includeDestroyed = false
-      var myArray = observableArray([{ someProp: 1 }, { someProp: 2, _destroy: 'evals to true' }, { someProp: 3 }, { someProp: 4, _destroy: observable(false) }])
+      const myArray = observableArray([{ someProp: 1 }, { someProp: 2, _destroy: 'evals to true' }, { someProp: 3 }, { someProp: 4, _destroy: observable(false) }])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: '<div>someProp=[js: nomangle$data.someProp]</div>' }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection, includeDestroyed: false }'></div>"
 
@@ -856,7 +856,7 @@ describe('Templating', function () {
     })
 
     it('Should include any items whose \'_destroy\' flag is set if you use includeDestroyed', function () {
-      var myArray = observableArray([{ someProp: 1 }, { someProp: 2, _destroy: 'evals to true' }, { someProp: 3 }])
+      const myArray = observableArray([{ someProp: 1 }, { someProp: 2, _destroy: 'evals to true' }, { someProp: 3 }])
       setTemplateEngine(new dummyTemplateEngine({ itemTemplate: '<div>someProp=[js: nomangle$data.someProp]</div>' }))
       testNode.innerHTML = "<div data-bind='template: { name: \"itemTemplate\", foreach: myCollection, includeDestroyed: true }'></div>"
 
@@ -865,7 +865,7 @@ describe('Templating', function () {
     })
 
     it('Should be able to render a different template for each array entry by passing a function as template name, with the array entry\'s binding context available as a second parameter', function () {
-      var myArray = observableArray([
+      const myArray = observableArray([
                 { preferredTemplate: 1, someProperty: 'firstItemValue' },
                 { preferredTemplate: 2, someProperty: 'secondItemValue' }
       ])
@@ -875,7 +875,7 @@ describe('Templating', function () {
       }))
       testNode.innerHTML = "<div data-bind='template: {name: getTemplateModelProperty, foreach: myCollection}'></div>"
 
-      var getTemplate = function (dataItem, bindingContext) {
+      const getTemplate = function (dataItem, bindingContext) {
                 // Having the item's binding context available means you can read sibling or parent level properties
         expect(bindingContext.$parent.anotherProperty).toEqual(123)
 
@@ -886,8 +886,8 @@ describe('Templating', function () {
     })
 
     it('Should update all child contexts and bindings when used with a top-level observable view model', function () {
-      var myVm = observable({items: ['A', 'B', 'C'], itemValues: { 'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9] }})
-      var engine = new dummyTemplateEngine({
+      const myVm = observable({items: ['A', 'B', 'C'], itemValues: { 'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9] }})
+      const engine = new dummyTemplateEngine({
         itemTemplate: "<span>The <span data-bind='text: $index'>&nbsp;</span> item <span data-bind='text: $data'>&nbsp;</span> has <span data-bind='template: { name: \"valueTemplate\", foreach: $root.itemValues[$data] }'>&nbsp;</span> </span>",
         valueTemplate: "<span data-bind='text: $index'>&nbsp;</span>.<span data-bind='text: $data'>&nbsp;</span>,"
       })
@@ -908,7 +908,7 @@ describe('Templating', function () {
     setTemplateEngine(new dummyTemplateEngine({ myTemplate: 'Value: [js: nomangle$data.myProp().childProp]' }))
     testNode.innerHTML = "<div data-bind='template: { name: \"myTemplate\", \"if\": myProp }'></div>"
 
-    var viewModel = { myProp: observable({ childProp: 'abc' }) }
+    const viewModel = { myProp: observable({ childProp: 'abc' }) }
     applyBindings(viewModel, testNode)
 
         // Initially there is a value
@@ -927,7 +927,7 @@ describe('Templating', function () {
     setTemplateEngine(new dummyTemplateEngine({ myTemplate: 'Hello' }))
     testNode.innerHTML = "<div data-bind='template: { name: \"myTemplate\", ifnot: shouldHide }'></div>"
 
-    var viewModel = { shouldHide: observable(true) }
+    const viewModel = { shouldHide: observable(true) }
     applyBindings(viewModel, testNode)
 
         // Initially there is no output (shouldHide=true)
@@ -946,7 +946,7 @@ describe('Templating', function () {
     setTemplateEngine(new dummyTemplateEngine({ myTemplate: 'Value: [js: nomangle$data.myProp().childProp]' }))
     testNode.innerHTML = "<div data-bind='template: { name: \"myTemplate\", \"if\": myProp, foreach: [$data, $data, $data] }'></div>"
 
-    var viewModel = { myProp: observable({ childProp: 'abc' }) }
+    const viewModel = { myProp: observable({ childProp: 'abc' }) }
     applyBindings(viewModel, testNode)
     expect(testNode.childNodes[0].childNodes[0].nodeValue).toEqual('Value: abc')
     expect(testNode.childNodes[0].childNodes[1].nodeValue).toEqual('Value: abc')
@@ -976,7 +976,7 @@ describe('Templating', function () {
   })
 
   it('Data binding \'templateOptions\' should be passed to template', function () {
-    var myModel = {
+    const myModel = {
       someAdditionalData: { myAdditionalProp: 'someAdditionalValue' },
       people: observableArray([
                 { name: 'Alpha' },
@@ -991,7 +991,7 @@ describe('Templating', function () {
   })
 
   it('If the template binding is updated, should dispose any template subscriptions previously associated with the element', function () {
-    var myObservable = observable('some value'),
+    const myObservable = observable('some value'),
       myModel = {
         subModel: observable({ myObservable: myObservable })
       }
@@ -1002,7 +1002,7 @@ describe('Templating', function () {
         // Right now the template references myObservable, so there should be exactly one subscription on it
     expect(testNode.childNodes[0]).toContainText('The value is some value')
     expect(myObservable.getSubscriptionsCount()).toEqual(1)
-    var renderedNode1 = testNode.childNodes[0].childNodes[0]
+    const renderedNode1 = testNode.childNodes[0].childNodes[0]
 
         // By changing the object for subModel, we force the data-bind value to be re-evaluated and the template to be re-rendered,
         // setting up a new template subscription, so there have now existed two subscriptions on myObservable...
@@ -1015,7 +1015,7 @@ describe('Templating', function () {
 
   it('Should be able to specify a template engine instance using data-bind syntax', function () {
     setTemplateEngine(new dummyTemplateEngine({ theTemplate: 'Default output' })) // Not going to use this one
-    var alternativeTemplateEngine = new dummyTemplateEngine({ theTemplate: 'Alternative output' })
+    const alternativeTemplateEngine = new dummyTemplateEngine({ theTemplate: 'Alternative output' })
 
     testNode.innerHTML = "<div data-bind='template: { name: \"theTemplate\", templateEngine: chosenEngine }'></div>"
     applyBindings({ chosenEngine: alternativeTemplateEngine }, testNode)
@@ -1109,7 +1109,7 @@ describe('Templating', function () {
                 '--><!-- /ko -->',
       innerTemplate: "Inner via inline binding: <span data-bind='text: \"someText\"'></span>"
     }))
-    var model = { }
+    const model = { }
     testNode.innerHTML = "<div data-bind='template: { name: \"outerTemplate\" }'></div>"
     applyBindings(model, testNode)
     expect(testNode.childNodes[0]).toContainHtml('outer <!-- ko template: { name: "innertemplate" } -->inner via inline binding: <span data-bind="text: &quot;sometext&quot;">sometext</span><!-- /ko -->')
@@ -1139,7 +1139,7 @@ describe('Templating', function () {
 
   it('Should allow anonymous templates output to include top-level virtual elements, and will bind their virtual children only once', function () {
     delete bindingHandlers.nonexistentHandler
-    var initCalls = 0
+    let initCalls = 0
     bindingHandlers.countInits = { init: function () { initCalls++ } }
     testNode.innerHTML = "<div data-bind='template: {}'><!-- ko nonexistentHandler: true --><span data-bind='countInits: true'></span><!-- /ko --></div>"
     applyBindings(null, testNode)
@@ -1166,7 +1166,7 @@ describe('Templating', function () {
 
     setTemplateEngine(new dummyTemplateEngine({}))
     testNode.innerHTML = "<div data-bind='template: { foreach: items }'><button data-bind='text: $data'></button> OK. </div>"
-    var items = observableArray(['Alpha', 'Beta'])
+    const items = observableArray(['Alpha', 'Beta'])
     applyBindings({ items: items }, testNode)
     expect(testNode).toContainText('Alpha OK. Beta OK. ')
 
@@ -1200,7 +1200,7 @@ describe('Templating', function () {
       myTemplate: '<p>myval: [js: nomangle$data.myVal]</p>' // The whitespace after the closing span is what triggers the strange HTML parsing
     }))
 
-    var testDocFrag = document.createDocumentFragment()
+    const testDocFrag = document.createDocumentFragment()
     renderTemplate('myTemplate', { myVal: 123 }, null, testDocFrag)
 
         // Can't use .toContainHtml directly on doc frags, so check DOM structure manually
@@ -1211,7 +1211,7 @@ describe('Templating', function () {
 
   describe('The `condition` exposed via the domData for `else` chaining', function () {
     it('is false iff the `if` is false', function () {
-      var condition = observable(true)
+      const condition = observable(true)
 
       testNode.innerHTML = '<!-- ko template: {if: condition} -->True<!-- /ko -->'
 
@@ -1224,7 +1224,7 @@ describe('Templating', function () {
     })
 
     it('is false iff the `ifnot` is true', function () {
-      var condition = observable(true)
+      const condition = observable(true)
 
       testNode.innerHTML = '<!-- ko template: {ifnot: condition} -->True<!-- /ko -->'
 
@@ -1237,7 +1237,7 @@ describe('Templating', function () {
     })
 
     it('is false iff the `foreach` is empty', function () {
-      var items = observable()
+      const items = observable()
 
       testNode.innerHTML = '<!-- ko template: {foreach: items} -->True<!-- /ko -->'
 
@@ -1255,7 +1255,7 @@ describe('Templating', function () {
     })
 
     it('is false iff the `if` is false, on a DOM node', function () {
-      var condition = observable(true)
+      const condition = observable(true)
 
       testNode.setAttribute('data-bind', 'template: {if: condition}')
       testNode.innerHTML = 'True'

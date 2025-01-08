@@ -3,11 +3,11 @@ import {
 } from '@tko/provider.databind'
 
 describe('Binding preprocessing', function () {
-  var bindingHandlers,
+  let bindingHandlers,
     preProcessBindings
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    const provider = new DataBindProvider()
     bindingHandlers = provider.bindingHandlers
     preProcessBindings = provider.preProcessBindings.bind(provider)
   })
@@ -20,8 +20,8 @@ describe('Binding preprocessing', function () {
         return value || 'false'
       }
     }
-    var rewritten = preProcessBindings('a: 1, b')
-    var parsedRewritten = eval('({' + rewritten + '})')
+    const rewritten = preProcessBindings('a: 1, b')
+    const parsedRewritten = eval('({' + rewritten + '})')
     expect(parsedRewritten.a).to.equal(1)
     expect(parsedRewritten.b).to.equal(false)
   })
@@ -40,8 +40,8 @@ describe('Binding preprocessing', function () {
         addBinding(key + '2', value)
       }
     }
-    var rewritten = preProcessBindings('a: 1, b: 2')
-    var parsedRewritten = eval('({' + rewritten + '})')
+    const rewritten = preProcessBindings('a: 1, b: 2')
+    const parsedRewritten = eval('({' + rewritten + '})')
 
     expect(parsedRewritten.a).to.equal(1)
     expect(parsedRewritten.a2).to.equal(1)
@@ -63,8 +63,8 @@ describe('Binding preprocessing', function () {
         return '' + (+value + 1)
       }
     }
-    var rewritten = preProcessBindings('a: 2')
-    var parsedRewritten = eval('({' + rewritten + '})')
+    const rewritten = preProcessBindings('a: 2')
+    const parsedRewritten = eval('({' + rewritten + '})')
     expect(parsedRewritten.a).to.be.undefined
     expect(parsedRewritten.b).to.equal(3)
   })
@@ -80,8 +80,8 @@ describe('Binding preprocessing', function () {
         }
       }
     })
-    var rewritten = preProcessBindings('a: 1')
-    var parsedRewritten = eval('({' + rewritten + '})')
+    const rewritten = preProcessBindings('a: 1')
+    const parsedRewritten = eval('({' + rewritten + '})')
     expect(parsedRewritten.a).to.equal(12)
   })
 })

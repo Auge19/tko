@@ -78,17 +78,17 @@ function limitNotifySubscribers (value, event) {
 
 // Add `limit` function to the subscribable prototype
 subscribable.fn.limit = function limit (limitFunction) {
-  var self = this
-  var selfIsObservable = isObservable(self)
-  var beforeChange = 'beforeChange'
-  var ignoreBeforeChange, notifyNextChange, previousValue, pendingValue, didUpdate
+  const self = this
+  const selfIsObservable = isObservable(self)
+  const beforeChange = 'beforeChange'
+  let ignoreBeforeChange, notifyNextChange, previousValue, pendingValue, didUpdate
 
   if (!self._origNotifySubscribers) {
     self._origNotifySubscribers = self.notifySubscribers
     self.notifySubscribers = limitNotifySubscribers
   }
 
-  var finish = limitFunction(function () {
+  const finish = limitFunction(function () {
     self._notificationIsPending = false
 
     // If an observable provided a reference to itself, access it to get the latest value.
@@ -137,7 +137,7 @@ subscribable.fn.limit = function limit (limitFunction) {
 
 Object.setPrototypeOf(observable.fn, subscribable.fn)
 
-var protoProperty = observable.protoProperty = options.protoProperty
+const protoProperty = observable.protoProperty = options.protoProperty
 observable.fn[protoProperty] = observable
 
 // Subclasses can add themselves to observableProperties so that

@@ -24,7 +24,7 @@ import {
 } from '@tko/utils/helpers/jasmine-13-helper'
 
 describe('ComponentABC', function () {
-  var testComponentName = 'test-component',
+  let testComponentName = 'test-component',
     testComponentBindingValue,
     testComponentParams,
     outerViewModel
@@ -37,7 +37,7 @@ describe('ComponentABC', function () {
     outerViewModel = { testComponentBindingValue: testComponentBindingValue, isOuterViewModel: true }
     testNode.innerHTML = '<div data-bind="component: testComponentBindingValue"></div>'
 
-    var provider = new MultiProvider({
+    const provider = new MultiProvider({
       providers: [
         new DataBindProvider(),
         new ComponentProvider(),
@@ -127,7 +127,7 @@ describe('ComponentABC', function () {
   })
 
   it('disposes when the node is removed', function () {
-    var disp = false
+    let disp = false
     class CX extends ComponentABC {
       dispose () {
         super.dispose()

@@ -9,13 +9,13 @@ import {
 
 export var attr = {
   update: function (element, valueAccessor, allBindings) {
-    var value = unwrap(valueAccessor()) || {}
+    const value = unwrap(valueAccessor()) || {}
     objectForEach(value, function (attrName, attrValue) {
       attrValue = unwrap(attrValue)
 
       // Find the namespace of this attribute, if any.
-      var prefixLen = attrName.indexOf(':')
-      var namespace = prefixLen > 0 && element.lookupNamespaceURI(attrName.substr(0, prefixLen))
+      const prefixLen = attrName.indexOf(':')
+      const namespace = prefixLen > 0 && element.lookupNamespaceURI(attrName.substr(0, prefixLen))
 
       // To cover cases like "attr: { checked:someProp }", we want to remove the attribute entirely
       // when someProp is a "no value"-like value (strictly null, false, or undefined)

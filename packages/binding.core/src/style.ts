@@ -11,7 +11,7 @@ const {jQueryInstance} = options
 
 export var style = {
   update: function (element, valueAccessor) {
-    var value = unwrap(valueAccessor() || {})
+    const value = unwrap(valueAccessor() || {})
     objectForEach(value, function (styleName, styleValue) {
       styleValue = unwrap(styleValue)
 

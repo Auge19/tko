@@ -9,7 +9,7 @@ import { forceRefresh } from './fixes'
 import * as virtualElements from './virtualElements'
 import options from '../options'
 
-var none = [0, '', ''],
+const none = [0, '', ''],
   table = [1, '<table>', '</table>'],
   tbody = [2, '<table><tbody>', '</tbody></table>'],
   colgroup = [ 2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
@@ -45,7 +45,7 @@ function getWrap (tags) {
 
 function simpleHtmlParse (html, documentContext) {
   documentContext || (documentContext = document)
-  var windowContext = documentContext['parentWindow'] || documentContext['defaultView'] || window
+  const windowContext = documentContext['parentWindow'] || documentContext['defaultView'] || window
 
     // Based on jQuery's "clean" function, but only accounting for table-related elements.
     // If you have referenced jQuery, this won't be used anyway - KO will use jQuery's "clean" function directly
@@ -56,13 +56,13 @@ function simpleHtmlParse (html, documentContext) {
     // (possibly a text node) in front of the comment. So, KO does not attempt to workaround this IE issue automatically at present.
 
     // Trim whitespace, otherwise indexOf won't work as expected
-  var tags = stringTrim(html).toLowerCase(), div = documentContext.createElement('div'),
+  let tags = stringTrim(html).toLowerCase(), div = documentContext.createElement('div'),
     wrap = getWrap(tags),
     depth = wrap[0]
 
     // Go to html and back, then peel off extra wrappers
     // Note that we always prefix with some dummy text, because otherwise, IE<9 will strip out leading comment nodes in descendants. Total madness.
-  var markup = 'ignored<div>' + wrap[1] + html + wrap[2] + '</div>'
+  const markup = 'ignored<div>' + wrap[1] + html + wrap[2] + '</div>'
   if (typeof windowContext['innerShiv'] === 'function') {
         // Note that innerShiv is deprecated in favour of html5shiv. We should consider adding
         // support for html5shiv (except if no explicit support is needed, e.g., if html5shiv
@@ -80,7 +80,7 @@ function simpleHtmlParse (html, documentContext) {
 
 function templateHtmlParse (html, documentContext) {
   if (!documentContext) { documentContext = document }
-  var template = documentContext.createElement('template')
+  const template = documentContext.createElement('template')
   template.innerHTML = html
   return makeArray(template.content.childNodes)
 }
@@ -91,14 +91,14 @@ function jQueryHtmlParse (html, documentContext) {
     return jQueryInstance.parseHTML(html, documentContext) || [] // Ensure we always return an array and never null
   } else {
         // For jQuery < 1.8.0, we fall back on the undocumented internal "clean" function.
-    var elems = jQueryInstance.clean([html], documentContext)
+    const elems = jQueryInstance.clean([html], documentContext)
 
         // As of jQuery 1.7.1, jQuery parses the HTML by appending it to some dummy parent nodes held in an in-memory document fragment.
         // Unfortunately, it never clears the dummy parent nodes from the document fragment, so it leaks memory over time.
         // Fix this by finding the top-most dummy parent element, and detaching it from its owner fragment.
     if (elems && elems[0]) {
             // Find the top-most parent element that's a direct child of a document fragment
-      var elem = elems[0]
+      let elem = elems[0]
       while (elem.parentNode && elem.parentNode.nodeType !== 11 /* i.e., DocumentFragment */) { elem = elem.parentNode }
             // ... then detach it
       if (elem.parentNode) { elem.parentNode.removeChild(elem) }
@@ -166,7 +166,7 @@ export function setHtml (node, html) {
       jQueryInstance(node).html(html)
     } else {
             // ... otherwise, use KO's own parsing logic.
-      var parsedNodes = parseHtmlFragment(html, node.ownerDocument)
+      const parsedNodes = parseHtmlFragment(html, node.ownerDocument)
 
       if (node.nodeType === 8) {
         if (html === null) {
@@ -175,7 +175,7 @@ export function setHtml (node, html) {
           virtualElements.setDomNodeChildren(node, parsedNodes)
         }
       } else {
-        for (var i = 0; i < parsedNodes.length; i++) { node.appendChild(parsedNodes[i]) }
+        for (let i = 0; i < parsedNodes.length; i++) { node.appendChild(parsedNodes[i]) }
       }
     }
   }
@@ -183,13 +183,13 @@ export function setHtml (node, html) {
 
 
 export function setTextContent (element, textContent) {
-  var value = typeof textContent === 'function' ? textContent() : textContent
+  let value = typeof textContent === 'function' ? textContent() : textContent
   if ((value === null) || (value === undefined)) { value = '' }
 
     // We need there to be exactly one child: a text node.
     // If there are no children, more than one, or if it's not a text node,
     // we'll clear everything and create a single text node.
-  var innerTextNode = virtualElements.firstChild(element)
+  const innerTextNode = virtualElements.firstChild(element)
   if (!innerTextNode || innerTextNode.nodeType != 3 || virtualElements.nextSibling(innerTextNode)) {
     virtualElements.setDomNodeChildren(element, [element.ownerDocument.createTextNode(value)])
   } else {

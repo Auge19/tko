@@ -153,8 +153,8 @@ export class JsxObserver extends LifeCycle {
    *   - sorted by index in ascending order
    */
   observableArrayChange (changes) {
-    let adds = new Array()
-    let dels = new Array()
+    const adds = new Array()
+    const dels = new Array()
     for (const index in changes) {
       const change = changes[index]
       if (change.status === 'added') {

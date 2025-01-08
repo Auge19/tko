@@ -25,12 +25,12 @@ import '@tko/utils/helpers/jasmine-13-helper'
 
 arrayForEach(['hasfocus', 'hasFocus'], binding => {
   describe(`Binding: ${binding}`, function () {
-    var bindingHandlers
+    let bindingHandlers
 
     beforeEach(jasmine.prepareTestNode)
 
     beforeEach(function () {
-      var provider = new DataBindProvider()
+      const provider = new DataBindProvider()
       options.bindingProviderInstance = provider
       bindingHandlers = provider.bindingHandlers
       bindingHandlers.set(coreBindings.bindings)
@@ -43,8 +43,8 @@ arrayForEach(['hasfocus', 'hasFocus'], binding => {
     }
 
     it('Should respond to changes on an observable value by blurring or focusing the element', function () {
-      var currentState
-      var model = { myVal: observable() }
+      let currentState
+      const model = { myVal: observable() }
       testNode.innerHTML = `<input data-bind='${binding}: myVal' /><input />`
       applyBindings(model, testNode)
       registerEventHandler(testNode.childNodes[0], 'focusin', function () { currentState = true })
@@ -60,7 +60,7 @@ arrayForEach(['hasfocus', 'hasFocus'], binding => {
     })
 
     it('Should set an observable value to be true on focus and false on blur', function () {
-      var model = { myVal: observable() }
+      const model = { myVal: observable() }
       testNode.innerHTML = `<input data-bind='${binding}: myVal' /><input />`
       applyBindings(model, testNode)
 
@@ -78,14 +78,14 @@ arrayForEach(['hasfocus', 'hasFocus'], binding => {
 
           // If the model value becomes true after a blur, we re-focus the element
           // (Represents issue #672, where this wasn't working)
-      var didFocusExpectedElement = false
+      let didFocusExpectedElement = false
       registerEventHandler(testNode.childNodes[0], 'focusin', function () { didFocusExpectedElement = true })
       model.myVal(true)
       expect(didFocusExpectedElement).toEqual(true)
     })
 
     it('Should set a non-observable value to be true on focus and false on blur', function () {
-      var model = { myVal: null }
+      const model = { myVal: null }
       testNode.innerHTML = `<input data-bind='${binding}: myVal' /><input />`
       applyBindings(model, testNode)
 
@@ -102,13 +102,13 @@ arrayForEach(['hasfocus', 'hasFocus'], binding => {
 
     it('Should not unnecessarily focus or blur an element that is already focused/blurred', function () {
           // This is the closest we can get to representing issue #698 as a spec
-      var model = { isFocused: observable({}) }
+      const model = { isFocused: observable({}) }
       testNode.innerHTML = `<input data-bind='${binding}: isFocused' />`
       applyBindings(model, testNode)
 
           // The elem is already focused, so changing the model value to a different truthy value
           // shouldn't cause any additional focus events
-      var didFocusAgain = false
+      let didFocusAgain = false
       registerEventHandler(testNode.childNodes[0], 'focusin', function () { didFocusAgain = true })
       model.isFocused.valueHasMutated()
       expect(didFocusAgain).toEqual(false)
@@ -116,7 +116,7 @@ arrayForEach(['hasfocus', 'hasFocus'], binding => {
           // Similarly, when the elem is already blurred, changing the model value to a different
           // falsy value shouldn't cause any additional blur events
       model.isFocused(false)
-      var didBlurAgain = false
+      let didBlurAgain = false
       registerEventHandler(testNode.childNodes[0], 'focusout', function () { didBlurAgain = true })
       model.isFocused(null)
       expect(didBlurAgain).toEqual(false)

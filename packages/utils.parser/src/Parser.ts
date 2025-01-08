@@ -50,7 +50,7 @@ export default class Parser {
   currentContextGlobals: [context:object, globals:object, node:any]
 
   white () {
-    var ch = this.ch
+    let ch = this.ch
     while (ch && ch <= ' ') {
       ch = this.next()
     }
@@ -62,8 +62,8 @@ export default class Parser {
  */
   comment (ch) {
     if (ch !== '/') { return ch }
-    var p = this.at
-    var second = this.lookahead()
+    const p = this.at
+    const second = this.lookahead()
     if (second === '/') {
       while (ch) {
         ch = this.next()
@@ -102,7 +102,7 @@ export default class Parser {
 
   error (m) {
     if (m instanceof Error) { throw m }
-    let [name, msg] = m.name ? [m.name, m.message] : [m, '']
+    const [name, msg] = m.name ? [m.name, m.message] : [m, '']
     const message = `\n${name} ${msg} of
     ${this.text}\n` + Array(this.at).join(' ') + '_/ 🔥 \\_\n'
     throw new Error(message)
@@ -110,11 +110,11 @@ export default class Parser {
 
   name () {
   // A name of a binding
-    var name = ''
-    var enclosedBy
+    let name = ''
+    let enclosedBy
     this.white()
 
-    var ch = this.ch
+    let ch = this.ch
 
     if (ch === "'" || ch === '"') {
       enclosedBy = ch
@@ -208,7 +208,7 @@ export default class Parser {
 
   object () {
     let key:string
-    let object = {}
+    const object = {}
     let ch = this.ch
 
     if (ch === '{') {
@@ -259,12 +259,12 @@ export default class Parser {
  */
   readString (delim) {
     let string = ''
-    let nodes = ['']
-    let plusOp:any = operators['+']
+    const nodes = ['']
+    const plusOp:any = operators['+']
     let hex
     let i
     let uffff
-    let interpolate = delim === '`'
+    const interpolate = delim === '`'
     let ch = this.next()
 
     while (ch) {
@@ -314,7 +314,7 @@ export default class Parser {
   }
 
   string () {
-    var ch = this.ch
+    const ch = this.ch
     if (ch === '"') {
       return this.readString('"')?.join('')
     } else if (ch === "'") {
@@ -327,7 +327,7 @@ export default class Parser {
   }
 
   array () {
-    let array = new Array()
+    const array = new Array()
     let ch = this.ch
 
     if (ch === '[') {
@@ -353,7 +353,7 @@ export default class Parser {
 
   value () {
     this.white()
-    let ch = this.ch
+    const ch = this.ch
     switch (ch) {
       case '{': return this.object()
       case '[': return this.array()
@@ -420,11 +420,11 @@ export default class Parser {
   filter (): FilterType 
   {
     let ch = this.next()
-    let args = new Array()
+    const args = new Array()
     
 
     let nextFilter: ((any) => any) | InnerFilterType = function (v) { return v };
-    let name = this.name()
+    const name = this.name()
 
     if (!options.filters[name]) {
       options.onError(new Error('Cannot find filter by the name of: ' + name))
@@ -449,9 +449,9 @@ export default class Parser {
     }
 
     function filter (value, ignored, context, globals, node) {
-      var argValues = [value]
+      const argValues = [value]
 
-      for (var i = 0, j = args.length; i < j; ++i) {
+      for (let i = 0, j = args.length; i < j; ++i) {
         argValues.push(Node.value_of(args[i], context, globals, node))
       }
 
@@ -481,7 +481,7 @@ export default class Parser {
  */
   expression (filterable: string | boolean = false, allowMultipleValues: boolean = true) {
     let op
-    let nodes = new Array()
+    const nodes = new Array()
     let ch = this.white()
 
     while (ch) {
@@ -548,14 +548,14 @@ export default class Parser {
       return undefined
     }
 
-    var dereferences = this.dereferences()
+    const dereferences = this.dereferences()
 
     if (nodes.length === 1 && !dereferences.length) {
       return nodes[0]
     }
 
-    for (var i = 0, j = dereferences.length; i < j; ++i) {
-      var deref = dereferences[i]
+    for (let i = 0, j = dereferences.length; i < j; ++i) {
+      const deref = dereferences[i]
       if (deref.constructor === Arguments) {
         nodes.push(operators.call)
       } else {
@@ -579,7 +579,7 @@ export default class Parser {
   }
 
   ternary (nodes) {
-    var ternary = new Ternary()
+    const ternary = new Ternary()
     ternary.yes = this.singleValueExpression()
     this.next(':')
     ternary.no = this.singleValueExpression()
@@ -592,7 +592,7 @@ export default class Parser {
  *
  */
   funcArguments () {
-    let args = new Array()
+    const args = new Array()
     let ch = this.next('(')
 
     while (ch) {
@@ -637,7 +637,7 @@ export default class Parser {
  */
   dereference () {
     let member
-    let ch = this.white()
+    const ch = this.white()
 
     while (ch) {
       if (ch === '(') {
@@ -662,8 +662,8 @@ export default class Parser {
   }
 
   dereferences () {
-    let ch = this.white()
-    let dereferences = new Array()
+    const ch = this.white()
+    const dereferences = new Array()
     let deref
 
     while (ch) {
@@ -704,7 +704,7 @@ export default class Parser {
 
   readBindings () {
     let key
-    let bindings = {}
+    const bindings = {}
     let sep
     let expr
     let ch = this.ch
@@ -825,7 +825,7 @@ export default class Parser {
     this.ch = ' '
 
     try {
-      var result = fn()
+      const result = fn()
       this.white()
       if (this.ch) {
         this.error('Syntax Error')

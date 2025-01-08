@@ -114,7 +114,7 @@ function nodeOrChildHasBindings (node : HTMLElement) : boolean {
 }
 
 function applyBindingsToNodeAndDescendantsInternal (bindingContext, nodeVerified, asyncBindingsApplied) {
-  var isElement = nodeVerified.nodeType === 1
+  const isElement = nodeVerified.nodeType === 1
   if (isElement) { // Workaround IE <= 8 HTML parsing weirdness
     virtualElements.normaliseVirtualElementDomStructure(nodeVerified)
   }
@@ -123,7 +123,7 @@ function applyBindingsToNodeAndDescendantsInternal (bindingContext, nodeVerified
   // (1) We need to store the binding info for the node (all element nodes)
   // (2) It might have bindings (e.g., it has a data-bind attribute, or it's a marker for a containerless template)
 
-  let shouldApplyBindings = isElement || // Case (1)
+  const shouldApplyBindings = isElement || // Case (1)
       hasBindings(nodeVerified)          // Case (2)
 
   const { shouldBindDescendants } = shouldApplyBindings
@@ -197,7 +197,7 @@ function applyBindingsToNodeInternal (node : HTMLElement, sourceBindings : any, 
   }
 
   // Use bindings if given, otherwise fall back on asking the bindings provider to give us some bindings
-  var bindings
+  let bindings
   if (sourceBindings && typeof sourceBindings !== 'function') {
     bindings = sourceBindings
   } else {
@@ -221,7 +221,7 @@ function applyBindingsToNodeInternal (node : HTMLElement, sourceBindings : any, 
     }
   }
 
-  var bindingHandlerThatControlsDescendantBindings
+  let bindingHandlerThatControlsDescendantBindings
   if (bindings) {
     const $component = bindingContext.$component || {}
 
@@ -327,7 +327,7 @@ function applyBindingsToNodeInternal (node : HTMLElement, sourceBindings : any, 
  * @param {Object} bindings
  * @param {[Promise]} nodeAsyncBindingPromises
  */
-function triggerDescendantsComplete (node : HTMLElement, bindings : Object, nodeAsyncBindingPromises : any) {
+function triggerDescendantsComplete (node : HTMLElement, bindings : object, nodeAsyncBindingPromises : any) {
   /** descendantsComplete ought to be an instance of the descendantsComplete
     *  binding handler. */
   const hasBindingHandler = bindingEvent.descendantsComplete in bindings
@@ -398,7 +398,7 @@ export function applyBindings (viewModelOrBindingContext : any, rootNode : HTMLE
 }
 
 function onBindingError (spec) {
-  var error, bindingText
+  let error, bindingText
   if (spec.bindingKey) {
         // During: 'init' or initial 'update'
     error = spec.errorCaptured

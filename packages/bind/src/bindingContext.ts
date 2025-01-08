@@ -175,6 +175,6 @@ export function contextFor (node : HTMLElement) {
 }
 
 export function dataFor (node : HTMLElement) {
-  var context = contextFor(node)
+  const context = contextFor(node)
   return context ? context.$data : undefined
 }

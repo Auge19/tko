@@ -7,11 +7,11 @@ import {
   getObjectOwnProperty, tasks
 } from '@tko/utils'
 
-var loadingSubscribablesCache = {}, // Tracks component loads that are currently in flight
+const loadingSubscribablesCache = {}, // Tracks component loads that are currently in flight
   loadedDefinitionsCache = {}    // Tracks component loads that have already completed
 
 function loadComponentAndNotify (componentName, callback) {
-  var _subscribable = getObjectOwnProperty(loadingSubscribablesCache, componentName),
+  let _subscribable = getObjectOwnProperty(loadingSubscribablesCache, componentName),
     completedAsync
   if (!_subscribable) {
         // It's not started loading yet. Start loading, and when it's done, move it to loadedDefinitionsCache.
@@ -19,7 +19,7 @@ function loadComponentAndNotify (componentName, callback) {
     _subscribable.subscribe(callback)
 
     beginLoadingComponent(componentName, function (definition, config) {
-      var isSynchronousComponent = !!(config && config.synchronous)
+      const isSynchronousComponent = !!(config && config.synchronous)
       loadedDefinitionsCache[componentName] = { definition: definition, isSynchronousComponent: isSynchronousComponent }
       delete loadingSubscribablesCache[componentName]
 
@@ -69,11 +69,11 @@ function getFirstResultFromLoaders (methodName, argsExceptCallback, callback, ca
   }
 
     // Try the next candidate
-  var currentCandidateLoader = candidateLoaders.shift()
+  const currentCandidateLoader = candidateLoaders.shift()
   if (currentCandidateLoader) {
-    var methodInstance = currentCandidateLoader[methodName]
+    const methodInstance = currentCandidateLoader[methodName]
     if (methodInstance) {
-      var wasAborted = false,
+      let wasAborted = false,
         synchronousReturnValue = methodInstance.apply(currentCandidateLoader, argsExceptCallback.concat(function (result) {
           if (wasAborted) {
             callback(null)
@@ -111,7 +111,7 @@ function getFirstResultFromLoaders (methodName, argsExceptCallback, callback, ca
 
 export var registry = {
   get (componentName, callback) {
-    var cachedDefinition = getObjectOwnProperty(loadedDefinitionsCache, componentName)
+    const cachedDefinition = getObjectOwnProperty(loadedDefinitionsCache, componentName)
     if (cachedDefinition) {
       // It's already loaded and cached. Reuse the same definition object.
       // Note that for API consistency, even cache hits complete asynchronously by default.

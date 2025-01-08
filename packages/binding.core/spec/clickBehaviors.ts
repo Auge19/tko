@@ -21,7 +21,7 @@ describe('Binding: Click', function () {
   beforeEach(jasmine.prepareTestNode)
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    const provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
   })

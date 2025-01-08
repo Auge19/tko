@@ -22,13 +22,13 @@ describe('Binding: Visible', function () {
   beforeEach(jasmine.prepareTestNode)
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    const provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
   })
 
   it('Visible means the node only when the value is true', function () {
-    var myObservable = observable(false)
+    const myObservable = observable(false)
     testNode.innerHTML = "<input data-bind='visible:myModelProperty()' />"
     applyBindings({
       myModelProperty: myObservable
@@ -40,7 +40,7 @@ describe('Binding: Visible', function () {
   })
 
   it('Visible should unwrap observables implicitly', function () {
-    var myObservable = observable(false)
+    const myObservable = observable(false)
     testNode.innerHTML = "<input data-bind='visible:myModelProperty' />"
     applyBindings({
       myModelProperty: myObservable
@@ -49,7 +49,7 @@ describe('Binding: Visible', function () {
   })
 
   it('Hidden means the node is only visible when the value is false', function () {
-    var myObservable = observable(false)
+    const myObservable = observable(false)
     testNode.innerHTML = "<input data-bind='hidden:myModelProperty()' />"
     applyBindings({
       myModelProperty: myObservable
@@ -61,7 +61,7 @@ describe('Binding: Visible', function () {
   })
 
   it('Hidden should unwrap observables implicitly', function () {
-    var myObservable = observable(true)
+    const myObservable = observable(true)
     testNode.innerHTML = "<input data-bind='hidden:myModelProperty' />"
     applyBindings({
       myModelProperty: myObservable

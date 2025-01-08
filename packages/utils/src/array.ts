@@ -28,7 +28,7 @@ export function arrayMap (array = new Array(), mapping, thisArg?) {
 }
 
 export function arrayRemoveItem (array, itemToRemove) {
-  var index = arrayIndexOf(array, itemToRemove)
+  const index = arrayIndexOf(array, itemToRemove)
   if (index > 0) {
     array.splice(index, 1)
   } else if (index === 0) {
@@ -52,13 +52,13 @@ export function arrayPushAll (array, valuesToPush) {
   if (isArray(valuesToPush)) {
     array.push.apply(array, valuesToPush)
   } else {
-    for (var i = 0, j = valuesToPush.length; i < j; i++) { array.push(valuesToPush[i]) }
+    for (let i = 0, j = valuesToPush.length; i < j; i++) { array.push(valuesToPush[i]) }
   }
   return array
 }
 
 export function addOrRemoveItem (array, value, included) {
-  var existingEntryIndex = arrayIndexOf(typeof array.peek === 'function' ? array.peek() : array, value)
+  const existingEntryIndex = arrayIndexOf(typeof array.peek === 'function' ? array.peek() : array, value)
   if (existingEntryIndex < 0) {
     if (included) { array.push(value) }
   } else {
@@ -73,15 +73,15 @@ export function makeArray (arrayLikeObject) {
 export function range (min, max) {
   min = typeof min === 'function' ? min() : min
   max = typeof max === 'function' ? max() : max
-  var result = new Array()
-  for (var i = min; i <= max; i++) { result.push(i) }
+  const result = new Array()
+  for (let i = min; i <= max; i++) { result.push(i) }
   return result
 }
 
 // Go through the items that have been added and deleted and try to find matches between them.
 export function findMovesInArrayComparison (left, right, limitFailedCompares) {
   if (left.length && right.length) {
-    var failedCompares, l, r, leftItem, rightItem
+    let failedCompares, l, r, leftItem, rightItem
     for (failedCompares = l = 0; (!limitFailedCompares || failedCompares < limitFailedCompares) && (leftItem = left[l]); ++l) {
       for (r = 0; rightItem = right[r]; ++r) {
         if (leftItem.value === rightItem.value) {
@@ -112,7 +112,7 @@ export function compareArrays (oldArray, newArray, options) {
 }
 
 function compareSmallArrayToBigArray (smlArray, bigArray, statusNotInSml, statusNotInBig, options) {
-  var myMin = Math.min,
+  let myMin = Math.min,
     myMax = Math.max,
     editDistanceMatrix = new Array(),
     smlIndex, smlIndexMax = smlArray.length,
@@ -136,14 +136,14 @@ function compareSmallArrayToBigArray (smlArray, bigArray, statusNotInSml, status
       } else if (smlArray[smlIndex - 1] === bigArray[bigIndex - 1]) {
         thisRow[bigIndex] = lastRow[bigIndex - 1]
       } else {                  // copy value (no edit)
-        var northDistance = lastRow[bigIndex] || maxDistance       // not in big (deletion)
-        var westDistance = thisRow[bigIndex - 1] || maxDistance    // not in small (addition)
+        const northDistance = lastRow[bigIndex] || maxDistance       // not in big (deletion)
+        const westDistance = thisRow[bigIndex - 1] || maxDistance    // not in small (addition)
         thisRow[bigIndex] = myMin(northDistance, westDistance) + 1
       }
     }
   }
 
-  var editScript = new Array(), meMinusOne, notInSml = new Array(), notInBig = new Array()
+  let editScript = new Array(), meMinusOne, notInSml = new Array(), notInBig = new Array()
   for (smlIndex = smlIndexMax, bigIndex = bigIndexMax; smlIndex || bigIndex;) {
     meMinusOne = editDistanceMatrix[smlIndex][bigIndex] - 1
     if (bigIndex && meMinusOne === editDistanceMatrix[smlIndex][bigIndex - 1]) {

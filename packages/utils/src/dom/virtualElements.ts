@@ -20,11 +20,11 @@ import { tagNameLower } from './info'
 import * as domData from './data'
 import options from '../options'
 
-var commentNodesHaveTextProperty = options.document && ("text" in options.document.createComment('test')) //in case of IE8..
+const commentNodesHaveTextProperty = options.document && ("text" in options.document.createComment('test')) //in case of IE8..
 
 export var startCommentRegex = commentNodesHaveTextProperty ? /^<!--\s*ko(?:\s+([\s\S]+))?\s*-->$/ : /^\s*ko(?:\s+([\s\S]+))?\s*$/
 export var endCommentRegex = commentNodesHaveTextProperty ? /^<!--\s*\/ko\s*-->$/ : /^\s*\/ko\s*$/
-var htmlTagsWithOptionallyClosingChildren = { 'ul': true, 'ol': true }
+const htmlTagsWithOptionallyClosingChildren = { 'ul': true, 'ol': true }
 
 export function isStartComment (node) {
   return (node.nodeType == 8) && startCommentRegex.test(commentNodesHaveTextProperty ? node.text : node.nodeValue)
@@ -41,9 +41,9 @@ function isUnmatchedEndComment (node) {
 const matchedEndCommentDataKey = '__ko_matchedEndComment__'
 
 export function getVirtualChildren (startComment, allowUnbalanced?) {
-  var currentNode = startComment
-  var depth = 1
-  var children = new Array()
+  let currentNode = startComment
+  let depth = 1
+  const children = new Array()
   while (currentNode = currentNode.nextSibling) {
     if (isEndComment(currentNode)) {
       domData.set(currentNode, matchedEndCommentDataKey, true)
@@ -60,7 +60,7 @@ export function getVirtualChildren (startComment, allowUnbalanced?) {
 }
 
 function getMatchingEndComment (startComment, allowUnbalanced?) {
-  var allVirtualChildren = getVirtualChildren(startComment, allowUnbalanced)
+  const allVirtualChildren = getVirtualChildren(startComment, allowUnbalanced)
   if (allVirtualChildren) {
     if (allVirtualChildren.length > 0) { return allVirtualChildren[allVirtualChildren.length - 1].nextSibling }
     return startComment.nextSibling
@@ -70,12 +70,12 @@ function getMatchingEndComment (startComment, allowUnbalanced?) {
 function getUnbalancedChildTags (node) {
     // e.g., from <div>OK</div><!-- ko blah --><span>Another</span>, returns: <!-- ko blah --><span>Another</span>
     //       from <div>OK</div><!-- /ko --><!-- /ko -->,             returns: <!-- /ko --><!-- /ko -->
-  var childNode = node.firstChild, captureRemaining:any = null
+  let childNode = node.firstChild, captureRemaining:any = null
   if (childNode) {
     do {
       if (captureRemaining)                   // We already hit an unbalanced node and are now just scooping up all subsequent nodes
           { captureRemaining.push(childNode) } else if (isStartComment(childNode)) {
-            var matchingEndComment = getMatchingEndComment(childNode, /* allowUnbalanced: */ true)
+            const matchingEndComment = getMatchingEndComment(childNode, /* allowUnbalanced: */ true)
             if (matchingEndComment)             // It's a balanced tag, so skip immediately to the end of this virtual set
                   { childNode = matchingEndComment } else { captureRemaining = [childNode] } // It's unbalanced, so start capturing from this point
           } else if (isEndComment(childNode)) {
@@ -95,8 +95,8 @@ export function childNodes (node) {
 
 export function emptyNode (node) {
   if (!isStartComment(node)) { emptyDomNode(node) } else {
-    var virtualChildren = childNodes(node)
-    for (var i = 0, j = virtualChildren.length; i < j; i++) { removeNode(virtualChildren[i]) }
+    const virtualChildren = childNodes(node)
+    for (let i = 0, j = virtualChildren.length; i < j; i++) { removeNode(virtualChildren[i]) }
   }
 }
 
@@ -105,7 +105,7 @@ export function setDomNodeChildren (node, childNodes) {
     emptyNode(node)
     const endCommentNode = node.nextSibling // Must be the next sibling, as we just emptied the children
     const parentNode = endCommentNode.parentNode
-    for (var i = 0, j = childNodes.length; i < j; ++i) {
+    for (let i = 0, j = childNodes.length; i < j; ++i) {
       parentNode.insertBefore(childNodes[i], endCommentNode)
     }
   }
@@ -172,7 +172,7 @@ export function nextSibling (node) {
 }
 
 export function previousSibling (node) {
-  var depth = 0
+  let depth = 0
   do {
     if (node.nodeType === 8) {
       if (isStartComment(node)) {
@@ -189,7 +189,7 @@ export function previousSibling (node) {
 }
 
 export function virtualNodeBindingValue (node) {
-  var regexMatch = (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(startCommentRegex)
+  const regexMatch = (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(startCommentRegex)
   return regexMatch ? regexMatch[1] : null
 }
 
@@ -201,15 +201,15 @@ export function normaliseVirtualElementDomStructure (elementVerified) {
 
     // Scan immediate children to see if they contain unbalanced comment tags. If they do, those comment tags
     // must be intended to appear *after* that child, so move them there.
-  var childNode = elementVerified.firstChild
+  let childNode = elementVerified.firstChild
   if (childNode) {
     do {
       if (childNode.nodeType === 1) {
-        var unbalancedTags = getUnbalancedChildTags(childNode)
+        const unbalancedTags = getUnbalancedChildTags(childNode)
         if (unbalancedTags) {
                     // Fix up the DOM by moving the unbalanced tags to where they most likely were intended to be placed - *after* the child
-          var nodeToInsertBefore = childNode.nextSibling
-          for (var i = 0; i < unbalancedTags.length; i++) {
+          const nodeToInsertBefore = childNode.nextSibling
+          for (let i = 0; i < unbalancedTags.length; i++) {
             if (nodeToInsertBefore) { elementVerified.insertBefore(unbalancedTags[i], nodeToInsertBefore) } else { elementVerified.appendChild(unbalancedTags[i]) }
           }
         }

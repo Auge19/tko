@@ -19,12 +19,12 @@ import * as coreBindings from '../dist'
 import '@tko/utils/helpers/jasmine-13-helper'
 
 describe('Binding: Text', function () {
-  var bindingHandlers
+  let bindingHandlers
 
   beforeEach(jasmine.prepareTestNode)
 
   beforeEach(function () {
-    var provider = new MultiProvider({
+    const provider = new MultiProvider({
       providers: [ new DataBindProvider(), new VirtualProvider() ]
     })
     options.bindingProviderInstance = provider
@@ -33,7 +33,7 @@ describe('Binding: Text', function () {
   })
 
   it('Should assign the value to the node, HTML-encoding the value', function () {
-    var model = { textProp: "'Val <with> \"special\" <i>characters</i>'" }
+    const model = { textProp: "'Val <with> \"special\" <i>characters</i>'" }
     testNode.innerHTML = "<span data-bind='text:textProp'></span>"
     applyBindings(model, testNode)
     expect(testNode.childNodes[0].textContent || testNode.childNodes[0].innerText).toEqual(model.textProp)
@@ -42,19 +42,19 @@ describe('Binding: Text', function () {
   it('Should assign an empty string as value if the model value is null', function () {
     testNode.innerHTML = "<span data-bind='text:(null)' ></span>"
     applyBindings(null, testNode)
-    var actualText = 'textContent' in testNode.childNodes[0] ? testNode.childNodes[0].textContent : testNode.childNodes[0].innerText
+    const actualText = 'textContent' in testNode.childNodes[0] ? testNode.childNodes[0].textContent : testNode.childNodes[0].innerText
     expect(actualText).toEqual('')
   })
 
   it('Should assign an empty string as value if the model value is undefined', function () {
     testNode.innerHTML = "<span data-bind='text:undefined' ></span>"
     applyBindings(null, testNode)
-    var actualText = 'textContent' in testNode.childNodes[0] ? testNode.childNodes[0].textContent : testNode.childNodes[0].innerText
+    const actualText = 'textContent' in testNode.childNodes[0] ? testNode.childNodes[0].textContent : testNode.childNodes[0].innerText
     expect(actualText).toEqual('')
   })
 
   it('Should work with virtual elements, adding a text node between the comments', function () {
-    var myObservable = observable('Some text')
+    const myObservable = observable('Some text')
     testNode.innerHTML = 'xxx <!-- ko text: textProp --><!-- /ko -->'
     applyBindings({textProp: myObservable}, testNode)
     expect(testNode).toContainText('xxx Some text')
@@ -86,7 +86,7 @@ describe('Binding: Text', function () {
 
         // First replace the binding provider with one that's hardcoded to replace all text
         // content with a special message, via a binding handler that operates on text nodes
-    var originalBindingProvider = options.bindingProviderInstance
+    const originalBindingProvider = options.bindingProviderInstance
     options.bindingProviderInstance = {
       FOR_NODE_TYPES: [document.ELEMENT_NODE],
       nodeHasBindings: function (/* node, bindingContext */) {
@@ -100,7 +100,7 @@ describe('Binding: Text', function () {
         return true
       },
       getBindingAccessors: function (node, bindingContext) {
-        var bindings = originalBindingProvider.getBindingAccessors(node, bindingContext)
+        const bindings = originalBindingProvider.getBindingAccessors(node, bindingContext)
         if (node.nodeType === 3) {
           return {
             replaceTextNodeContent: function () { return 'should not see this value in the output' }

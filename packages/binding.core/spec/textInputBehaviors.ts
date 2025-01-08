@@ -23,14 +23,14 @@ const DEBUG = true
 
 import '@tko/utils/helpers/jasmine-13-helper'
 
-declare var testNode : any
+declare let testNode : any
 
 describe('Binding: TextInput', function () {
-  var bindingHandlers
+  let bindingHandlers
   beforeEach(jasmine.prepareTestNode)
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    const provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     bindingHandlers = provider.bindingHandlers
     bindingHandlers.set(coreBindings)
@@ -61,7 +61,7 @@ describe('Binding: TextInput', function () {
   })
 
   it('For observable values, should unwrap the value and update on change', function () {
-    var myObservable = observable(123)
+    const myObservable = observable(123)
     testNode.innerHTML = "<input data-bind='textInput:someProp' />"
     applyBindings({ someProp: myObservable }, testNode)
     expect(testNode.children[0].value).toEqual('123')
@@ -70,7 +70,7 @@ describe('Binding: TextInput', function () {
   })
 
   it('For observable values, should update on change if new value is \'strictly\' different from previous value', function () {
-    var myObservable = observable('+123')
+    const myObservable = observable('+123')
     testNode.innerHTML = "<input data-bind='textInput:someProp' />"
     applyBindings({ someProp: myObservable }, testNode)
     expect(testNode.children[0].value).toEqual('+123')
@@ -79,7 +79,7 @@ describe('Binding: TextInput', function () {
   })
 
   it('For writeable observable values, should catch the node\'s onchange and write values back to the observable', function () {
-    var myObservable = observable(123)
+    const myObservable = observable(123)
     testNode.innerHTML = "<input data-bind='textInput:someProp' />"
     applyBindings({ someProp: myObservable }, testNode)
     testNode.children[0].value = 'some user-entered value'
@@ -88,9 +88,9 @@ describe('Binding: TextInput', function () {
   })
 
   it('For writeable observable values, when model rejects change, update view to match', function () {
-    var validValue = observable(123)
-    var isValid = observable(true)
-    var valueForEditing = computed({
+    const validValue = observable(123)
+    const isValid = observable(true)
+    const valueForEditing = computed({
       read: validValue,
       write: function (newValue) {
         if (!isNaN(newValue)) {
@@ -128,8 +128,8 @@ describe('Binding: TextInput', function () {
   })
 
   it('Should ignore node changes when bound to a read-only observable', function () {
-    var computedValue = computed(function () { return 'zzz' })
-    var vm = { prop: computedValue }
+    const computedValue = computed(function () { return 'zzz' })
+    const vm = { prop: computedValue }
 
     testNode.innerHTML = "<input data-bind='textInput: prop' />"
     applyBindings(vm, testNode)
@@ -143,7 +143,7 @@ describe('Binding: TextInput', function () {
   })
 
   it('For non-observable property values, should catch the node\'s onchange and write values back to the property', function () {
-    var model = { modelProperty123: 456 }
+    const model = { modelProperty123: 456 }
     testNode.innerHTML = "<input data-bind='textInput: modelProperty123' />"
     applyBindings(model, testNode)
     expect(testNode.children[0].value).toEqual('456')
@@ -160,7 +160,7 @@ describe('Binding: TextInput', function () {
   })
 
   it('Should write to non-observable property values using "textinput" alias', function () {
-    var model = { modelProperty123: 456 }
+    const model = { modelProperty123: 456 }
     testNode.innerHTML = "<input data-bind='textinput: modelProperty123' />"
     applyBindings(model, testNode)
     expect(testNode.children[0].value).toEqual('456')
@@ -171,8 +171,8 @@ describe('Binding: TextInput', function () {
   })
 
   it('Should be able to read and write to a property of an object returned by a function', function () {
-    var mySetter = { set: 666 }
-    var model = {
+    const mySetter = { set: 666 }
+    const model = {
       getSetter: function () {
         return mySetter
       }
@@ -204,9 +204,9 @@ describe('Binding: TextInput', function () {
 
   it('Should be able to write to observable subproperties of an observable, even after the parent observable has changed', function () {
         // This spec represents https://github.com/SteveSanderson/knockout/issues#issue/13
-    var originalSubproperty = observable('original value')
-    var newSubproperty = observable()
-    var model = { myprop: observable({ subproperty: originalSubproperty }) }
+    const originalSubproperty = observable('original value')
+    const newSubproperty = observable()
+    const model = { myprop: observable({ subproperty: originalSubproperty }) }
 
         // Set up a text box whose value is linked to the subproperty of the observable's current value
     testNode.innerHTML = "<input data-bind='textInput: myprop().subproperty' />"
@@ -223,7 +223,7 @@ describe('Binding: TextInput', function () {
   })
 
   it('Should update observable on input event (on supported browsers) or propertychange event (on old IE)', function () {
-    var myObservable = observable(123)
+    const myObservable = observable(123)
     testNode.innerHTML = "<input data-bind='textInput: someProp' />"
     applyBindings({ someProp: myObservable }, testNode)
     expect(testNode.children[0].value).toEqual('123')
@@ -243,7 +243,7 @@ describe('Binding: TextInput', function () {
   })
 
   it('Should update observable on blur event', function () {
-    var myobservable = observable(123)
+    const myobservable = observable(123)
     testNode.innerHTML = "<input data-bind='textInput: someProp' /><input />"
     applyBindings({ someProp: myobservable }, testNode)
     expect(testNode.children[0].value).toEqual('123')
@@ -256,7 +256,7 @@ describe('Binding: TextInput', function () {
   })
 
   it('Should write only changed values to model', function () {
-    var model = { writtenValue: '' }
+    const model = { writtenValue: '' }
 
     testNode.innerHTML = "<input data-bind='textInput: writtenValue' />"
     applyBindings(model, testNode)
@@ -312,7 +312,7 @@ describe('Binding: TextInput', function () {
       })
 
       it('Should update observable asynchronously', function () {
-        var myObservable = observable('123')
+        const myObservable = observable('123')
         testNode.innerHTML = "<input data-bind='textInput:someProp' />"
         applyBindings({ someProp: myObservable }, testNode)
         triggerEvent(testNode.children[0], 'keydown')
@@ -324,7 +324,7 @@ describe('Binding: TextInput', function () {
       })
 
       it('Should ignore "unchanged" notifications from observable during delayed event processing', function () {
-        var myObservable = observable('123')
+        const myObservable = observable('123')
         testNode.innerHTML = "<input data-bind='textInput:someProp' />"
         applyBindings({ someProp: myObservable }, testNode)
         triggerEvent(testNode.children[0], 'keydown')
@@ -340,7 +340,7 @@ describe('Binding: TextInput', function () {
       })
 
       it('Should not ignore actual change notifications from observable during delayed event processing', function () {
-        var myObservable = observable('123')
+        const myObservable = observable('123')
         testNode.innerHTML = "<input data-bind='textInput:someProp' />"
         applyBindings({ someProp: myObservable }, testNode)
         triggerEvent(testNode.children[0], 'keydown')
@@ -356,7 +356,7 @@ describe('Binding: TextInput', function () {
       })
 
       it('Should update model property using earliest available event', function () {
-        var model = { someProp: '123' }
+        const model = { someProp: '123' }
         testNode.innerHTML = "<input data-bind='textInput:someProp' />"
         applyBindings(model, testNode)
 

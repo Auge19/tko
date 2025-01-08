@@ -22,7 +22,7 @@ import { bindings as ifBindings } from '@tko/binding.if'
 import { bindings as eachBindings } from '@tko/binding.foreach'
 
 describe('Binding Application Promise', function () {
-  var bindingHandlers
+  let bindingHandlers
 
   class SyncBinding extends BindingHandler {
     get bindingCompleted () { this.value(true) }
@@ -47,7 +47,7 @@ describe('Binding Application Promise', function () {
 
   beforeEach(function () {
       // Set up the default binding handlers.
-    var provider = new MultiProvider({providers: [
+    const provider = new MultiProvider({providers: [
       new VirtualProvider(),
       new DataBindProvider()
     ]})

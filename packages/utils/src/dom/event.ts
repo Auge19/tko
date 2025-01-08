@@ -12,10 +12,10 @@ import { addDisposeCallback } from './disposal'
 import options from '../options'
 
 // Represent the known event types in a compact way, then at runtime transform it into a hash with event name as key (for fast lookup)
-var knownEvents = {},
+const knownEvents = {},
   knownEventTypesByEventName = {}
 
-var keyEventTypeName = (options.global.navigator && /Firefox\/2/i.test(options.global.navigator.userAgent)) ? 'KeyboardEvent' : 'UIEvents'
+const keyEventTypeName = (options.global.navigator && /Firefox\/2/i.test(options.global.navigator.userAgent)) ? 'KeyboardEvent' : 'UIEvents'
 
 knownEvents[keyEventTypeName] = ['keyup', 'keydown', 'keypress']
 
@@ -25,19 +25,19 @@ knownEvents['MouseEvents'] = [
 
 objectForEach(knownEvents, function (eventType, knownEventsForType) {
   if (knownEventsForType.length) {
-    for (var i = 0, j = knownEventsForType.length; i < j; i++) { knownEventTypesByEventName[knownEventsForType[i]] = eventType }
+    for (let i = 0, j = knownEventsForType.length; i < j; i++) { knownEventTypesByEventName[knownEventsForType[i]] = eventType }
   }
 })
 
 function isClickOnCheckableElement (element, eventType) {
   if ((tagNameLower(element) !== 'input') || !element.type) return false
   if (eventType.toLowerCase() != 'click') return false
-  var inputType = element.type
+  const inputType = element.type
   return (inputType == 'checkbox') || (inputType == 'radio')
 }
 
 // Workaround for an IE9 issue - https://github.com/SteveSanderson/knockout/issues/406
-var eventsThatMustBeRegisteredUsingAttachEvent = { 'propertychange': true }
+const eventsThatMustBeRegisteredUsingAttachEvent = { 'propertychange': true }
 let jQueryEventAttachName
 
 export function registerEventHandler (element, eventType, handler, eventOptions = false) {
@@ -74,14 +74,14 @@ export function triggerEvent (element, eventType) {
     // event handler runs instead of *before*. (This was fixed in 1.9 for checkboxes but not for radio buttons.)
     // IE doesn't change the checked state when you trigger the click event using "fireEvent".
     // In both cases, we'll use the click method instead.
-  var useClickWorkaround = isClickOnCheckableElement(element, eventType)
+  const useClickWorkaround = isClickOnCheckableElement(element, eventType)
 
   if (!options.useOnlyNativeEvents && jQueryInstance && !useClickWorkaround) {
     jQueryInstance(element).trigger(eventType)
   } else if (typeof document.createEvent === 'function') {
     if (typeof element.dispatchEvent === 'function') {
-      var eventCategory = knownEventTypesByEventName[eventType] || 'HTMLEvents'
-      var event = document.createEvent(eventCategory);
+      const eventCategory = knownEventTypesByEventName[eventType] || 'HTMLEvents'
+      const event = document.createEvent(eventCategory);
       (event as any).initEvent(eventType, true, true, options.global, 0, 0, 0, 0, 0, false, false, false, false, 0, element)
       element.dispatchEvent(event)
     } else { throw new Error("The supplied element doesn't support dispatchEvent") }

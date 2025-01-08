@@ -41,7 +41,7 @@ import * as coreBindings from '@tko/binding.core';
 import { assert} from "chai"
 import * as sinon from "sinon"
 
-var instance
+let instance
 
 beforeEach(function () {
   instance = new DataBindProvider()
@@ -49,14 +49,14 @@ beforeEach(function () {
 
 describe('nodeHasBindings', function () {
   it('identifies elements with data-bind', function () {
-    var div = document.createElement('div')
+    const div = document.createElement('div')
     div.setAttribute('data-bind', 'x')
     assert.ok(instance.nodeHasBindings(div))
   })
 })
 
 describe('getBindingAccessors with string arg', function () {
-  var div;
+  let div;
 
   beforeEach(function () {
     instance = options.bindingProviderInstance = new DataBindProvider()
@@ -69,7 +69,7 @@ describe('getBindingAccessors with string arg', function () {
 
   it('reads multiple bindings', function () {
     div.setAttribute('data-bind', 'a: 123, b: "456"')
-    var bindings = instance.getBindingAccessors(div);
+    const bindings = instance.getBindingAccessors(div);
     assert.equal(Object.keys(bindings).length, 2, 'len')
     assert.equal(bindings['a'](), 123, 'a')
     assert.equal(bindings['b'](), '456', 'b')
@@ -77,7 +77,7 @@ describe('getBindingAccessors with string arg', function () {
 
   it('escapes strings', function () {
     div.setAttribute('data-bind', 'a: "a\\"b", b: \'c\\\'d\'')
-    var bindings = instance.getBindingAccessors(div);
+    const bindings = instance.getBindingAccessors(div);
     assert.equal(Object.keys(bindings).length, 2, 'len')
     assert.equal(bindings['a'](), 'a"b', 'a')
     assert.equal(bindings['b'](), "c\'d", 'b')
@@ -85,7 +85,7 @@ describe('getBindingAccessors with string arg', function () {
 
   it('returns a name/valueAccessor pair', function () {
     div.setAttribute('data-bind', 'alpha: "122.9"');
-    var bindings = instance.getBindingAccessors(div);
+    const bindings = instance.getBindingAccessors(div);
     assert.equal(Object.keys(bindings).length, 1, 'len')
     assert.isFunction(bindings['alpha'], 'is accessor')
     assert.equal(bindings['alpha'](), '122.9', '122.9')
@@ -93,7 +93,7 @@ describe('getBindingAccessors with string arg', function () {
 
   it('becomes the valueAccessor', function () {
     div.setAttribute('data-bind', 'alpha: "122.9"');
-    var i_spy = instance.bindingHandlers.alpha.init,
+    let i_spy = instance.bindingHandlers.alpha.init,
       u_spy = instance.bindingHandlers.alpha.update,
       args;
     applyBindings({
@@ -113,7 +113,7 @@ describe('getBindingAccessors with string arg', function () {
 })
 
 describe('getBindingAccessors with function arg', function () {
-  var div;
+  let div;
 
   beforeEach(function () {
     instance = options.bindingProviderInstance = new DataBindProvider()
@@ -126,13 +126,13 @@ describe('getBindingAccessors with function arg', function () {
   });
 
   it('returns a name/valueAccessor pair', function () {
-    var bindings = instance.getBindingAccessors(div);
+    const bindings = instance.getBindingAccessors(div);
     assert.equal(Object.keys(bindings).length, 1)
     assert.isFunction(bindings['alpha'])
   });
 
   it('becomes the valueAccessor', function () {
-    var i_spy = instance.bindingHandlers.alpha.init,
+    let i_spy = instance.bindingHandlers.alpha.init,
       u_spy = instance.bindingHandlers.alpha.update,
       args;
     applyBindings({
@@ -158,7 +158,7 @@ describe('all bindings', function () {
   })
 
   it('binds Text with data-bind', function () {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     div.setAttribute('data-bind', 'text: obs')
     applyBindings({
       obs: observable('a towel')
@@ -167,7 +167,7 @@ describe('all bindings', function () {
   })
 
   it('sets attributes to constants', function () {
-    var div = document.createElement('div'),
+    const div = document.createElement('div'),
       context = {
         aTitle: 'petunia plant'
       };
@@ -177,7 +177,7 @@ describe('all bindings', function () {
   })
 
   it('sets attributes to observables in objects', function () {
-    var div = document.createElement('div'),
+    const div = document.createElement('div'),
       context = {
         aTitle: observable('petunia plant')
       };
@@ -187,7 +187,7 @@ describe('all bindings', function () {
   })
 
   it('registers a click event', function () {
-    var div = document.createElement('div'),
+    let div = document.createElement('div'),
       called = false,
       context = {
         cb: function () {
@@ -202,7 +202,7 @@ describe('all bindings', function () {
   })
 
   it('sets an input `value` binding ', function () {
-    var input = document.createElement('input'),
+    const input = document.createElement('input'),
       context = {
         vobs: observable('273-9164')
       };
@@ -214,7 +214,7 @@ describe('all bindings', function () {
   })
 
   it('reads an input `value` binding', function () {
-    var input = document.createElement('input'),
+    const input = document.createElement('input'),
       evt = new CustomEvent('change'),
       context = {
         vobs: observable()
@@ -229,7 +229,7 @@ describe('all bindings', function () {
   it('reads an input `value` binding for a defineProperty', function () {
     // see https://github.com/brianmhunt/knockout-secure-binding/issues/23
     // and http://stackoverflow.com/questions/21580173
-    var input = document.createElement('input'),
+    const input = document.createElement('input'),
       evt = new CustomEvent('change'),
       obs = observable(),
       context = {};
@@ -247,7 +247,7 @@ describe('all bindings', function () {
   })
 
   it('writes an input `value` binding for a defineProperty', function () {
-    var input = document.createElement('input'),
+    const input = document.createElement('input'),
       // evt = new CustomEvent("change"),
       obs = observable(),
       context = {};
@@ -268,7 +268,7 @@ describe('all bindings', function () {
   })
 
   it('writes an input object defineProperty', function () {
-    var input = document.createElement('input'),
+    const input = document.createElement('input'),
       // evt = new CustomEvent("change"),
       obs = observable(),
       context = {
@@ -296,7 +296,7 @@ describe('all bindings', function () {
   })
 
   it('writes nested defineProperties', function () {
-    var input = document.createElement('input'),
+    const input = document.createElement('input'),
       // evt = new CustomEvent("change"),
       obs = observable(),
       context = {},
@@ -329,7 +329,7 @@ describe('all bindings', function () {
   })
 
   it('reads a nested defineProperty', function () {
-    var input = document.createElement('input'),
+    const input = document.createElement('input'),
       evt = new CustomEvent('change'),
       obs = observable(),
       oo = observable({}),
@@ -357,7 +357,7 @@ describe('all bindings', function () {
   })
 
   it('reads a multi-nested defineProperty', function () {
-    var input = document.createElement('input'),
+    const input = document.createElement('input'),
       evt = new CustomEvent('change'),
       o0 = observable({}),
       o1 = observable({}),
@@ -407,7 +407,7 @@ describe('The lookup of variables (get_lookup_root)', function () {
   }
 
   it('accesses the context', function () {
-    var binding = 'a: x',
+    const binding = 'a: x',
       context = {
         x: 'y'
       },
@@ -416,7 +416,7 @@ describe('The lookup of variables (get_lookup_root)', function () {
   })
 
   it('accesses the globals', function () {
-    var binding = 'a: z',
+    const binding = 'a: z',
       globals = {
         z: 'ZZ'
       },
@@ -425,7 +425,7 @@ describe('The lookup of variables (get_lookup_root)', function () {
   })
 
   it('accesses $data.value and value', function () {
-    var binding = 'x: $data.value, y: value',
+    const binding = 'x: $data.value, y: value',
       context = {
         value: 42
       },
@@ -435,7 +435,7 @@ describe('The lookup of variables (get_lookup_root)', function () {
   })
 
   it('ignores spaces', function () {
-    var binding = 'x: $data  .  value, y: $data\n\t\r . \t\r\nvalue',
+    const binding = 'x: $data  .  value, y: $data\n\t\r . \t\r\nvalue',
       context = { value: 42 },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.x(), 42)
@@ -443,7 +443,7 @@ describe('The lookup of variables (get_lookup_root)', function () {
   })
 
   it('looks up nested elements in objects', function () {
-    var binding = 'x: { y: { z: a.b.c } }',
+    const binding = 'x: { y: { z: a.b.c } }',
       context = {
         'a': {
           b: {
@@ -456,7 +456,7 @@ describe('The lookup of variables (get_lookup_root)', function () {
   })
 
   it('can be denied access to `window` globals', function () {
-    var binding = 'x: window, y: global, z: document',
+    const binding = 'x: window, y: global, z: document',
       context = {},
       bindings = makeBindings(binding, context)
     assert.throws(bindings.x, 'not found')
@@ -465,7 +465,7 @@ describe('The lookup of variables (get_lookup_root)', function () {
   })
 
   it('only returns explicitly from $context', function () {
-    var binding = 'x: $context.$data.value, y: $context.value, z: value',
+    const binding = 'x: $context.$data.value, y: $context.value, z: value',
       context = {
         value: 42
       },
@@ -476,7 +476,7 @@ describe('The lookup of variables (get_lookup_root)', function () {
   })
 
   it('recognizes $element', function () {
-    var binding = 'x: $element.id',
+    const binding = 'x: $element.id',
       node = { id: 42 },
       bindings = makeBindings(binding, {}, {}, node)
     assert.equal(bindings.x(), node.id)
@@ -491,7 +491,7 @@ describe('The lookup of variables (get_lookup_root)', function () {
   })
 
   it('accesses $context before globals', function () {
-    var binding = 'a: z',
+    const binding = 'a: z',
       context = {
         z: 42
       },
@@ -504,7 +504,7 @@ describe('The lookup of variables (get_lookup_root)', function () {
 
   it('accesses properties created with defineProperty', function () {
     // style of e.g. knockout-es5
-    var binding = 'a: z',
+    const binding = 'a: z',
       context = {},
       bindings = makeBindings(binding, context),
       obs = observable();
@@ -522,7 +522,7 @@ describe('The lookup of variables (get_lookup_root)', function () {
   })
 
   it('does not bleed globals', function () {
-    var binding = 'a: z',
+    const binding = 'a: z',
       globals_1 = {
         z: 168
       },

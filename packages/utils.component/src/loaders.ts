@@ -52,14 +52,14 @@ export function unregister (componentName) {
 
 export var defaultLoader = {
   getConfig: function (componentName, callback) {
-    var result = hasOwnProperty(defaultConfigRegistry, componentName)
+    const result = hasOwnProperty(defaultConfigRegistry, componentName)
             ? defaultConfigRegistry[componentName]
             : null
     callback(result)
   },
 
   loadComponent: function (componentName, config, callback) {
-    var errorCallback = makeErrorCallback(componentName)
+    const errorCallback = makeErrorCallback(componentName)
     possiblyGetConfigFromAmd(errorCallback, config, function (loadedConfig) {
       resolveConfig(componentName, errorCallback, loadedConfig, callback)
     })
@@ -74,7 +74,7 @@ export var defaultLoader = {
   }
 }
 
-var createViewModelKey = 'createViewModel'
+const createViewModelKey = 'createViewModel'
 
 // Takes a config object of the form { template: ..., viewModel: ... }, and asynchronously convert it
 // into the standard component definition format:
@@ -83,7 +83,7 @@ var createViewModelKey = 'createViewModel'
 // in parallel, and the results joined when both are ready. We don't depend on any promises infrastructure,
 // so this is implemented manually below.
 function resolveConfig (componentName, errorCallback, config, callback) {
-  var result = {},
+  let result = {},
     makeCallBackWhenZero = 2,
     tryIssueCallback = function () {
       if (--makeCallBackWhenZero === 0) {
@@ -127,13 +127,13 @@ function resolveTemplate (errorCallback, templateConfig, callback) {
         // Document fragment - use its child nodes
     callback(makeArray(templateConfig.childNodes))
   } else if (templateConfig.element) {
-    var element = templateConfig.element
+    const element = templateConfig.element
     if (isDomElement(element)) {
             // Element instance - copy its child nodes
       callback(cloneNodesFromTemplateSourceElement(element))
     } else if (typeof element === 'string') {
             // Element ID - find it, then copy its child nodes
-      var elemInstance = document.getElementById(element)
+      const elemInstance = document.getElementById(element)
       if (elemInstance) {
         callback(cloneNodesFromTemplateSourceElement(elemInstance))
       } else {
@@ -166,7 +166,7 @@ function resolveViewModel (errorCallback, viewModelConfig, callback) {
     callback(viewModelConfig[createViewModelKey])
   } else if ('instance' in viewModelConfig) {
         // Fixed object instance - promote to createViewModel format for API consistency
-    var fixedInstance = viewModelConfig['instance']
+    const fixedInstance = viewModelConfig['instance']
     callback(function (/* params, componentInfo */) {
       return fixedInstance
     })

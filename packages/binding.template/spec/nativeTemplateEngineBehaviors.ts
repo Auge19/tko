@@ -28,9 +28,9 @@ import '@tko/utils/helpers/jasmine-13-helper'
 
 describe('Native template engine', function () {
   function ensureNodeExistsAndIsEmpty (id, tagName, type) {
-    var existingNode = document.getElementById(id)
+    const existingNode = document.getElementById(id)
     if (existingNode != null) { existingNode.parentNode.removeChild(existingNode) }
-    var resultNode = document.createElement(tagName || 'div')
+    const resultNode = document.createElement(tagName || 'div')
     resultNode.id = id
     if (type) { resultNode.setAttribute('type', type) }
     document.body.appendChild(resultNode)
@@ -40,7 +40,7 @@ describe('Native template engine', function () {
   beforeEach(jasmine.prepareTestNode)
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    const provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
     provider.bindingHandlers.set(templateBindings)
@@ -71,30 +71,30 @@ describe('Native template engine', function () {
     }
 
     it('can display static content from regular DOM element', function () {
-      var testDivTemplate = ensureNodeExistsAndIsEmpty('testDivTemplate')
+      const testDivTemplate = ensureNodeExistsAndIsEmpty('testDivTemplate')
       testDivTemplate.innerHTML = 'this is some static content'
       renderTemplate('testDivTemplate', null, null, testNode)
       expect(testNode).toContainHtml('this is some static content')
     })
 
     it('can fetch template from regular DOM element and data-bind on results', function () {
-      var testDivTemplate = ensureNodeExistsAndIsEmpty('testDivTemplate')
+      const testDivTemplate = ensureNodeExistsAndIsEmpty('testDivTemplate')
       testRenderTemplate(testDivTemplate, 'testDivTemplate')
     })
 
     it('can fetch template from <script> elements and data-bind on results', function () {
-      var testScriptTemplate = ensureNodeExistsAndIsEmpty('testScriptTemplate', 'script', 'text/html')
+      const testScriptTemplate = ensureNodeExistsAndIsEmpty('testScriptTemplate', 'script', 'text/html')
       testRenderTemplate(testScriptTemplate, 'testScriptTemplate', 'text')
     })
 
     it('can fetch template from <textarea> elements and data-bind on results', function () {
-      var testTextAreaTemplate = ensureNodeExistsAndIsEmpty('testTextAreaTemplate', 'textarea'),
+      const testTextAreaTemplate = ensureNodeExistsAndIsEmpty('testTextAreaTemplate', 'textarea'),
         prop = 'value'
       testRenderTemplate(testTextAreaTemplate, 'testTextAreaTemplate', prop)
     })
 
     it('can fetch template from <template> elements and data-bind on results', function () {
-      var testTemplateTemplate = ensureNodeExistsAndIsEmpty('testTemplateTemplate', 'template')
+      const testTemplateTemplate = ensureNodeExistsAndIsEmpty('testTemplateTemplate', 'template')
       testRenderTemplate(testTemplateTemplate, 'testTemplateTemplate')
     })
   })
@@ -119,7 +119,7 @@ describe('Native template engine', function () {
     it('can be supplied by not giving a template name', function () {
       testNode.innerHTML = "<div data-bind='template: { data: someItem }'>Value: <span data-bind='text: val'></span></div>"
 
-      var viewModel = {
+      const viewModel = {
         someItem: {
           val: 'abc'
         }
@@ -131,7 +131,7 @@ describe('Native template engine', function () {
 
     it('work in conjunction with foreach', function () {
       testNode.innerHTML = "<div data-bind='template: { foreach: myItems }'><b>Item: <span data-bind='text: itemProp'></span></b></div>"
-      var myItems = observableArray([{
+      const myItems = observableArray([{
         itemProp: 'Alpha'
       }, {
         itemProp: 'Beta'
@@ -167,7 +167,7 @@ describe('Native template engine', function () {
                 "(Val: <span data-bind='text: $data'></span>, Invocations: <span data-bind='text: $root.invocationCount()'></span>, Parents: <span data-bind='text: $parents.length'></span>)" +
                 '</div>' +
                 '</div>'
-      var viewModel = {
+      const viewModel = {
         invocations: 0, // Verifying # invocations to be sure we're not rendering anything multiple times and discarding the results
         items: observableArray([{
           children: observableArray(['A1', 'A2', 'A3'])
@@ -190,7 +190,7 @@ describe('Native template engine', function () {
     })
 
     it('re-renders nested templates', function () {
-      var node = document.createElement('div')
+      const node = document.createElement('div')
       let inner = 0
       let outer = 0
       node.innerHTML = `
@@ -219,7 +219,7 @@ describe('Native template engine', function () {
     it('with no content should be rejected', function () {
       window.testDivTemplate.innerHTML = "<div data-bind='template: { data: someItem }'></div>"
 
-      var viewModel = {
+      const viewModel = {
         someItem: { val: 'abc' }
       }
       expect(function () {

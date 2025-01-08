@@ -23,9 +23,9 @@ import { computed } from '@tko/computed'
 
 function mapNodeAndRefreshWhenChanged (containerNode, mapping, valueToMap, callbackAfterAddingNodes, index) {
   // Map this array value inside a dependentObservable so we re-map when any dependency changes
-  var mappedNodes = new Array()
-  var dependentObservable = computed(function () {
-    var newMappedNodes = mapping(valueToMap, index, fixUpContinuousNodeArray(mappedNodes, containerNode)) || []
+  const mappedNodes = new Array()
+  const dependentObservable = computed(function () {
+    const newMappedNodes = mapping(valueToMap, index, fixUpContinuousNodeArray(mappedNodes, containerNode)) || []
 
     // On subsequent evaluations, just replace the previously-inserted DOM nodes
     if (mappedNodes.length > 0) {
@@ -41,8 +41,8 @@ function mapNodeAndRefreshWhenChanged (containerNode, mapping, valueToMap, callb
   return { mappedNodes: mappedNodes, dependentObservable: (dependentObservable.isActive() ? dependentObservable : undefined) }
 }
 
-var lastMappingResultDomDataKey = domData.nextKey()
-let deletedItemDummyValue = domData.nextKey()
+const lastMappingResultDomDataKey = domData.nextKey()
+const deletedItemDummyValue = domData.nextKey()
 
 export function setDomNodeChildrenFromArrayMapping (domNode, array, mapping, options, callbackAfterAddingNodes, editScript) {
   // Compare the provided array against the previous one
@@ -51,20 +51,20 @@ export function setDomNodeChildrenFromArrayMapping (domNode, array, mapping, opt
     array = [array]
   }
   options = options || {}
-  let lastMappingResult = domData.get(domNode, lastMappingResultDomDataKey)
-  let isFirstExecution = !lastMappingResult
+  const lastMappingResult = domData.get(domNode, lastMappingResultDomDataKey)
+  const isFirstExecution = !lastMappingResult
 
   // Build the new mapping result
-  var newMappingResult = new Array()
-  var lastMappingResultIndex = 0
-  var newMappingResultIndex = 0
+  const newMappingResult = new Array()
+  let lastMappingResultIndex = 0
+  let newMappingResultIndex = 0
 
-  var nodesToDelete = new Array()
-  var itemsToProcess = new Array()
-  var itemsForBeforeRemoveCallbacks = new Array()
-  var itemsForMoveCallbacks = new Array()
-  var itemsForAfterAddCallbacks = new Array()
-  var mapData
+  const nodesToDelete = new Array()
+  const itemsToProcess = new Array()
+  const itemsForBeforeRemoveCallbacks = new Array()
+  const itemsForMoveCallbacks = new Array()
+  const itemsForAfterAddCallbacks = new Array()
+  let mapData
   let countWaitingForRemove = 0
 
   function itemAdded (value) {
@@ -103,8 +103,8 @@ export function setDomNodeChildrenFromArrayMapping (domNode, array, mapping, opt
   } else {
     if (!editScript || (lastMappingResult && lastMappingResult['_countWaitingForRemove'])) {
       // Compare the provided array against the previous one
-      var lastArray = isFirstExecution ? [] : arrayMap(lastMappingResult, function (x) { return x.arrayEntry })
-      var compareOptions = {
+      const lastArray = isFirstExecution ? [] : arrayMap(lastMappingResult, function (x) { return x.arrayEntry })
+      const compareOptions = {
         'dontLimitMoves': options['dontLimitMoves'],
         'sparse': true
       }
@@ -186,7 +186,7 @@ export function setDomNodeChildrenFromArrayMapping (domNode, array, mapping, opt
     if (!mapData.mappedNodes) { extend(mapData, mapNodeAndRefreshWhenChanged(domNode, mapping, mapData.arrayEntry, callbackAfterAddingNodes, mapData.indexObservable)) }
 
     // Put nodes in the right place if they aren't there already
-    for (var j = 0; node = mapData.mappedNodes[j]; nextNode = node.nextSibling, lastNode = node, j++) {
+    for (let j = 0; node = mapData.mappedNodes[j]; nextNode = node.nextSibling, lastNode = node, j++) {
       if (node !== nextNode) { virtualElements.insertAfter(domNode, node, lastNode) }
     }
 

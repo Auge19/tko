@@ -37,7 +37,7 @@ jasmine.resolve = function (promise : Promise<boolean>) {
 jasmine.prepareTestNode = function() {
     // The bindings specs make frequent use of this utility function to set up
     // a clean new DOM node they can execute code against
-    var existingNode = document.getElementById("testNode");
+    const existingNode = document.getElementById("testNode");
     if (existingNode !== null && existingNode.parentNode)
         existingNode.parentNode.removeChild(existingNode);
     window.testNode = document.createElement("div");
@@ -61,7 +61,7 @@ export function useMockForTasks(options) {
 }
 
 jasmine.Spec.prototype.restoreAfter = function(object, propertyName) {
-    var originalValue = object[propertyName];
+    const originalValue = object[propertyName];
     this.after(function() {
         object[propertyName] = originalValue;
     });
@@ -79,15 +79,15 @@ jasmine.ieVersion = ieVersion;
     Custom Matchers
     ~~~~~~~~~~~~~~~
  */
-var matchers = {
+const matchers = {
 
   toContainText (expectedText, ignoreSpaces) {
       if (ignoreSpaces) {
           expectedText = expectedText.replace(/\s/g, "");
       }
 
-      var actualText = jasmine.nodeText(this.actual);
-      var cleanedActualText = actualText.replace(/\r\n/g, "\n");
+      const actualText = jasmine.nodeText(this.actual);
+      let cleanedActualText = actualText.replace(/\r\n/g, "\n");
       if (ignoreSpaces) {
           cleanedActualText = cleanedActualText.replace(/\s/g, "");
       }
@@ -97,8 +97,8 @@ var matchers = {
   },
 
   toHaveOwnProperties (expectedProperties) {
-      var ownProperties = new Array();
-      for (var prop in this.actual) {
+      const ownProperties = new Array();
+      for (const prop in this.actual) {
           if (hasOwnProperty(this.actual, prop)) {
               ownProperties.push(prop);
           }
@@ -107,13 +107,13 @@ var matchers = {
   },
 
   toHaveTexts (expectedTexts) {
-      var texts = arrayMap(this.actual.childNodes, jasmine.nodeText);
+      const texts = arrayMap(this.actual.childNodes, jasmine.nodeText);
       this.actual = texts;   // Fix explanatory message
       return this.env.equals_(texts, expectedTexts);
   },
 
   toHaveValues (expectedValues) {
-      var values = arrayFilter(
+      const values = arrayFilter(
         arrayMap(this.actual.childNodes, node => node.value),
         value => value !== undefined)
       this.actual = values   // Fix explanatory message
@@ -128,18 +128,18 @@ var matchers = {
   },
 
   toThrowContaining(expected) {
-      var exception;
+      let exception;
       try {
           this.actual();
       } catch (e) {
           exception = e;
       }
-      var exceptionMessage = exception && (exception.message || exception);
+      const exceptionMessage = exception && (exception.message || exception);
 
       this.message = function () {
-          var notText = this.isNot ? " not" : "";
-          var expectation = "Expected " + this.actual.toString() + notText + " to throw exception containing '" + expected + "'";
-          var result = exception ? (", but it threw '" + exceptionMessage + "'") : ", but it did not throw anything";
+          const notText = this.isNot ? " not" : "";
+          const expectation = "Expected " + this.actual.toString() + notText + " to throw exception containing '" + expected + "'";
+          const result = exception ? (", but it threw '" + exceptionMessage + "'") : ", but it did not throw anything";
           return expectation + result;
       };
 
@@ -147,7 +147,7 @@ var matchers = {
   },
 
   toEqualOneOf (expectedPossibilities) {
-      for (var i = 0; i < expectedPossibilities.length; i++) {
+      for (let i = 0; i < expectedPossibilities.length; i++) {
           if (this.env.equals_(this.actual, expectedPossibilities[i])) {
               return true;
           }
@@ -156,7 +156,7 @@ var matchers = {
   },
 
   toContainHtml (expectedHtml, postProcessCleanedHtml) {
-      var cleanedHtml = this.actual.innerHTML.toLowerCase().replace(/\r\n/g, "");
+      let cleanedHtml = this.actual.innerHTML.toLowerCase().replace(/\r\n/g, "");
       // IE < 9 strips whitespace immediately following comment nodes. Normalize by doing the same on all browsers.
       cleanedHtml = cleanedHtml.replace(/(<!--.*?-->)\s*/g, "$1");
       expectedHtml = expectedHtml.replace(/(<!--.*?-->)\s*/g, "$1");
@@ -174,9 +174,9 @@ var matchers = {
 // bmh: Monkeypatch so we can catch errors in asynchronous functions.
 //
 jasmine.FakeTimer.prototype.runFunctionsWithinRange = function(oldMillis, nowMillis) {
-    var scheduledFunc;
-    var funcsToRun = new Array();
-    for (var timeoutKey in this.scheduledFunctions) {
+    let scheduledFunc;
+    const funcsToRun = new Array();
+    for (const timeoutKey in this.scheduledFunctions) {
         scheduledFunc = this.scheduledFunctions[timeoutKey];
         if (scheduledFunc != jasmine.undefined &&
             scheduledFunc.runAtMillis >= oldMillis &&
@@ -191,9 +191,9 @@ jasmine.FakeTimer.prototype.runFunctionsWithinRange = function(oldMillis, nowMil
             return a.runAtMillis - b.runAtMillis;
         });
 
-        for (var i = 0; i < funcsToRun.length; ++i) {
+        for (let i = 0; i < funcsToRun.length; ++i) {
           //try {       // mbest: Removed so we can catch errors in asynchronous functions
-            var funcToRun = funcsToRun[i];
+            const funcToRun = funcsToRun[i];
             this.nowMillis = funcToRun.runAtMillis;
             funcToRun.funcToCall();
             if (funcToRun.recurring) {

@@ -84,7 +84,7 @@ describe('Text filters preprocessor', function () {
     attempt('default', [null, 'blank'], 'blank')
     attempt('default', [undefined, 'blank'], 'blank')
         // a function is not converted
-    var emptyFunction = function () {}
+    const emptyFunction = function () {}
     attempt('default', [emptyFunction, 'blank'], emptyFunction)
         // Should unwrap observable value
     attempt('default', [observable('someText'), 'blank'], 'someText')

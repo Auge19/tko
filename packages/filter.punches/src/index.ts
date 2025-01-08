@@ -3,9 +3,9 @@ import {
     unwrap, toJS
 } from '@tko/observable'
 
-var sproto = String.prototype
+const sproto = String.prototype
 
-var filters = {}
+const filters = {}
 
 // Convert value to uppercase
 filters.uppercase = function (value) {

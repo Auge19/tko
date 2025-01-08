@@ -1,4 +1,4 @@
-declare var jQuery : any
+declare let jQuery : any
 
 
 //
@@ -22,10 +22,10 @@ class OptionsClass {
   allowVirtualElements: boolean = true
 
     // Global variables that can be accessed from bindings.
-  bindingGlobals: Object = Object.create(null)
+  bindingGlobals: object = Object.create(null)
 
     // An instance of the binding provider.
-  bindingProviderInstance: Object | any = null
+  bindingProviderInstance: object | any = null
 
   // Whether the `with` binding creates a child context when used with `as`.
   createChildContextWithAs: boolean = false
