@@ -15,7 +15,18 @@ function unwrapOrCall (a, b) {
   return b
 }
 
-const operators = {
+type OperatorFunction = (a: any, b: any, ...args: any[]) => any;
+
+
+interface OperatorWithProperties extends OperatorFunction{
+  earlyOut?: (a: any) => any;
+  precedence?:number;
+}
+
+interface Operators{
+  [key: string]:OperatorWithProperties;
+}
+const operators:Operators = {
   // unary
   '@': unwrapOrCall,
   '#': (a, b) => () => unwrap(b), // Convert to read-only.
@@ -88,7 +99,7 @@ operators['--'].precedence = 16
 operators['&-'].precedence = 16
 
   // exponent
-operators['**'].precedent = 15
+operators['**'].precedence = 15
 
   // mul/div/remainder
 operators['%'].precedence = 14

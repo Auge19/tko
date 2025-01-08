@@ -50,8 +50,8 @@ export function getObjectOwnProperty (obj, propName) {
   return hasOwnProperty(obj, propName) ? obj[propName] : undefined
 }
 
-export function clonePlainObjectDeep (obj, seen) {
-  if (!seen) { seen = [] }
+export function clonePlainObjectDeep (obj, seen?: any[]) {
+  if (!seen) { seen = new Array() }
 
   if (!obj || typeof obj !== 'object' ||
         obj.constructor !== Object ||
