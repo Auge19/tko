@@ -12,11 +12,11 @@ declare global {
         (value: T): void; // Setter
         subscribe(callback: (newValue: T) => void): Subscription;
       };
-      
+
     export type Subscription = {
         dispose(): void; // Unsubscribe method
       };
-      
+
     export type ObservableArray<T> = Observable<T[]> & {
         remove (valueOrPredicate: any): any[]
         removeAll (arrayOfValues: undefined): any
@@ -27,7 +27,7 @@ declare global {
         sorted (compareFn: ((a: any, b: any) => number) | undefined): any[]
         reversed (): any[]
         [Symbol.iterator]: Generator<any, void, any>
-        
+
         // Array-specific methods
         push(...items: T[]): number;
         pop(): T | undefined;
@@ -49,10 +49,10 @@ declare global {
         // filter(predicate: (item: T) => boolean): T[];
         // map<U>(callback: (item: T) => U): U[];
       };
-    
+
     var testNode: HTMLElement;
     var jQueryInstance: JQueryStatic;
-  
+
     interface Window {
         // Below just informs IDE and/or TS-compiler (it's set in `.js` file).
         DEBUG: boolean
@@ -83,7 +83,7 @@ declare global {
 
         interface Matchers<T> {
 
-            toContainText(expected: string, ignoreSpaces: boolean) : boolean
+            toContainText(expected: string, ignoreSpaces?: boolean) : boolean
             toHaveOwnProperties(expectedProperties : any) : boolean
             toHaveTexts (expectedTexts : any) : boolean
             toHaveValues (expectedValues : any) : boolean
@@ -96,7 +96,8 @@ declare global {
         }
 
         interface Clock{
-            mockScheduler:any
+            mockScheduler: any,
+            reset()
         }
 
         interface Spy {

@@ -150,12 +150,12 @@ describe('Components: Custom elements', function () {
     applyBindings(viewModel, testNode)
     jasmine.Clock.tick(1)
     expect(testNode).toContainHtml('<test-component data-bind="visible: shouldshow">custom element</test-component>')
-    expect(testNode.childNodes[0].style.display).not.toBe('none')
+    expect((testNode.childNodes[0] as HTMLElement).style.display).not.toBe('none')
 
         // See that the 'visible' binding still works
     viewModel.shouldshow(false)
-    expect(testNode.childNodes[0].style.display).toBe('none')
-    expect(testNode.childNodes[0].innerHTML).toBe('custom element')
+    expect((testNode.childNodes[0] as HTMLElement).style.display).toBe('none')
+    expect((testNode.childNodes[0] as HTMLElement).innerHTML).toBe('custom element')
   })
 
   it('Is not possible to have regular data-bind bindings on a custom element if they also attempt to control descendants', function () {
@@ -176,7 +176,7 @@ describe('Components: Custom elements', function () {
       template: 'custom element'
     })
     testNode.innerHTML = '<test-component></test-component>'
-    const customElem = testNode.childNodes[0]
+    const customElem = testNode.children[0]
     expect(customElem.tagName.toLowerCase()).toBe('test-component')
 
     applyBindings(null, customElem)
@@ -389,7 +389,7 @@ describe('Components: Custom elements', function () {
         // The component itself doesn't have to know or care that the supplied value is nested - the
         // custom element syntax takes care of producing a single computed property that gives the
         // unwrapped inner value.
-    var innerObservable = observable('inner1'),
+    const innerObservable = observable('inner1'),
       outerObservable = observable({ inner: innerObservable })
     testNode.innerHTML = '<test-component params="somevalue: outer().inner"></test-component>'
     applyBindings({ outer: outerObservable }, testNode)

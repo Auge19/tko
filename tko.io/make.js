@@ -13,6 +13,7 @@ function highlight (str, lang) {
   if (hljs.getLanguage(lang)) {
     try {
       return hljs.highlight(lang, str).value
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-empty
     } catch (__) {}
   }
   return ''
@@ -33,7 +34,7 @@ function * genHtmlIncludes ({includes}, htmlSettings, config) {
     console.log('  |  ', sourcePath)
     const source = fs.readFileSync(sourcePath, ENC)
     if (sourcePath.endsWith('.md')) {
-      yield `<span data-bind='source: \"${relPath}\"'></span>
+      yield `<span data-bind='source: "${relPath}"'></span>
       ${md.render(source)}`
     } else if (sourcePath.endsWith('.pug')) {
       yield pug.render(source, Object.assign({}, htmlSettings, config))
@@ -99,7 +100,7 @@ if (argv.includes('-w')) {
       -s   Start the server with 'dev_appserver.py .' (from Google Cloud)
 
     Deploy with:
-	
+
 	$  gcloud app deploy --project tko-io .
   `)
   make()
