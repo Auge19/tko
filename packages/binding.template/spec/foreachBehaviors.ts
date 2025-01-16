@@ -456,7 +456,7 @@ describe('Binding: Foreach', function () {
     expect(testNode).toContainHtml('hi <!-- ko foreach: someitems --><span data-bind="text: childprop">first child</span><span data-bind="text: childprop">second child</span><!-- /ko -->')
 
         // Check we can recover the binding contexts
-    expect(dataFor(testNode.childNodes[3]).childprop).toEqual('second child')
+    expect(dataFor(testNode.childNodes[3] as HTMLElement).childprop).toEqual('second child')
     expect(contextFor(testNode.childNodes[3]).$parent.someitems.length).toEqual(2)
   })
 
@@ -750,8 +750,8 @@ describe('Binding: Foreach', function () {
     expect(testNode.childNodes[0].childNodes[0]).toContainText('alpha')
     expect(testNode.childNodes[0].childNodes[1]).toContainText('beta')
 
-    expect(dataFor(testNode.childNodes[0].childNodes[0])).toEqual(dataFor(testNode))
-    expect(dataFor(testNode.childNodes[0].childNodes[1])).toEqual(dataFor(testNode))
+    expect(dataFor(testNode.childNodes[0].childNodes[0] as HTMLElement)).toEqual(dataFor(testNode))
+    expect(dataFor(testNode.childNodes[0].childNodes[1] as HTMLElement)).toEqual(dataFor(testNode))
   })
 
   it('Should provide access to observable items', function () {
@@ -760,8 +760,8 @@ describe('Binding: Foreach', function () {
     applyBindings({ someItems: someItems }, testNode)
     expect(testNode.childNodes[0]).toHaveValues(['first', 'second'])
 
-    expect(dataFor(testNode.childNodes[0].childNodes[0])).toEqual(dataFor(testNode))
-    expect(dataFor(testNode.childNodes[0].childNodes[1])).toEqual(dataFor(testNode));
+    expect(dataFor(testNode.childNodes[0].childNodes[0] as HTMLElement)).toEqual(dataFor(testNode))
+    expect(dataFor(testNode.childNodes[0].childNodes[1] as HTMLElement)).toEqual(dataFor(testNode));
 
       // Should update observable when input is changed
     (testNode.childNodes[0].childNodes[0] as HTMLInputElement).value = 'third'

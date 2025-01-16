@@ -95,7 +95,7 @@ function limitNotifySubscribers (value, event) {
     // If an observable provided a reference to itself, access it to get the latest value.
     // This allows computed observables to delay calculating their value until needed.
     if (selfIsObservable && pendingValue === self) {
-      pendingValue = self._evalIfChanged ? self._evalIfChanged() : self()
+      pendingValue = (self as any)._evalIfChanged ? (self as any)._evalIfChanged() : self()
     }
     const shouldNotify = notifyNextChange || (
       didUpdate && self.isDifferent(previousValue, pendingValue)

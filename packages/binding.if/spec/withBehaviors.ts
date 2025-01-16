@@ -209,7 +209,7 @@ describe('Binding: With', function () {
     applyBindings({ someItem: someItem }, testNode)
 
     expect(testNode.childNodes[0].childNodes[0]).toContainText('Hello')
-    expect(dataFor(testNode.childNodes[0].childNodes[0])).toEqual(dataFor(testNode))
+    expect(dataFor(testNode.childNodes[0].childNodes[0] as HTMLElement)).toEqual(dataFor(testNode))
   })
 
   it('Should provide access to observable value', function () {
@@ -218,7 +218,7 @@ describe('Binding: With', function () {
     applyBindings({ someItem: someItem }, testNode)
     expect((testNode.childNodes[0].childNodes[0] as HTMLInputElement).value).toEqual('Hello')
 
-    expect(dataFor(testNode.childNodes[0].childNodes[0])).toEqual(dataFor(testNode));
+    expect(dataFor(testNode.childNodes[0].childNodes[0] as HTMLElement)).toEqual(dataFor(testNode));
 
       // Should update observable when input is changed
     (testNode.childNodes[0].childNodes[0] as HTMLInputElement).value = 'Goodbye'
