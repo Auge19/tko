@@ -203,7 +203,7 @@ describe('Binding: Value', function () {
   })
 
   it('Should only register one single onchange handler', function () {
-    const notifiedValues = []
+    const notifiedValues = new Array()
     const myObservable = observable(123)
     myObservable.subscribe(function (value) { notifiedValues.push(value) })
     expect(notifiedValues.length).toEqual(0)

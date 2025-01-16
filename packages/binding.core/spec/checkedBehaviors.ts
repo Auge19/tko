@@ -23,8 +23,6 @@ import { bindings as templateBindings } from '@tko/binding.template'
 
 import '@tko/utils/helpers/jasmine-13-helper'
 
-declare let testNode : HTMLElement
-
 describe('Binding: Checked', function () {
   beforeEach(jasmine.prepareTestNode)
 
@@ -122,7 +120,7 @@ describe('Binding: Checked', function () {
     const myobservable = observable('another value')
     testNode.innerHTML = "<input type='radio' value='this radio button value' data-bind='checked:someProp' />"
     applyBindings({ someProp: myobservable }, testNode)
-    
+
     expect(myobservable()).toEqual('another value')
     const input = testNode.children[0] as HTMLInputElement
     input.click()
@@ -384,18 +382,17 @@ describe('Binding: Checked', function () {
                       "<input type='radio' data-bind='checked:someProp, " + binding + ":false' />"
         applyBindings({ someProp: myobservable }, testNode)
 
-        
         expect(myobservable()).toEqual(false)
 
-                  // Check initial state
+        // Check initial state
         expect(testNode).toHaveCheckedStates([false, true])
-
-                  // Update observable; verify elements
+        // Update observable; verify elements
         myobservable(true)
         expect(testNode).toHaveCheckedStates([true, false])
 
-                  // "Click" a button; verify observable and elements
-        testNode.childNodes[1].click()
+        // "Click" a button; verify observable and elements
+        var inputElement = testNode.children[1] as HTMLInputElement;
+        inputElement.click()
         expect(myobservable()).toEqual(false)
         expect(testNode).toHaveCheckedStates([false, true])
       })
@@ -457,13 +454,15 @@ describe('Binding: Checked', function () {
           myobservable(true)
           expect(testNode).toHaveCheckedStates([true, false])
 
-                      // "check" a box; verify observable and elements
-          testNode.childNodes[1].click()
+          var inputElement = testNode.children[1] as HTMLInputElement;
+
+          // "check" a box; verify observable and elements
+          inputElement.click()
           expect(myobservable()).toEqual(false)
           expect(testNode).toHaveCheckedStates([false, true])
 
-                      // "uncheck" a box; verify observable and elements
-          testNode.childNodes[1].click()
+          // "uncheck" a box; verify observable and elements
+          inputElement.click()
           expect(myobservable()).toEqual(undefined)
           expect(testNode).toHaveCheckedStates([false, false])
         })

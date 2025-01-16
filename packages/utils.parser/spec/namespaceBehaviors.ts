@@ -40,8 +40,6 @@ describe('Parser Namespace', function () {
     assert.deepEqual(p.on(), expect)
   }
 
-  it.skip('Should call bindings with a period e.g. x.y') // ?
-
   it('namespace.attr returns an object', function () {
     trial({v: 't'}, 'on.p: v', { p: 't' })
   })
@@ -78,7 +76,7 @@ describe('Parser Namespace', function () {
     })
 
     it('Should set css.classname', function () {
-      const observable1 = new observable();
+      const observable1 = observable();
       node.innerHTML = "<div data-bind='css.myRule: someModelProperty'>Hallo</div>";
       applyBindings({ someModelProperty: observable1 }, node);
 
@@ -88,7 +86,7 @@ describe('Parser Namespace', function () {
     })
 
     it('Should set style with style.stylename', function () {
-      const myObservable = new observable('red');
+      const myObservable = observable('red');
       node.innerHTML = "<div data-bind='style.backgroundColor: colorValue'>Hallo</div>";
       applyBindings({ colorValue: myObservable }, node);
 

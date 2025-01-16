@@ -22,7 +22,7 @@ export function arrayFirst (array, predicate, predicateOwner?) {
     .find(predicate, predicateOwner)
 }
 
-export function arrayMap (array = new Array(), mapping, thisArg?) {
+export function arrayMap (array: ArrayLike<any>, mapping, thisArg?) {
   if (arguments.length > 2) { mapping = mapping.bind(thisArg) }
   return array === null ? [] : Array.from(array, mapping)
 }
@@ -43,7 +43,7 @@ export function arrayGetDistinctValues (array = new Array()) {
     .filter(item => seen.has(item) ? false : seen.add(item))
 }
 
-export function arrayFilter (array, predicate, thisArg) {
+export function arrayFilter (array, predicate, thisArg?) {
   if (arguments.length > 2) { predicate = predicate.bind(thisArg) }
   return array === null ? [] : (isArray(array) ? array : [...array]).filter(predicate)
 }
@@ -66,7 +66,7 @@ export function addOrRemoveItem (array, value, included) {
   }
 }
 
-export function makeArray (arrayLikeObject) {
+export function makeArray<T=any> (arrayLikeObject:ArrayLike<T>):T[] {
   return Array.from(arrayLikeObject)
 }
 
@@ -79,7 +79,7 @@ export function range (min, max) {
 }
 
 // Go through the items that have been added and deleted and try to find matches between them.
-export function findMovesInArrayComparison (left, right, limitFailedCompares) {
+export function findMovesInArrayComparison (left, right, limitFailedCompares?: number| boolean) {
   if (left.length && right.length) {
     let failedCompares, l, r, leftItem, rightItem
     for (failedCompares = l = 0; (!limitFailedCompares || failedCompares < limitFailedCompares) && (leftItem = left[l]); ++l) {
@@ -100,8 +100,12 @@ export function findMovesInArrayComparison (left, right, limitFailedCompares) {
 const statusNotInOld = 'added'
 const statusNotInNew = 'deleted'
 
+interface Options {
+  dontLimitMoves: boolean
+}
+
     // Simple calculation based on Levenshtein distance.
-export function compareArrays (oldArray, newArray, options) {
+export function compareArrays (oldArray, newArray, options:Options|boolean) {
     // For backward compatibility, if the third arg is actually a bool, interpret
     // it as the old parameter 'dontLimitMoves'. Newer code should use { dontLimitMoves: true }.
   options = (typeof options === 'boolean') ? { dontLimitMoves: options } : (options || {})

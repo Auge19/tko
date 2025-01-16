@@ -25,7 +25,7 @@ export interface BindingContextSetting {
 
 // The bindingContext constructor is only called directly to create the root context. For child
 // contexts, use bindingContext.createChildContext or bindingContext.extend.
-export function bindingContext (dataItemOrAccessor, parentContext, dataItemAlias, extendCallback, settings? : BindingContextSetting) {
+export function bindingContext (dataItemOrAccessor, parentContext?, dataItemAlias?, extendCallback?, settings? : BindingContextSetting) {
   const self = this
   const shouldInheritData = dataItemOrAccessor === inheritParentIndicator
   const realDataItemOrAccessor = shouldInheritData ? undefined : dataItemOrAccessor
@@ -161,16 +161,16 @@ Object.assign(bindingContext.prototype, {
   }
 })
 
-export function storedBindingContextForNode (node : HTMLElement) {
+export function storedBindingContextForNode (node : HTMLElement|Comment) {
   const bindingInfo = domData.get(node, boundElementDomDataKey)
   return bindingInfo && bindingInfo.context
 }
 
 // Retrieving binding context from arbitrary nodes
-export function contextFor (node : HTMLElement) {
+export function contextFor (node : Node) {
   // We can only do something meaningful for elements and comment nodes (in particular, not text nodes, as IE can't store domdata for them)
   if (node && (node.nodeType === 1 || node.nodeType === 8)) {
-    return storedBindingContextForNode(node)
+    return storedBindingContextForNode(node as HTMLElement|Comment)
   }
 }
 

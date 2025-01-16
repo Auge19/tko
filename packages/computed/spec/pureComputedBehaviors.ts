@@ -99,7 +99,7 @@ describe('Pure Computed', function () {
   })
 
   it('Should notify "spectator" subscribers whenever the value changes', function () {
-    const obs = new observable('A')
+    const obs = observable('A')
     const computed = pureComputed(obs)
     const computed2 = pureComputed(computed)
     const notifiedValues = new Array()

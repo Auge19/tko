@@ -35,6 +35,7 @@ import {
 import $ from 'jquery'
 
 import { assert } from "chai"
+import { ObservableArray } from 'packages/observable/types/Observable'
 
 beforeEach(function () {
   const provider = new MultiProvider({
@@ -222,7 +223,7 @@ describe('is empty/conditional', function () {
 
   it('sets `elseChainSatisfied` to true after array is filled', function () {
     const div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
-    const obs = observableArray([])
+    const obs: ObservableArray<number> = observableArray([])
     const view = {obs: obs}
     applyBindings(view, div[0])
     obs([1, 2, 3])
@@ -668,7 +669,7 @@ describe('observable array changes', function () {
     it('emits on changes to an observable array', function () {
       let calls = 0
       let nodes = 0
-      const arr = observableArray([])
+      const arr: ObservableArray = observableArray([])
       function cb (v) { calls++; nodes += v.nodeOrArrayInserted.length }
       const target = $("<ul data-bind='foreach: { data: arr, afterAdd: cb }'><li data-bind='text: $data'></li></div>")
       applyBindings({arr: arr, cb: cb}, target[0])
@@ -808,7 +809,7 @@ describe('observable array changes', function () {
 
     it('updates the first list item', function () {
       const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
-      const list = observableArray([])
+      const list: ObservableArray<string> = observableArray([])
       applyBindings(list, target[0])
       list.push('a')
       assert.equal(contextFor(target.children()[0]).$index(), 0)
@@ -884,9 +885,9 @@ describe('observable array changes', function () {
       const target = $("<ul data-bind='foreach: { data: $data, as: \"xyz\" }'><li data-bind='text: xyz'></li></ul>")
       const list = ['a', 'b', 'c']
       applyBindings(list, target[0])
-      assert.strictEqual(dataFor(target.children()[0]).$data, dataFor(target))
-      assert.strictEqual(dataFor(target.children()[1]).$data, dataFor(target))
-      assert.strictEqual(dataFor(target.children()[2]).$data, dataFor(target))
+      assert.strictEqual(dataFor(target.children()[0]).$data, dataFor(target as any))
+      assert.strictEqual(dataFor(target.children()[1]).$data, dataFor(target as any))
+      assert.strictEqual(dataFor(target.children()[2]).$data, dataFor(target as any))
     })
 
     it('has an $index', function () {

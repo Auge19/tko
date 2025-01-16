@@ -1,5 +1,7 @@
-declare let jQuery : any
-
+interface CustomBindingGlobalProperties {
+  String;
+  isObservable;
+}
 
 //
 // This becomes ko.options
@@ -8,7 +10,7 @@ declare let jQuery : any
 // This is the root 'options', which must be extended by others.
 class OptionsClass {
   [key: string]: any;
-  
+
   deferUpdates: boolean = false
 
   useOnlyNativeEvents: boolean = false
@@ -21,8 +23,9 @@ class OptionsClass {
     // Enable/disable <!-- ko binding: ... -> style bindings
   allowVirtualElements: boolean = true
 
+
     // Global variables that can be accessed from bindings.
-  bindingGlobals: object = Object.create(null)
+  bindingGlobals: Object & CustomBindingGlobalProperties = Object.create(null)
 
     // An instance of the binding provider.
   bindingProviderInstance: object | any = null

@@ -44,11 +44,11 @@ import { ORIGINAL_JSX_SYM } from '../dist/JsxObserver';
 import { assert } from "chai"
 
 class JsxTestObserver extends JsxObserver {
-  
+
   constructor (jsxOrObservable, parentNode, insertBefore = null, xmlns?, noInitialBinding?) {
     super(jsxOrObservable, parentNode, insertBefore, xmlns, noInitialBinding)
   }
-  
+
   // For testing purposes, we make this synchronous.
   detachAndDispose (node) {
     super.detachAndDispose(node)
@@ -326,6 +326,7 @@ describe('jsx', function () {
     const jsx = { elementName: 'div', children: [itag, io], attributes: {} }
     const jo = new JsxTestObserver(jsx, parent)
 
+    let counter = 0;
     const provider = new NativeProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set({ counter: () => ++counter })
@@ -378,11 +379,11 @@ describe('jsx', function () {
     // The JSX preprocessor can generate sparse arrays with e.g.
     //  <div>{/* thing */}</div>
     const parent = document.createElement('div')
-    const jsx = new Array()
+    const jsx: string[] = []
     jsx[0] = 'a'
     jsx[2] = 'b'
     const jo = new JsxTestObserver(jsx, parent)
-    assert.equal(parent.innerHTML, `ab`)
+    assert.equal(parent.innerHTML, `a<!--undefined-->b`)
     jo.dispose()
   })
 
@@ -926,7 +927,7 @@ describe('jsx', function () {
     })
 
     it('binds components array', () => {
-      const arr = observableArray([])
+      const arr = observableArray<any>([])
       class TestComponentInner extends ComponentABC {
         get template () {
           return { elementName: 'i', children: ['I'], attributes: {} }
@@ -1090,7 +1091,7 @@ describe('jsx', function () {
       assert.equal(parent.innerHTML, 'yz<!--O-->')
       obs(['z', '2'])
       assert.equal(parent.innerHTML, 'z2<!--O-->')
-      obs('r')
+      obs(['r'])
       assert.equal(parent.innerHTML, 'r<!--O-->')
       jo.dispose()
     })
