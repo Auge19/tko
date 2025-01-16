@@ -34,7 +34,7 @@ describe('Binding: Visible', function () {
       myModelProperty: myObservable
     }, testNode)
 
-    var node = (testNode.childNodes[0] as HTMLElement)
+    const node = (testNode.childNodes[0] as HTMLElement)
     expect(node.style.display).toEqual('none')
     myObservable(true)
     expect(node.style.display).toEqual('')
@@ -46,7 +46,7 @@ describe('Binding: Visible', function () {
     applyBindings({
       myModelProperty: myObservable
     }, testNode)
-    var node = (testNode.childNodes[0] as HTMLElement)
+    const node = (testNode.childNodes[0] as HTMLElement)
     expect(node.style.display).toEqual('none')
   })
 
@@ -57,7 +57,7 @@ describe('Binding: Visible', function () {
       myModelProperty: myObservable
     }, testNode)
 
-    var node = (testNode.childNodes[0] as HTMLElement)
+    const node = (testNode.childNodes[0] as HTMLElement)
     expect(node.style.display).toEqual('')
     myObservable(true)
     expect(node.style.display).toEqual('none')
@@ -70,7 +70,7 @@ describe('Binding: Visible', function () {
       myModelProperty: myObservable
     }, testNode)
 
-    var node = (testNode.childNodes[0] as HTMLElement)
+    const node = (testNode.childNodes[0] as HTMLElement)
     expect(node.style.display).toEqual('none')
   })
 })

@@ -244,7 +244,7 @@ declare global {
 
     export type BindingContextExtendCallback<T = any> = (self: BindingContext<T>, parentContext: BindingContext<T> | null, dataItem: T) => void;
 
-    export module bindingEvent {
+    export namespace bindingEvent {
         export function subscribe(node: Node, event: "childrenComplete" | "descendantsComplete", callback: (node: Node) => void, callbackContext?: any): Subscription;
         export function startPossiblyAsyncContentBinding(node: Element, bindingContext: BindingContext): BindingContext;
     }
@@ -282,7 +282,7 @@ declare global {
     //#endregion
 
     //#region binding/expressionRewriting.js
-    export module expressionRewriting {
+    export namespace expressionRewriting {
         export interface KeyValue {
             key?: string;
             value?: string;
@@ -307,7 +307,7 @@ declare global {
 
     //#region binding/selectExtensions.js
 
-    export module selectExtensions {
+    export namespace selectExtensions {
         export function readValue(element: HTMLElement): any;
         export function writeValue(element: HTMLElement, value?: any, allowUnset?: boolean): void;
     }
@@ -435,7 +435,7 @@ declare global {
 
     //#region binding/editDetection/compareArrays.js
 
-    export module utils {
+    export namespace utils {
         export interface ArrayChange<T = any> {
             status: "added" | "deleted" | "retained";
             value: T;
@@ -459,7 +459,7 @@ declare global {
 
     //#region binding/editDetection/arrayToDomNodeChildren.js
 
-    export module utils {
+    export namespace utils {
         export type MappingFunction<T = any> = (valueToMap: T, index: number, nodes: Node[]) => Node[];
         export type MappingAfterAddFunction<T = any> = (arrayEntry: T, nodes: Node[], index: Observable<number>) => Node[];
         export type MappingHookFunction<T = any> = (nodes: Node[], index: number, arrayEntry: T) => void;
@@ -557,7 +557,7 @@ declare global {
         };
     }
 
-    export module templateSources {
+    export namespace templateSources {
         export class domElement implements TemplateSource {
             constructor(element: Node);
 
@@ -612,7 +612,7 @@ declare global {
 
     //#region components/customElements.js
 
-    export module components {
+    export namespace components {
         export function getComponentNameForNode(node: Node): string;
     }
 
@@ -620,7 +620,7 @@ declare global {
 
     //#region components/defaultLoader.js
 
-    export module components {
+    export namespace components {
         export interface ViewModelConstructor {
             new(params?: ViewModelParams): ViewModel;
         }
@@ -695,7 +695,7 @@ declare global {
 
     //#region components/loaderRegistry.js
 
-    export module components {
+    export namespace components {
         export function get(componentName: string, callback: (definition: Component, config: Config) => void): string;
         export function clearCachedDefinition(componentName: string): void;
     }
@@ -708,7 +708,7 @@ declare global {
         [name: string]: boolean;
     }
 
-    export module virtualElements {
+    export namespace virtualElements {
         export const allowedBindings: VirtualElementsAllowedBindings;
 
         export function childNodes(node: Node): Node[];
@@ -724,7 +724,7 @@ declare global {
 
     //#region memoization.js
 
-    export module memoization {
+    export namespace memoization {
         export function memoize(callback: (val: any) => void): Node[];
         export function unmemoize(memoId: string, callbackParams: any[]): void;
         export function unmemoizeDomNodeAndDescendants(domNode: Node, extraCallbackParamsArray: any[]): void;
@@ -748,7 +748,7 @@ declare global {
 
     //#region tasks.js
 
-    export module tasks {
+    export namespace tasks {
         export var scheduler: (callback: () => any) => void;
 
         export function schedule(callback: () => any): number;
@@ -761,7 +761,7 @@ declare global {
 
     //#region utils.js
 
-    export module utils {
+    export namespace utils {
         export interface PostJsonOptions {
             params?: object;
             includeFields?: string[];
@@ -818,8 +818,8 @@ declare global {
 
     //#region utils.domData.js
 
-    export module utils {
-        export module domData {
+    export namespace utils {
+        export namespace domData {
             export function get<T = any>(node: Node, key: string): T;
 
             export function set<T = any>(node: Node, key: string, value: T): void;
@@ -832,8 +832,8 @@ declare global {
 
     //#region utils.domNodeDisposal.js
 
-    export module utils {
-        export module domNodeDisposal {
+    export namespace utils {
+        export namespace domNodeDisposal {
             export function addDisposeCallback(node: Node, callback: (node: Node) => void): void;
             export function removeDisposeCallback(node: Node, callback: (node: Node) => void): void;
             export function cleanExternalData(node: Node): void;
@@ -847,7 +847,7 @@ declare global {
 
     //#region utils.domManipulation.js
 
-    export module utils {
+    export namespace utils {
         export function parseHtmlFragment(html: string, documentContext?: Document): Node[];
         export function setHtml(node: Node, html: MaybeSubscribable<string>): void;
     }
@@ -866,7 +866,7 @@ declare global {
 
 
     interface SymbolConstructor {
-        observable?: Symbol;
+        observable?: symbol;
     }
 
 
@@ -907,7 +907,7 @@ declare global {
         var Matchers:Matchers
 
         interface Matchers<T> {
-            toContainText(expected: string, ignoreSpaces: boolean): boolean
+            toContainText(expected: string, ignoreSpaces?: boolean): boolean
             toHaveOwnProperties(expectedProperties: any): boolean
             toHaveTexts(expectedTexts: any): boolean
             toHaveValues(expectedValues: any): boolean

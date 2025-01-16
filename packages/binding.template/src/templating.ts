@@ -326,8 +326,8 @@ export class TemplateBindingHandler extends AsyncBindingHandler {
     let options = unwrap(value)
     let shouldDisplay = true
     let templateComputed: string | Computed<any> | null = null;
-    var elseChainSatisfied = domData.get(element, 'conditional').elseChainSatisfied;
-    var templateName;
+    const elseChainSatisfied = domData.get(element, 'conditional').elseChainSatisfied;
+    let templateName;
 
     if (typeof options === 'string') {
       templateName = value;

@@ -70,7 +70,7 @@ export function observable<T>(value: T): Observable<T>;
 export function observable<T = any>(value: null): Observable<T | null>
 /** No initial value provided, so implicitly includes `undefined` as a possible value */
 export function observable<T = any>(): Observable<T | undefined>
-export module observable {
+export namespace observable {
     export const fn: ObservableFunctions;
 }
 
@@ -215,7 +215,7 @@ export interface ObservableArray<T = any> extends Observable<T[]>, ObservableArr
 
 export function observableArray<T = any>(): ObservableArray<T>;
 export function observableArray<T = any>(initialValue: T[]): ObservableArray<T>;
-export module observableArray {
+export namespace observableArray {
     export const fn: ObservableArrayFunctions;
 }
 

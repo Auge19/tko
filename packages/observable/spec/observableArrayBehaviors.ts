@@ -72,7 +72,7 @@ describe('Observable Array', function () {
 
   it('Should be able to mark single items as destroyed', function () {
     const x : MyModel = { _destroy : null}
-    var y : MyModel = { _destroy : null}
+    const y : MyModel = { _destroy : null}
     testObservableArray([x, y])
     testObservableArray.destroy(y)
     expect(testObservableArray().length).toEqual(2)
@@ -82,8 +82,8 @@ describe('Observable Array', function () {
 
   it('Should be able to mark multiple items as destroyed', function () {
     const x : MyModel = { _destroy : null}
-    var y : MyModel = { _destroy : null}
-    var z : MyModel = { _destroy : null}
+    const y : MyModel = { _destroy : null}
+    const z : MyModel = { _destroy : null}
 
     testObservableArray([x, y, z])
     testObservableArray.destroyAll([x, z])
@@ -104,8 +104,8 @@ describe('Observable Array', function () {
 
   it('Should be able to mark all items as destroyed by passing no args to destroyAll()', function () {
     const x : MyModel = { _destroy : null}
-    var y : MyModel = { _destroy : null}
-    var z : MyModel = { _destroy : null}
+    const y : MyModel = { _destroy : null}
+    const z : MyModel = { _destroy : null}
 
     testObservableArray([x, y, z])
     testObservableArray.destroyAll()
@@ -260,9 +260,9 @@ describe('Observable Array', function () {
   })
 
   it('Should notify subscribers after marking items as destroyed', function () {
-    let x : MyModel = { _destroy : null}
-    var y : MyModel = { _destroy : null}
-    var didNotify = false
+    const x : MyModel = { _destroy : null}
+    const y : MyModel = { _destroy : null}
+    let didNotify = false
 
     testObservableArray([x, y])
     testObservableArray.subscribe(function (/* value */) {
@@ -275,9 +275,9 @@ describe('Observable Array', function () {
   })
 
   it('Should notify "beforeChange" subscribers before marking items as destroyed', function () {
-    let x : MyModel = { _destroy : null}
-    var y : MyModel = { _destroy : null}
-    var didNotify = false
+    const x : MyModel = { _destroy : null}
+    const y : MyModel = { _destroy : null}
+    let didNotify = false
 
     testObservableArray([x, y])
     testObservableArray.subscribe(function (/* value */) {

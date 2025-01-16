@@ -82,7 +82,7 @@ jasmine.setNodeText = function(node, text:string) {
 
 
 function cleanedHtml(node) {
-    var cleanedHtml = node.innerHTML.toLowerCase().replace(/\r\n/g, "");
+    let cleanedHtml = node.innerHTML.toLowerCase().replace(/\r\n/g, "");
     // IE < 9 strips whitespace immediately following comment nodes. Normalize by doing the same on all browsers.
     cleanedHtml = cleanedHtml.replace(/(<!--.*?-->)\s*/g, "$1");
     // Also remove __ko__ expando properties (for DOM data) - most browsers hide these anyway but IE < 9 includes them in innerHTML
@@ -97,7 +97,7 @@ function cleanedHtml(node) {
 const matchers = {
 
     toHaveNodeTypes  (expectedTypes) {
-        var values = arrayMap(this.actual, function (node) {
+        const values = arrayMap(this.actual, function (node) {
             return node.nodeType;
         });
         this.actual = values;   // Fix explanatory message

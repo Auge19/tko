@@ -32,7 +32,7 @@ function ctxStub (obj = {}) { return { lookup (v) { return obj[v] } } }
 
 describe('Attribute Interpolation Markup Provider', function () {
   let testNode: HTMLElement;
-  var provider: AttributeMustacheProvider;
+  let provider: AttributeMustacheProvider;
 
   beforeEach(function () {
     provider = new AttributeMustacheProvider()

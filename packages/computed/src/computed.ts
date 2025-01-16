@@ -564,7 +564,7 @@ export function isPureComputed<T=any> (instance:any): instance is PureComputed<T
 
 export function pureComputed<T = any> (evaluatorFunctionOrOptions: ComputedOptions|ComputedReadFunction, evaluatorFunctionTarget?):Computed<T> {
   if (typeof evaluatorFunctionOrOptions === 'function') {
-    let evaluator = evaluatorFunctionOrOptions as ComputedReadFunction;
+    const evaluator = evaluatorFunctionOrOptions as ComputedReadFunction;
     return computed(evaluator, evaluatorFunctionTarget, {'pure': true})
   } else {
     let options = evaluatorFunctionOrOptions as ComputedOptions;

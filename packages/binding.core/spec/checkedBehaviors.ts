@@ -391,7 +391,7 @@ describe('Binding: Checked', function () {
         expect(testNode).toHaveCheckedStates([true, false])
 
         // "Click" a button; verify observable and elements
-        var inputElement = testNode.children[1] as HTMLInputElement;
+        const inputElement = testNode.children[1] as HTMLInputElement;
         inputElement.click()
         expect(myobservable()).toEqual(false)
         expect(testNode).toHaveCheckedStates([false, true])
@@ -454,7 +454,7 @@ describe('Binding: Checked', function () {
           myobservable(true)
           expect(testNode).toHaveCheckedStates([true, false])
 
-          var inputElement = testNode.children[1] as HTMLInputElement;
+          const inputElement = testNode.children[1] as HTMLInputElement;
 
           // "check" a box; verify observable and elements
           inputElement.click()

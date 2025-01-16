@@ -38,7 +38,7 @@ export interface Computed<T = any> extends ComputedFunctions<T> {
   export function computed<T = any>(evaluator: ComputedReadFunction<T>): Computed<T>;
   export function computed<T = any, TTarget = any>(evaluator: ComputedReadFunction<T, TTarget>, evaluatorTarget: TTarget): Computed<T>;
   export function computed<T = any, TTarget = any>(evaluator: ComputedReadFunction<T, TTarget>, evaluatorTarget: TTarget, options: ComputedOptions<T, TTarget>): Computed<T>;
-  export module computed {
+  export namespace computed {
       export const fn: ComputedFunctions;
   }
 

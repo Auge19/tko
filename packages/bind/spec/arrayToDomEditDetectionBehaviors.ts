@@ -125,7 +125,7 @@ describe('Array to DOM node children mapping', function () {
     expect(testNode).toContainHtml('<div>a</div><div>b</div><div>c</div>')
 
         // Now kill the middle DIV manually, even though people shouldn't really do this
-    var elemToRemove = testNode.children[1]
+    const elemToRemove = testNode.children[1]
     expect(elemToRemove.innerHTML).toEqual('B') // Be sure it's the right one
     elemToRemove.parentNode?.removeChild(elemToRemove)
 

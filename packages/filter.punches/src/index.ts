@@ -15,7 +15,7 @@ interface Filters {
   number(value);
 }
 
-var filters:Filters = {
+const filters:Filters = {
   // Convert value to uppercase
   uppercase: function (value) {
     return sproto.toUpperCase.call(unwrap(value))
