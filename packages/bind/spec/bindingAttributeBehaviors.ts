@@ -5,7 +5,7 @@ import {
 
 import {
   unwrap,
-  observable as koObservable
+  Observable as koObservable
 } from '@tko/observable'
 
 import {
@@ -209,7 +209,7 @@ describe('Binding attribute syntax', function () {
   it('Should call onBindingError with relevant details when an update fails', function () {
     var saved_obe = options.onError,
       obe_calls = 0,
-      observable = koObservable()
+      observable = new koObservable()
 
     this.after(function () {
       options.onError = saved_obe
@@ -261,7 +261,7 @@ describe('Binding attribute syntax', function () {
 
   it('Calls options.onError, if it is defined', function () {
     var oe_calls = 0
-    var oxy = koObservable()
+    var oxy = new koObservable()
     this.after(function () { options.set('onError', undefined) })
     options.set('onError', function (err) {
       expect(err.message.indexOf('turtle')).not.toEqual(-1)
@@ -729,7 +729,7 @@ describe('Binding attribute syntax', function () {
 
     const element = document.createElement('div')
     element.setAttribute('data-bind', 'myBinding: o')
-    const viewModel = { o: koObservable(123) }
+    const viewModel = { o: new koObservable(123) }
     applyBindings(viewModel, element)
     expect(read).toEqual('r')
     const event = new Event('change', { 'bubbles': true, 'cancelable': true })

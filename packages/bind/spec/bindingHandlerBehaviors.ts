@@ -3,7 +3,7 @@ import {
 } from '@tko/utils'
 
 import {
-    observable as koObservable
+    Observable as koObservable
 } from '@tko/observable'
 
 import {
@@ -60,7 +60,7 @@ describe('BindingHandler behaviors', function () {
         computed;
         constructor (...args) {
           super(...args)
-          var v = this.v = koObservable(0)
+          var v = this.v = new koObservable(0)
           instance = this
           this.x = this.computed(() => {
             xCalls++
@@ -98,7 +98,7 @@ describe('BindingHandler behaviors', function () {
     })
 
     it("has a .subscribe property with the node's lifecycle", function () {
-      var obs = koObservable(),
+      var obs = new koObservable(),
         handlerInstance
       bindingHandlers.fnHandler = class extends BindingHandler {
         subscribe;
@@ -144,7 +144,7 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('calls the `fn.dispose` when cleaned up', function () {
-      var viewModel = { x: koObservable(true) },
+      var viewModel = { x: new koObservable(true) },
         instance = null,
         disposeCalled = 0
       bindingHandlers.fnHandler = function () {
@@ -162,7 +162,7 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('does not error without a `dispose` property', function () {
-      var viewModel = { x: koObservable(true) }
+      var viewModel = { x: new koObservable(true) }
       bindingHandlers.fnHandler = function () {}
       testNode.innerHTML = '<b data-bind="if: x"><i data-bind="fnHandler"></i></b>'
       applyBindings(viewModel, testNode)

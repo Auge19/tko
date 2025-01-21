@@ -57,7 +57,7 @@ import {
     isObservable,
     isSubscribable,
     isWriteableObservable,
-    observable,
+    Observable,
     observableArray,
     isObservableArray,
     peek,
@@ -166,7 +166,7 @@ const knockout = {
   isSubscribable,
   isWriteableObservable,
   isWritableObservable: isWriteableObservable,
-  observable,
+  Observable,
   observableArray,
   isObservableArray,
   peek,
@@ -207,7 +207,7 @@ const knockout = {
 
 export class Builder {
   providedProperties: { extenders: any; bindingHandlers: any; bindingProvider: any }
-  
+
   constructor ({ provider, bindings, extenders, filters, options }) {
     Object.assign(knockout.options, options, {
       filters,

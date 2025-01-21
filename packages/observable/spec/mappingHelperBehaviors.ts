@@ -3,13 +3,13 @@
 //
 
 import {
-    toJS, toJSON, isObservable, observable, observableArray
-} from '../dist'
+    toJS, toJSON, observableArray, isObservable, observable
+} from '../src'
 
 describe('Mapping helpers', function () {
   it('toJS should require a parameter', function () {
     expect(function () {
-      toJS()
+      toJS(null)
     }).toThrow()
   })
 
@@ -17,6 +17,7 @@ describe('Mapping helpers', function () {
     var atomicValues = ['hello', 123, true, null, undefined, { a: 1 }]
     for (var i = 0; i < atomicValues.length; i++) {
       var data = observable(atomicValues[i])
+      console.log(isObservable(data));
       var result = toJS(data)
       expect(isObservable(result)).toEqual(false)
       expect(result).toEqual(atomicValues[i])

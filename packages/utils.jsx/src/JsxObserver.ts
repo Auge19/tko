@@ -10,7 +10,7 @@ import {
 } from '@tko/bind'
 
 import {
-  isObservable, unwrap, observable
+  isObservable, unwrap, Observable
 } from '@tko/observable'
 
 import {
@@ -24,7 +24,6 @@ import {
 import {
   queueCleanNode
 } from './jsxClean'
-import { IObservable } from 'packages/observable/src/observable'
 
 export const ORIGINAL_JSX_SYM = Symbol('Knockout - Original JSX')
 
@@ -51,7 +50,7 @@ function isIterable (v) {
 interface Changes {
   index: number;
   status: string;
-  value: any 
+  value: any
 }
 
 /**
@@ -188,7 +187,7 @@ export class JsxObserver extends LifeCycle {
    * @param {int} index
    * @param {string|object|Array|Observable.string|Observable.Array|Observable.object} jsx
    */
-  addChange (index: number, jsx:string|object|Array<any>|IObservable) {
+  addChange (index: number, jsx:string | object | Array<any>| any) {
     this.nodeArrayOrObservableAtIndex.splice(index, 0,
       this.injectNode(jsx, this.lastNodeFor(index)))
   }
@@ -350,7 +349,7 @@ export class JsxObserver extends LifeCycle {
   }
 
   futureJsxNode (promise) {
-    const obs = observable()
+    const obs =  new Observable()
     promise.then(obs).catch(e => obs(e instanceof Error ? e : Error(e)))
     const jo = new JsxObserver(obs, this.parentNode, null, this.xmlns, this.noInitialBinding)
     this.addDisposable(jo)

@@ -10,7 +10,7 @@ import {
 
 import {
     unwrap,
-    observable as observableConstructor
+    Observable
 } from '@tko/observable';
 
 import {
@@ -46,7 +46,7 @@ describe('Binding dependencies', function () {
   })
 
   it('If the binding handler depends on an observable, invokes the init handler once and the update handler whenever a new value is available', function () {
-    var observable = observableConstructor();
+    var observable = new Observable();
     var initPassedValues = new Array(), updatePassedValues = new Array();
     bindingHandlers.test = {
       init: function (element, valueAccessor) { initPassedValues.push(valueAccessor()()); },
@@ -67,7 +67,7 @@ describe('Binding dependencies', function () {
   });
 
   it('If the associated DOM element was removed by KO, handler subscriptions are disposed immediately', function () {
-    var observable = observableConstructor('A');
+    var observable = new Observable('A');
     bindingHandlers.anyHandler = {
       update: function (element, valueAccessor) { valueAccessor(); }
     };
@@ -82,7 +82,7 @@ describe('Binding dependencies', function () {
   });
 
   it('If the associated DOM element was removed independently of KO, handler subscriptions are disposed on the next evaluation', function () {
-    var observable = observableConstructor('A');
+    var observable = new Observable('A');
     bindingHandlers.anyHandler = {
       update: function (element, valueAccessor) { valueAccessor(); }
     };
@@ -98,7 +98,7 @@ describe('Binding dependencies', function () {
   });
 
   it('If the binding attribute involves an observable, re-invokes the bindings if the observable notifies a change', function () {
-    var observable = observableConstructor({ message: 'hello' });
+    var observable = new Observable({ message: 'hello' });
     var passedValues = new Array();
     bindingHandlers.test = { update: function (element, valueAccessor) { passedValues.push(valueAccessor()); } };
     testNode.innerHTML = "<div data-bind='test: myObservable().message'></div>";
@@ -113,7 +113,7 @@ describe('Binding dependencies', function () {
   });
 
   it('Should not reinvoke init for notifications triggered during first evaluation', function () {
-    var observable = observableConstructor('A');
+    var observable = new Observable('A');
     var initCalls = 0;
     bindingHandlers.test = {
       init: function (element, valueAccessor) {
@@ -136,7 +136,7 @@ describe('Binding dependencies', function () {
   it('Should not run update before init, even if an associated observable is updated by a different binding before init', function () {
         // Represents the "theoretical issue" posed by Ryan in comments on https://github.com/SteveSanderson/knockout/pull/193
 
-    var observable = observableConstructor('A'), hasInittedSecondBinding = false, hasUpdatedSecondBinding = false;
+    var observable = new Observable('A'), hasInittedSecondBinding = false, hasUpdatedSecondBinding = false;
     bindingHandlers.test1 = {
       init: function (element, valueAccessor) {
                 // Read the observable (to set up a dependency on it), and then also write to it (to trigger re-eval of bindings)
@@ -176,7 +176,7 @@ describe('Binding dependencies', function () {
       }
     };
     testNode.innerHTML = "<div data-bind='testInit: myProp()'></div><div data-bind='testUpdate: myProp()'></div>";
-    var vm = observableConstructor({ myProp: observableConstructor('initial value') });
+    var vm = new Observable({ myProp: new Observable('initial value') });
     applyBindings(vm, testNode);
     expect(lastBoundValueInit).toEqual('initial value');
     expect(lastBoundValueUpdate).toEqual('initial value');
@@ -187,7 +187,7 @@ describe('Binding dependencies', function () {
     expect(lastBoundValueUpdate).toEqual('second value');
 
         // update value of observable to another observable
-    vm().myProp(observableConstructor('third value'));
+    vm().myProp(new Observable('third value'));
     expect(lastBoundValueInit).toEqual('third value');
     expect(lastBoundValueUpdate).toEqual('third value');
 
@@ -198,7 +198,7 @@ describe('Binding dependencies', function () {
   });
 
   it('Should not update sibling bindings if a binding is updated', function () {
-    var countUpdates = 0, observable = observableConstructor(1);
+    var countUpdates = 0, observable = new Observable(1);
     bindingHandlers.countingHandler = {
       update: function () { countUpdates++; }
     }
@@ -214,7 +214,7 @@ describe('Binding dependencies', function () {
   });
 
   it('Should not subscribe to observables accessed in init function', function () {
-    var observable = observableConstructor('A');
+    var observable = new Observable('A');
     bindingHandlers.test = {
       init: function (element, valueAccessor) {
         var value = valueAccessor();
@@ -229,7 +229,7 @@ describe('Binding dependencies', function () {
 
   it('Should access latest value from extra binding when normal binding is updated', function () {
     delete bindingHandlers.nonexistentHandler;
-    var observable = observableConstructor(), updateValue;
+    var observable = new Observable(), updateValue;
     var vm = {myObservable: observable, myNonObservable: 'first value'};
     bindingHandlers.existentHandler = {
       update: function (element, valueAccessor, allBindings) {
@@ -248,7 +248,7 @@ describe('Binding dependencies', function () {
 
   it('Should update a binding when its observable is modified in a sibling binding', function () {
         // Represents an issue brought up in the forum: https://groups.google.com/d/topic/knockoutjs/ROyhN7T2WJw/discussion
-    var latestValue, observable1 = observableConstructor(1), observable2 = observableConstructor();
+    var latestValue, observable1 = new Observable(1), observable2 = new Observable();
     bindingHandlers.updatedHandler = {
       update: function () { latestValue = observable2(); }
     }
@@ -265,7 +265,7 @@ describe('Binding dependencies', function () {
   });
 
   it('Should track observables accessed within the binding provider\'s "getBindingAccessor" function', function () {
-    var observable = observableConstructor('substitute')
+    var observable = new Observable('substitute')
 
     class TestProvider extends DataBindProvider {
       getBindingAccessors (node, bindingContext) {
@@ -305,8 +305,8 @@ describe('Binding dependencies', function () {
       }
     };
 
-    var callbackObservable = observableConstructor(1),
-      bindingObservable = observableConstructor(1),
+    var callbackObservable = new Observable(1),
+      bindingObservable = new Observable(1),
       callbacks = 0,
       vm = {
         childprop: 'child',
@@ -347,7 +347,7 @@ describe('Binding dependencies', function () {
     var callbackSpy1 = jasmine.createSpy('callbackSpy1'),
       callbackSpy2 = jasmine.createSpy('callbackSpy2'),
       vm = {
-        observable: observableConstructor('value'),
+        observable: new Observable('value'),
         callback: callbackSpy1
       };
 
@@ -366,7 +366,7 @@ describe('Binding dependencies', function () {
 
   describe('Observable view models', function () {
     it('Should update bindings (including callbacks)', function () {
-      var vm = observableConstructor(), clickedVM;
+      var vm = new Observable(), clickedVM;
       function checkVM (data) {
         clickedVM = data;
       }
@@ -387,7 +387,7 @@ describe('Binding dependencies', function () {
       expect(clickedVM).toEqual(vm());
 
             // set the view-model to a new object
-      vm({ someProp: observableConstructor('My new prop value'), checkVM: checkVM });
+      vm({ someProp: new Observable('My new prop value'), checkVM: checkVM });
       expect(child.value).toEqual('My new prop value');
 
             // a change to the input value should be written to the new model
@@ -405,7 +405,7 @@ describe('Binding dependencies', function () {
     });
 
     it('Should provide access to the view model\'s observable through $rawData', function () {
-      var vm = observableConstructor('text');
+      var vm = new Observable('text');
       testNode.innerHTML = "<div data-bind='text:$data'></div>";
       applyBindings(vm, testNode);
       expect(testNode).toContainText('text');
@@ -416,7 +416,7 @@ describe('Binding dependencies', function () {
     });
 
     it('Should set $rawData to the observable returned from a function', function () {
-      var vm = observableConstructor('text');
+      var vm = new Observable('text');
       testNode.innerHTML = "<div data-bind='text:$data'></div>";
       applyBindings(function () { return vm; }, testNode);
       expect(testNode).toContainText('text');
@@ -427,7 +427,7 @@ describe('Binding dependencies', function () {
     });
 
     it('Should set $rawData to the view model if a function unwraps the observable view model', function () {
-      var vm = observableConstructor('text');
+      var vm = new Observable('text');
       testNode.innerHTML = "<div data-bind='text:$data'></div>";
       applyBindings(function () { return vm(); }, testNode);
       expect(testNode).toContainText('text');
@@ -444,7 +444,7 @@ describe('Binding dependencies', function () {
     });
 
     it('Should dispose view model subscription on next update when bound node is removed outside of KO', function () {
-      var vm = observableConstructor('text');
+      var vm = new Observable('text');
       testNode.innerHTML = "<div data-bind='text:$data'></div>";
       applyBindings(vm, testNode);
       expect(vm.getSubscriptionsCount()).toEqual(1);
@@ -466,7 +466,7 @@ describe('Binding dependencies', function () {
       };
 
       testNode.innerHTML = "<div data-bind='setChildContext:obj1'><span data-bind='text:prop1'></span><span data-bind='text:$root.prop2'></span></div>";
-      var vm = observableConstructor({obj1: {prop1: 'First '}, prop2: 'view model'});
+      var vm = new Observable({obj1: {prop1: 'First '}, prop2: 'view model'});
       applyBindings(vm, testNode);
       expect(testNode).toContainText('First view model');
 
@@ -494,7 +494,7 @@ describe('Binding dependencies', function () {
       };
 
       testNode.innerHTML = "<div data-bind='withProperties: obj1'><span data-bind='text:prop1'></span><span data-bind='text:prop2'></span><span data-bind='text:$rawData().prop3'></span></div>";
-      var vm = observableConstructor({obj1: {prop1: 'First '}, prop2: 'view ', prop3: 'model'});
+      var vm = new Observable({obj1: {prop1: 'First '}, prop2: 'view ', prop3: 'model'});
       applyBindings(vm, testNode);
       expect(testNode).toContainText('First view model');
 
@@ -520,9 +520,9 @@ describe('Binding dependencies', function () {
         }
       };
 
-      var vm1 = observableConstructor('vm1'),
-        vm2 = observableConstructor('vm2'),
-        whichVm = observableConstructor(vm1);
+      var vm1 = new Observable('vm1'),
+        vm2 = new Observable('vm2'),
+        whichVm = new Observable(vm1);
       testNode.innerHTML = "<div data-bind='extended: {}'><div data-bind='text: $data'></div></div>";
       applyBindings(function () { return whichVm(); }, testNode);
       expect(testNode).toContainText('vm1');
@@ -556,7 +556,7 @@ describe('Binding dependencies', function () {
       };
 
       testNode.innerHTML = "<div data-bind='withProperties: obj1'><span data-bind='text:prop1'></span><span data-bind='text:$parent.prop2'></span></div>";
-      var vm = observableConstructor({obj1: {prop1: 'First '}, prop2: 'view model'});
+      var vm = new Observable({obj1: {prop1: 'First '}, prop2: 'view model'});
       applyBindings(vm, testNode);
       expect(testNode).toContainText('First view model');
 

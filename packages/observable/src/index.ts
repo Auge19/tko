@@ -6,7 +6,7 @@
 //
 
 export {
-    Observable, isObservable, unwrap, peek,
+    Observable, observable, isObservable, unwrap, peek,
     isWriteableObservable, isWritableObservable
 } from './observable'
 export { isSubscribable, subscribable, LATEST_VALUE } from './subscribable'

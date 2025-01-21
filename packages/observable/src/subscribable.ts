@@ -20,7 +20,7 @@ if (!Symbol.observable) {
 }
 
 export function subscribable () : Subscribable {
-  
+
   return new Subscribable();
 }
 
@@ -36,11 +36,12 @@ export class Subscribable extends Function {
   _subscriptions : any;
   _versionNumber : any;
   _changeSubscriptions : any
-  equalityComparer : Function
-
+  equalityComparer: Function | null;
+  extend: Function;
   constructor() {
     super()
     this.init()
+    this.extend = applyExtenders;
   }
 
   init () {
@@ -183,9 +184,7 @@ export class Subscribable extends Function {
 
   toString () { return '[object Object]' }
 
-  extend (requestedExtenders?): any {
-    return applyExtenders(requestedExtenders)
-  }
+
 }
 
 // For browsers that support proto assignment, we overwrite the prototype of each

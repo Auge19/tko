@@ -4,10 +4,12 @@ import {
 } from '@tko/utils'
 
 import {
-    observable, isSubscribable, isObservable,
+    isSubscribable, isObservable,
     isWriteableObservable, isWritableObservable, subscribable,
     unwrap
 } from '../dist'
+
+import { observable } from '../src'
 
 describe('Observable', function () {
   it('Should be subscribable', function () {
@@ -310,44 +312,45 @@ describe('Observable', function () {
     ])
   })
 
-  it('Should inherit any properties defined on subscribable.fn or observable.fn', function () {
-    this.after(function () {
-      delete subscribable.fn.customProp       // Will be able to reach this
-      delete subscribable.fn.customFunc       // Overridden on observable.fn
-      delete observable.fn.customFunc         // Will be able to reach this
-    })
+  // obsolete after swtich to class layout
+  // it('Should inherit any properties defined on subscribable.fn or observable.fn', function () {
+  //   this.after(function () {
+  //     delete subscribable.fn.customProp       // Will be able to reach this
+  //     delete subscribable.fn.customFunc       // Overridden on observable.fn
+  //     delete observable.fn.customFunc         // Will be able to reach this
+  //   })
 
-    subscribable.fn.customProp = 'subscribable value'
-    subscribable.fn.customFunc = function () { throw new Error('Shouldn\'t be reachable') }
-    observable.fn.customFunc = function () { return this() }
+  //   subscribable.fn.customProp = 'subscribable value'
+  //   subscribable.fn.customFunc = function () { throw new Error('Shouldn\'t be reachable') }
+  //   observable.fn.customFunc = function () { return this() }
 
-    var instance = observable(123)
-    expect(instance.customProp).toEqual('subscribable value')
-    expect(instance.customFunc()).toEqual(123)
-  })
+  //   var instance = observable(123)
+  //   expect(instance.customProp).toEqual('subscribable value')
+  //   expect(instance.customFunc()).toEqual(123)
+  // })
 
-  it('Should have access to functions added to "fn" on existing instances on supported browsers', function () {
-        // On unsupported browsers, there's nothing to test
-    if (!jasmine.browserSupportsProtoAssignment) {
-      return
-    }
+  // it('Should have access to functions added to "fn" on existing instances on supported browsers', function () {
+  //       // On unsupported browsers, there's nothing to test
+  //   if (!jasmine.browserSupportsProtoAssignment) {
+  //     return
+  //   }
 
-    this.after(function () {
-      delete subscribable.fn.customFunction1
-      delete observable.fn.customFunction2
-    })
+  //   this.after(function () {
+  //     delete subscribable.fn.customFunction1
+  //     delete observable.fn.customFunction2
+  //   })
 
-    var myObservable = observable()
+  //   var myObservable = observable()
 
-    var customFunction1 = function () {}
-    var customFunction2 = function () {}
+  //   var customFunction1 = function () {}
+  //   var customFunction2 = function () {}
 
-    subscribable.fn.customFunction1 = customFunction1
-    myObservable.fn.customFunction2 = customFunction2
+  //   subscribable.fn.customFunction1 = customFunction1
+  //   myObservable.fn.customFunction2 = customFunction2
 
-    expect(myObservable.customFunction1).toBe(customFunction1)
-    expect(myObservable.customFunction2).toBe(customFunction2)
-  })
+  //   expect(myObservable.customFunction1).toBe(customFunction1)
+  //   expect(myObservable.customFunction2).toBe(customFunction2)
+  // })
 
   it('immediately emits any value when called with {next: ...}', function () {
     const instance = observable(1)

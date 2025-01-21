@@ -13,30 +13,27 @@ import { valuesArePrimitiveAndEqual } from './extenders'
 
 
 export class Observable extends Subscribable {
-  
-  LATEST_VALUE: any
-  static observablePrototypes : any
   // Some observables may not always be writeable, notably computeds.
   isWriteable: true
-  
+  [key: symbol | string]: any;
   constructor(initialValue?: any) {
-    super()
-
+    super();
+    this[options.protoProperty] = true
     if (arguments.length > 0) {
       // Write
       // Ignore writes if the value hasn't changed
-      if ((this as any).isDifferent(this[LATEST_VALUE], arguments[0])) {
-        (this as any).valueWillMutate();
+      if (this.isDifferent(this[LATEST_VALUE], arguments[0])) {
+        this.valueWillMutate();
         this[LATEST_VALUE] = arguments[0];
-        (this as any).valueHasMutated();
+        this.valueHasMutated();
       }
-      
+
     } else {
-            // Read
+      // Read
       dependencyDetection.registerDependency(this) // The caller only needs to be notified of changes if they did a "read" operation
     }
 
-    overwriteLengthPropertyIfSupported(this, { value: undefined })
+    // overwriteLengthPropertyIfSupported(this, { value: undefined })
 
     if (options.deferUpdates) {
       deferUpdates(this)
@@ -74,7 +71,7 @@ function limitNotifySubscribers (value, event) {
   } else {
     this._origNotifySubscribers(value, event)
   }
-  
+
 }
 
 
@@ -146,12 +143,16 @@ observable.fn[protoProperty] = observable
 observable.
 */
 
-export function isObservable (instance:any): instance is Observable {
-  /*const proto = typeof instance === 'function' && instance[options.protoProperty]
-  if (proto && !Observable.observablePrototypes.has(proto)) {
-    throw Error('Invalid object that looks like an observable; possibly from another Knockout instance')
-  } */
-  return instance instanceof Observable;
+export function isObservable (instance: any): instance is Observable {
+
+  if(instance instanceof Observable)
+    return true;
+
+  const proto = typeof instance === 'function' && instance[options.protoProperty] === true
+  // if (proto && !Observable.observablePrototypes.has(proto)) {
+  //   throw Error('Invalid object that looks like an observable; possibly from another Knockout instance')
+  // }
+  return !!proto;
 }
 
 export function unwrap (value) {
@@ -167,3 +168,7 @@ export function isWriteableObservable<T = any> (instance: any): instance is Obse
 }
 
 export { isWriteableObservable as isWritableObservable }
+
+export function observable(initialValue?: any): Observable {
+  return new Observable(initialValue);
+}

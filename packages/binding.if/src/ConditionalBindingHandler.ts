@@ -3,13 +3,12 @@ import {
 } from '@tko/utils'
 
 import {
-    dependencyDetection, observable
+    dependencyDetection, Observable
 } from '@tko/observable'
 
 import {
     applyBindingsToDescendants, AsyncBindingHandler
 } from '@tko/bind'
-import { IObservable } from 'packages/observable/src/observable';
 
 /**
  * Create a DOMbinding that controls DOM nodes presence
@@ -39,13 +38,13 @@ export default class ConditionalBindingHandler extends AsyncBindingHandler {
   get bindingContext(): any {
     return;
   }
-  completesElseChain: IObservable;
+  completesElseChain: any;
   hasElse: boolean;
   ifElseNodes?: any;
   constructor (params) {
     super(params)
     this.hasElse = this.detectElse(this.$element)
-    const elseChainSatisfied = this.completesElseChain = observable()
+    const elseChainSatisfied = this.completesElseChain =  new Observable()
     domData.set(this.$element, 'conditional', { elseChainSatisfied })
   }
 
