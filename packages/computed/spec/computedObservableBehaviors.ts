@@ -10,7 +10,7 @@ import {
 import {
     computed, isPureComputed, isComputed
 } from '../dist'
-import { ObservableArray } from 'packages/observable/types/Observable'
+import { ObservableArray } from 'packages/observable/src/observableArray'
 
 describe('Dependent Observable', function () {
   it('Should be subscribable', function () {

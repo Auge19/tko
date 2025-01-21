@@ -1,11 +1,11 @@
-import { Subscribable } from 'packages/observable/types/Observable';
+
 
 export interface Computed<T = any> extends ComputedFunctions<T> {
     (): T;
     (value: T): this;
   }
 
-  export interface ComputedFunctions<T = any> extends Subscribable<T> {
+  export interface ComputedFunctions<T = any> extends Function /* extends SubscribableFunctions */ {
     // It's possible for a to be undefined, since the equalityComparer is run on the initial
     // computation with undefined as the first argument. This is user-relevant for deferred computeds.
     equalityComparer(a: T | undefined, b: T): boolean;
@@ -14,6 +14,9 @@ export interface Computed<T = any> extends ComputedFunctions<T> {
     isActive(): boolean;
     getDependenciesCount(): number;
     getDependencies(): Subscribable[];
+    extend(requestedExtenders: any): this;
+    notifySubscribers(valueToWrite?: any, event?: string): void;
+    subscribe<TTarget = void> (callback : SubscriptionCallback<any, TTarget>, callbackTarget? : TTarget, event? : string) : Subscription
   }
 
 

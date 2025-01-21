@@ -146,7 +146,7 @@ describe('Rate-limited', function () {
 
   describe('Subscribable', function () {
     it('Should delay change notifications', function () {
-      var subscribable = new koSubscribable().extend({rateLimit: 500})
+      var subscribable = koSubscribable().extend({rateLimit: 500})
       var notifySpy = jasmine.createSpy('notifySpy')
       subscribable.subscribe(notifySpy)
       subscribable.subscribe(notifySpy, null, 'custom')
@@ -170,7 +170,7 @@ describe('Rate-limited', function () {
     })
 
     it('Should notify every timeout interval using notifyAtFixedRate method ', function () {
-      var subscribable = new koSubscribable().extend({rateLimit: {method: 'notifyAtFixedRate', timeout: 50}})
+      var subscribable = koSubscribable().extend({rateLimit: {method: 'notifyAtFixedRate', timeout: 50}})
       var notifySpy = jasmine.createSpy('notifySpy')
       subscribable.subscribe(notifySpy)
 
@@ -191,7 +191,7 @@ describe('Rate-limited', function () {
     })
 
     it('Should notify after nothing happens for the timeout period using notifyWhenChangesStop method', function () {
-      var subscribable = new koSubscribable().extend({rateLimit: {method: 'notifyWhenChangesStop', timeout: 50}})
+      var subscribable = koSubscribable().extend({rateLimit: {method: 'notifyWhenChangesStop', timeout: 50}})
       var notifySpy = jasmine.createSpy('notifySpy')
       subscribable.subscribe(notifySpy)
 
@@ -211,7 +211,7 @@ describe('Rate-limited', function () {
     })
 
     it('Should use latest settings when applied multiple times', function () {
-      var subscribable = new koSubscribable().extend({rateLimit: 250}).extend({rateLimit: 500})
+      var subscribable = koSubscribable().extend({rateLimit: 250}).extend({rateLimit: 500})
       var notifySpy = jasmine.createSpy('notifySpy')
       subscribable.subscribe(notifySpy)
 
@@ -227,7 +227,7 @@ describe('Rate-limited', function () {
     it('Uses latest settings for future notification and previous settings for pending notification', function () {
             // This test describes the current behavior for the given scenario but is not a contract for that
             // behavior, which could change in the future if convenient.
-      var subscribable = new koSubscribable().extend({rateLimit: 250})
+      var subscribable = koSubscribable().extend({rateLimit: 250})
       var notifySpy = jasmine.createSpy('notifySpy')
       subscribable.subscribe(notifySpy)
 

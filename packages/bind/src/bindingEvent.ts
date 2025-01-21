@@ -12,7 +12,7 @@ export const bindingEvent = {
   subscribe(node: Node, event: string, callback: Function, context: any) {
     const bindingInfo = domData.getOrSet(node, boundElementDomDataKey, {})
     if (!bindingInfo.eventSubscribable) {
-      bindingInfo.eventSubscribable = new subscribable()
+      bindingInfo.eventSubscribable = subscribable()
     }
     return bindingInfo.eventSubscribable.subscribe(callback, context, event)
   },

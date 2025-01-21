@@ -8,62 +8,61 @@ import {
 
 import * as dependencyDetection from './dependencyDetection'
 import { deferUpdates } from './defer'
-import { subscribable, defaultEvent, LATEST_VALUE } from './subscribable'
+import { defaultEvent, LATEST_VALUE, Subscribable } from './subscribable'
 import { valuesArePrimitiveAndEqual } from './extenders'
-import { Observable } from '../types/Observable'
 
-export function observable(initialValue?: any): Observable{
-  function Observable () {
+
+export class Observable extends Subscribable {
+  
+  LATEST_VALUE: any
+  static observablePrototypes : any
+  // Some observables may not always be writeable, notably computeds.
+  isWriteable: true
+  
+  constructor(initialValue?: any) {
+    super()
+
     if (arguments.length > 0) {
-            // Write
-            // Ignore writes if the value hasn't changed
-      if ((Observable as any).isDifferent(Observable[LATEST_VALUE], arguments[0])) {
-        (Observable as any).valueWillMutate();
-        Observable[LATEST_VALUE] = arguments[0];
-        (Observable as any).valueHasMutated();
+      // Write
+      // Ignore writes if the value hasn't changed
+      if ((this as any).isDifferent(this[LATEST_VALUE], arguments[0])) {
+        (this as any).valueWillMutate();
+        this[LATEST_VALUE] = arguments[0];
+        (this as any).valueHasMutated();
       }
-      return this // Permits chained assignments
+      
     } else {
             // Read
-      dependencyDetection.registerDependency(Observable) // The caller only needs to be notified of changes if they did a "read" operation
-      return Observable[LATEST_VALUE]
+      dependencyDetection.registerDependency(this) // The caller only needs to be notified of changes if they did a "read" operation
     }
+
+    overwriteLengthPropertyIfSupported(this, { value: undefined })
+
+    if (options.deferUpdates) {
+      deferUpdates(this)
+    }
+
+    this.equalityComparer = valuesArePrimitiveAndEqual
   }
 
-  overwriteLengthPropertyIfSupported(Observable, { value: undefined })
-
-  Observable[LATEST_VALUE] = initialValue
-
-  subscribable.fn.init(Observable)
-
-    // Inherit from 'observable'
-  Object.setPrototypeOf(Observable, observable.fn)
-
-  if (options.deferUpdates) {
-    deferUpdates(Observable)
-  }
-
-  return (Observable as any)
-}
-
-// Define prototype for observables
-observable.fn = {
-  equalityComparer: valuesArePrimitiveAndEqual,
-  peek () { return this[LATEST_VALUE] },
+  peek () { return this[LATEST_VALUE] }
   valueHasMutated () {
     this.notifySubscribers(this[LATEST_VALUE], 'spectate')
     this.notifySubscribers(this[LATEST_VALUE])
-  },
+  }
   valueWillMutate () {
     this.notifySubscribers(this[LATEST_VALUE], 'beforeChange')
-  },
+  }
 
-  modify (fn, peek = true) {
+  modify (fn, peek?) : Observable {
+
+    if(peek === undefined)
+      peek = true
+
     return this(fn(peek ? this.peek() : this()))
-  },
+  }
 
-  // Some observables may not always be writeable, notably computeds.
-  isWriteable: true
+
 }
 
 // Moved out of "limit" to avoid the extra closure
@@ -75,10 +74,12 @@ function limitNotifySubscribers (value, event) {
   } else {
     this._origNotifySubscribers(value, event)
   }
+  
 }
 
+
 // Add `limit` function to the subscribable prototype
-(subscribable.fn as any).limit = function limit (limitFunction) {
+Subscribable.prototype.limit = function limit (limitFunction) {
   var self = this
   var selfIsObservable = isObservable(self)
   var beforeChange = 'beforeChange'
@@ -136,21 +137,21 @@ function limitNotifySubscribers (value, event) {
   })
 }
 
-Object.setPrototypeOf(observable.fn, subscribable.fn)
-
+/*
 var protoProperty = observable.protoProperty = options.protoProperty
 observable.fn[protoProperty] = observable
 
 // Subclasses can add themselves to observableProperties so that
 // isObservable will be `true`.
-observable.observablePrototypes = new Set([observable])
+observable.
+*/
 
-export function isObservable<T=any> (instance:any): instance is Observable<T> {
-  const proto = typeof instance === 'function' && instance[protoProperty]
-  if (proto && !observable.observablePrototypes.has(proto)) {
+export function isObservable (instance:any): instance is Observable {
+  /*const proto = typeof instance === 'function' && instance[options.protoProperty]
+  if (proto && !Observable.observablePrototypes.has(proto)) {
     throw Error('Invalid object that looks like an observable; possibly from another Knockout instance')
-  }
-  return !!proto
+  } */
+  return instance instanceof Observable;
 }
 
 export function unwrap (value) {
@@ -161,7 +162,7 @@ export function peek (value) {
   return isObservable(value) ? value.peek() : value
 }
 
-export function isWriteableObservable<T = any> (instance: any): instance is Observable<T> {
+export function isWriteableObservable<T = any> (instance: any): instance is Observable {
   return isObservable(instance) && (instance as any).isWriteable
 }
 

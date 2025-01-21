@@ -15,7 +15,7 @@ function loadComponentAndNotify (componentName, callback) {
     completedAsync
   if (!_subscribable) {
         // It's not started loading yet. Start loading, and when it's done, move it to loadedDefinitionsCache.
-    _subscribable = loadingSubscribablesCache[componentName] = new subscribable()
+    _subscribable = loadingSubscribablesCache[componentName] = subscribable()
     _subscribable.subscribe(callback)
 
     beginLoadingComponent(componentName, function (definition, config) {

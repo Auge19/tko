@@ -35,7 +35,7 @@ import {
 import $ from 'jquery'
 
 import { assert } from "chai"
-import { ObservableArray } from 'packages/observable/types/Observable'
+import { ObservableArray } from 'packages/observable/src/observableArray'
 
 beforeEach(function () {
   var provider = new MultiProvider({
@@ -223,7 +223,7 @@ describe('is empty/conditional', function () {
 
   it('sets `elseChainSatisfied` to true after array is filled', function () {
     var div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
-    var obs: ObservableArray<number> = observableArray([])
+    var obs: ObservableArray = observableArray([])
     var view = {obs: obs}
     applyBindings(view, div[0])
     obs([1, 2, 3])
@@ -809,7 +809,7 @@ describe('observable array changes', function () {
 
     it('updates the first list item', function () {
       var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
-      var list: ObservableArray<string> = observableArray([])
+      var list: ObservableArray = observableArray([])
       applyBindings(list, target[0])
       list.push('a')
       assert.equal(contextFor(target.children()[0]).$index(), 0)

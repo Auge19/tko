@@ -3,9 +3,8 @@ import {
   removeDisposeCallback, addDisposeCallback
 } from '@tko/utils'
 
-import { Subscription as SubscriptionType } from "../types/Observable";
 
-export default class Subscription implements SubscriptionType{
+export default class Subscription{
   private _disposeCallback: any
   private _target: any
   private _callback: any

@@ -42,8 +42,7 @@ import components from '@tko/utils.component'
 import {
     useMockForTasks
 } from '@tko/utils/helpers/jasmine-13-helper'
-import { ObservableArray } from 'packages/observable/types/Observable'
-
+import { ObservableArray } from 'packages/observable/src/observableArray'
 
 
 
@@ -1397,7 +1396,7 @@ describe('Components: Component binding', function () {
 
     it('respects observable array changes with JSX', function () {
       testNode.innerHTML = ''
-      const arr: ObservableArray<any> = observableArray([])
+      const arr: ObservableArray = observableArray([])
 
       // <test-component>
       //   <template slot='X'>{arr}</template>

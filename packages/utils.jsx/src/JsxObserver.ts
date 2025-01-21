@@ -24,7 +24,7 @@ import {
 import {
   queueCleanNode
 } from './jsxClean'
-import { Observable } from 'packages/observable/types/Observable'
+import { IObservable } from 'packages/observable/src/observable'
 
 export const ORIGINAL_JSX_SYM = Symbol('Knockout - Original JSX')
 
@@ -188,7 +188,7 @@ export class JsxObserver extends LifeCycle {
    * @param {int} index
    * @param {string|object|Array|Observable.string|Observable.Array|Observable.object} jsx
    */
-  addChange (index: number, jsx:string|object|Array<any>|Observable<string>|Observable<any[]>|Observable<object>) {
+  addChange (index: number, jsx:string|object|Array<any>|IObservable) {
     this.nodeArrayOrObservableAtIndex.splice(index, 0,
       this.injectNode(jsx, this.lastNodeFor(index)))
   }

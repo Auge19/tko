@@ -25,7 +25,7 @@ import {
 } from '../dist';
 
 import { assert } from "chai"
-import { Observable } from 'packages/observable/types/Observable';
+import { IObservable } from 'packages/observable/src/observable';
 
 function ctxStub (ctx?) {
   return {
@@ -896,7 +896,7 @@ describe('compound expressions', function () {
     },
     context,
     $context,
-    obs:Observable<any> & ExtendedObservable = observable({
+    obs:IObservable & ExtendedObservable = observable({
       d: d
     });
 

@@ -3,7 +3,7 @@
  */
 
 import {
-  observable, observableArray, unwrap
+  Observable, observableArray, unwrap
 } from '@tko/observable'
 
 import {
@@ -27,7 +27,7 @@ function setOrCreate (mirror, prop, value, proxy) {
   if (!mirror[prop]) {
     const ctr = Array.isArray(value) ? observableArray
       : typeof value === 'function' ? makeComputed.bind(null, proxy)
-      : observable
+      : Observable
     mirror[prop] = ctr(value)
   } else {
     mirror[prop](value)

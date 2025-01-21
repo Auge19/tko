@@ -12,7 +12,7 @@ import {
 
 import { computed } from '@tko/computed'
 import { Computed } from 'node_modules/@tko/computed/types/computed'
-import { Observable } from 'packages/observable/types/Observable'
+import { IObservable } from 'packages/observable/src/observable'
 
 // Objective:
 // * Given an input array, a container DOM node, and a function from array elements to arrays of DOM nodes,
@@ -24,7 +24,7 @@ import { Observable } from 'packages/observable/types/Observable'
 // "callbackAfterAddingNodes" will be invoked after any "mapping"-generated nodes are inserted into the container node
 // You can use this, for example, to activate bindings on those nodes.
 
-function mapNodeAndRefreshWhenChanged (containerNode: Node, mapping: Function, valueToMap: any, callbackAfterAddingNodes: Function, index: Observable) {
+function mapNodeAndRefreshWhenChanged (containerNode: Node, mapping: Function, valueToMap: any, callbackAfterAddingNodes: Function, index: IObservable) {
   // Map this array value inside a dependentObservable so we re-map when any dependency changes
   const mappedNodes = new Array()
   const dependentObservable: Computed<void> = computed(function () {
@@ -71,7 +71,7 @@ export function setDomNodeChildrenFromArrayMapping (domNode: Node, array: any[],
   var itemsForAfterAddCallbacks = new Array()
   var mapData: {
     arrayEntry: any,
-    indexObservable: Observable,
+    indexObservable: IObservable,
     mappedNodes?: Node[],
     dependentObservable?: Computed<void>,
     initialized?: boolean

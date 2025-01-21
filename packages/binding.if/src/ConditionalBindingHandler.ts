@@ -9,7 +9,7 @@ import {
 import {
     applyBindingsToDescendants, AsyncBindingHandler
 } from '@tko/bind'
-import { Observable } from 'node_modules/@tko/observable/types/Observable';
+import { IObservable } from 'packages/observable/src/observable';
 
 /**
  * Create a DOMbinding that controls DOM nodes presence
@@ -39,7 +39,7 @@ export default class ConditionalBindingHandler extends AsyncBindingHandler {
   get bindingContext(): any {
     return;
   }
-  completesElseChain: Observable;
+  completesElseChain: IObservable;
   hasElse: boolean;
   ifElseNodes?: any;
   constructor (params) {
