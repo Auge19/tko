@@ -4,6 +4,7 @@ import {
 
 import {
     applyBindings
+    , applyBindingsToNode
 } from '@tko/bind'
 
 import {
@@ -26,6 +27,7 @@ import '@tko/utils/helpers/jasmine-13-helper'
 import { VirtualProvider } from '@tko/provider.virtual'
 import { MultiProvider } from '@tko/provider.multi'
 
+import $ from 'jquery';
 
 var hasfocusUpdatingProperty = '__ko_hasfocusKnockoutUpdating';
 var hasfocusLastValue = '__ko_hasfocusKnockoutLastValue';
@@ -108,6 +110,33 @@ arrayForEach(['hasfocus', 'hasFocus', 'focusKnockout351'], binding => {
       // (issue knockout/knockout#736)
       beforeEach(function () { waits(100) })
     }
+
+    it('Should set an observable value to be true on focus and false on blur even if the binding is applied through another binding', function () {
+      const createElementWithHasFocusBinding  = {
+        init: (element: HTMLElement, valueAccessor: () => any) => {
+          let parent = $(element);
+          let $hasFocus = valueAccessor();
+
+          applyBindingsToNode(parent[0], { hasFocus: $hasFocus })
+        }
+      };
+      options.bindingProviderInstance.bindingHandlers.set("customBinding",  createElementWithHasFocusBinding)
+
+      testNode.innerHTML = `<input data-bind='customBinding: customProps' /><input />`
+
+      var $myVal = observable(false)
+      applyBindings({customProps: $myVal}, testNode );
+      const input = testNode.children[0] as HTMLInputElement;
+
+      input.focus()
+      triggerEvent(input, 'focusin')
+      expect($myVal()).toEqual(true);
+
+      // Move the focus elsewhere
+      (testNode.childNodes[1] as HTMLElement).focus()
+      triggerEvent(input, 'focusout')
+      expect($myVal()).toEqual(false)
+    })
 
     it('Should respond to changes on an observable value by blurring or focusing the element', function () {
       var currentState

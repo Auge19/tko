@@ -33,7 +33,8 @@ export var hasfocus = {
         isFocused = (active === element)
       }
       var modelValue = valueAccessor(isFocused, {onlyIfChanged: true});
-      // Found a scenario where hasFocus changes were not fired
+      // In the scenario that hasFocus is binded not via the DataBindProvider
+      // but as an example as a LegacyBinding HasFocus value changes were not fired
       // the fix was transfered from ko 3.5 (Focusout event was not fired)
       // This only replies the value if there are changes
       // it won't effect if already set by valueAccessor (Parser.convertToAccessors)
