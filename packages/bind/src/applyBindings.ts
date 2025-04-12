@@ -381,7 +381,7 @@ function triggerDescendantsComplete (node : Node, bindings : Object, nodeAsyncBi
 // used in applyBinding, bindingContext.ts
 export type BindingContextExtendCallback<T = any> = (self: BindingContext<T>, parentContext?: BindingContext<T>, dataItem?: T) => void;
 
-function getBindingContext<T = any>(viewModelOrBindingContext: any, extendContextCallback?: BindingContextExtendCallback<T>) : BindingContext<T> {
+function getBindingContext<T = any>(viewModelOrBindingContext?: any, extendContextCallback?: BindingContextExtendCallback<T>) : BindingContext<T> {
   return viewModelOrBindingContext && (viewModelOrBindingContext instanceof bindingContext)
     ? viewModelOrBindingContext
     : new bindingContext<T>(viewModelOrBindingContext, undefined, undefined, extendContextCallback)
@@ -394,7 +394,7 @@ export function applyBindingAccessorsToNode<T = any>(node: HTMLElement, bindings
   return applyBindingsToNodeInternal<T>(node, bindings, getBindingContext(viewModelOrBindingContext), asyncBindingsApplied)
 }
 
-export function applyBindingsToNode<T = any>(node: HTMLElement, bindings : Record<string, any>, viewModelOrBindingContext : BindingContext<T> | Observable<T> | T): BindingResult {
+export function applyBindingsToNode<T = any>(node: HTMLElement, bindings : Record<string, any>, viewModelOrBindingContext? : BindingContext<T> | Observable<T> | T): BindingResult {
   const asyncBindingsApplied = new Set()
   const bindingContext = getBindingContext<T>(viewModelOrBindingContext)
   const bindingAccessors = getBindingProvider().makeBindingAccessors(bindings, bindingContext, node)
