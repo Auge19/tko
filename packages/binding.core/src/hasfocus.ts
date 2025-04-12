@@ -32,15 +32,11 @@ export var hasfocus = {
         }
         isFocused = (active === element)
       }
-      var modelValue = valueAccessor(isFocused, {onlyIfChanged: true});
-      // Found a scenario where hasFocus changes were not fired
-      // the fix was transfered from ko 3.5 (Focusout event was not fired)
-      // This only replies the value if there are changes
-      // it won't effect if already set by valueAccessor (Parser.convertToAccessors)
+
+      const modelValue = valueAccessor(isFocused, {onlyIfChanged: true});
       if (isWriteableObservable(modelValue) && (modelValue.peek() !== isFocused)) {
         modelValue(isFocused);
       }
-
             // cache the latest value, so we can avoid unnecessarily calling focus/blur in the update function
       element[hasfocusLastValue] = isFocused
       element[hasfocusUpdatingProperty] = false
