@@ -1,12 +1,11 @@
-
 import {
-    arrayForEach, parseHtmlFragment
+    arrayForEach, parseHtmlFragment, options
 } from '../dist'
 
 import '../helpers/jasmine-13-helper'
 
 describe('Parse HTML fragment', function () {
-  const supportsTemplateTag = 'content' in document.createElement('template')
+  const supportsTemplateTag = options.useTemplateTag && 'content' in document.createElement('template')
 
   let testNode : HTMLElement
   beforeEach(function() { testNode = jasmine.prepareTestNode() })
