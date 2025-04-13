@@ -7,16 +7,16 @@ import { default as options } from '../options'
 import {arrayRemoveItem, arrayIndexOf} from '../array'
 import {jQueryInstance} from '../jquery'
 
-var domDataKey = domData.nextKey()
+const domDataKey = domData.nextKey()
 // Node types:
 // 1: Element
 // 8: Comment
 // 9: Document
-var cleanableNodeTypes = { 1: true, 8: true, 9: true }
-var cleanableNodeTypesWithDescendants = { 1: true, 9: true }
+const cleanableNodeTypes = { 1: true, 8: true, 9: true }
+const cleanableNodeTypesWithDescendants = { 1: true, 9: true }
 
 function getDisposeCallbacksCollection (node: Node, createIfNotFound: boolean) {
-  var allDisposeCallbacks = domData.get(node, domDataKey)
+  let allDisposeCallbacks = domData.get(node, domDataKey)
   if ((allDisposeCallbacks === undefined) && createIfNotFound) {
     allDisposeCallbacks = new Array()
     domData.set(node, domDataKey, allDisposeCallbacks)
@@ -29,7 +29,7 @@ function destroyCallbacksCollection (node: Node) {
 
 function cleanSingleNode (node: Node) {
     // Run all the dispose callbacks
-  var callbacks = getDisposeCallbacksCollection(node, false)
+  let callbacks = getDisposeCallbacksCollection(node, false)
   if (callbacks) {
     callbacks = callbacks.slice(0) // Clone, as the array may be modified during iteration (typically, callbacks will remove themselves)
     for (let i = 0; i < callbacks.length; i++) { callbacks[i](node) }
@@ -57,7 +57,7 @@ function cleanSingleNode (node: Node) {
 function cleanNodesInList (nodeList: NodeList | HTMLCollectionBase, onlyComments?: boolean) {
   const cleanedNodes = new Array<Node>()
   let lastCleanedNode
-  for (var i = 0; i < nodeList.length; i++) {
+  for (let i = 0; i < nodeList.length; i++) {
     if (!onlyComments || nodeList[i].nodeType === 8) {
       cleanSingleNode(cleanedNodes[cleanedNodes.length] = lastCleanedNode = nodeList[i]);
       if (nodeList[i] !== lastCleanedNode) {
@@ -74,7 +74,7 @@ export function addDisposeCallback (node: Node, callback: (node: Node) => void) 
 }
 
 export function removeDisposeCallback (node: Node, callback: (node: Node) => void) {
-  var callbacksCollection = getDisposeCallbacksCollection(node, false)
+  const callbacksCollection = getDisposeCallbacksCollection(node, false)
   if (callbacksCollection) {
     arrayRemoveItem(callbacksCollection, callback)
     if (callbacksCollection.length === 0) { destroyCallbacksCollection(node) }
@@ -118,7 +118,7 @@ export function removeCleaner (fn: Function) {
 // Many jQuery plugins (including jquery.tmpl) store data using jQuery's equivalent of domData
 // so notify it to tear down any resources associated with the node & descendants here.
 export function cleanjQueryData (node: Node) {
-  var jQueryCleanNodeFn = jQueryInstance ? jQueryInstance.cleanData : null
+  const jQueryCleanNodeFn = jQueryInstance ? jQueryInstance.cleanData : null
 
   if (jQueryCleanNodeFn) {
     jQueryCleanNodeFn([node])

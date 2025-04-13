@@ -22,27 +22,27 @@ import {
 } from '../dist/test-helper'
 
 describe('Binding: Selected Options', function () {
-  var testNode : HTMLElement
+  let testNode : HTMLElement
   beforeEach(function() { testNode = jasmine.prepareTestNode() })
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    const provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
     this.addMatchers(matchers)
   })
 
   it('Should only be applicable to SELECT nodes', function () {
-    var threw = false
+    let threw = false
     testNode.innerHTML = "<input data-bind='selectedOptions:[]' />"
     try { applyBindings({}, testNode) } catch (ex) { threw = true }
     expect(threw).toEqual(true)
   })
 
   it('Should set selection in the SELECT node to match the model', function () {
-    var bObject = {}
-    var values = observableArray(['A', bObject, 'C'])
-    var selection = observableArray([bObject])
+    const bObject = {}
+    const values = observableArray(['A', bObject, 'C'])
+    const selection = observableArray([bObject])
     testNode.innerHTML = "<select multiple='multiple' data-bind='options:myValues, selectedOptions:mySelection'></select>"
     applyBindings({ myValues: values, mySelection: selection }, testNode)
 
@@ -57,9 +57,9 @@ describe('Binding: Selected Options', function () {
       if (/MSIE 6/i.test(navigator.userAgent)) { optionElement.setAttribute('selected', state) } else { optionElement.selected = state }
     }
 
-    var cObject = {}
-    var values = observableArray(['A', 'B', cObject])
-    var selection = observableArray(['B'])
+    const cObject = {}
+    const values = observableArray(['A', 'B', cObject])
+    const selection = observableArray(['B'])
     testNode.innerHTML = "<select multiple='multiple' data-bind='options:myValues, selectedOptions:mySelection'></select>"
     applyBindings({ myValues: values, mySelection: selection }, testNode)
 
@@ -79,10 +79,10 @@ describe('Binding: Selected Options', function () {
       if (/MSIE 6/i.test(navigator.userAgent)) { optionElement.setAttribute('selected', state) } else { optionElement.selected = state }
     }
 
-    var cObject = {}
-    var values = observableArray(['A', 'B', cObject])
-    var selection = ['B']
-    var myModel = { myValues: values, mySelection: selection }
+    const cObject = {}
+    const values = observableArray(['A', 'B', cObject])
+    const selection = ['B']
+    const myModel = { myValues: values, mySelection: selection }
     testNode.innerHTML = "<select multiple='multiple' data-bind='options:myValues, selectedOptions:mySelection'></select>"
     applyBindings(myModel, testNode)
 
@@ -102,7 +102,7 @@ describe('Binding: Selected Options', function () {
       if (/MSIE 6/i.test(navigator.userAgent)) { optionElement.setAttribute('selected', state) } else { optionElement.selected = state }
     }
 
-    var selection = observableArray([])
+    const selection = observableArray([])
     testNode.innerHTML = "<select multiple='multiple' data-bind='selectedOptions:mySelection'><optgroup label='group'><option value='a'>a-text</option><option value='b'>b-text</option><option value='c'>c-text</option></optgroup></select>"
     applyBindings({ mySelection: selection }, testNode)
 
@@ -117,7 +117,7 @@ describe('Binding: Selected Options', function () {
   })
 
   it('Should set selection in the SELECT node inside an optgroup to match the model', function () {
-    var selection = observableArray(['a'])
+    const selection = observableArray(['a'])
     testNode.innerHTML = "<select multiple='multiple' data-bind='selectedOptions:mySelection'><optgroup label='group'><option value='a'>a-text</option><option value='b'>b-text</option><option value='c'>c-text</option></optgroup><optgroup label='group2'><option value='d'>d-text</option></optgroup></select>"
     applyBindings({ mySelection: selection }, testNode)
 
@@ -132,15 +132,15 @@ describe('Binding: Selected Options', function () {
   })
 
   it('Should not change the scroll position when updating the view', function () {
-    var selection = observableArray(), data = new Array()
-    for (var i = 1; i < 101; i++) {
+    const selection = observableArray(), data = new Array()
+    for (let i = 1; i < 101; i++) {
       data.push({ code: '0000' + i, name: 'Item ' + i })
     }
 
     testNode.innerHTML = "<select multiple=\"multiple\" data-bind=\"options: data, optionsText: 'name', optionsValue: 'code', selectedOptions: selectedItems\"></select>"
     applyBindings({ selectedItems: selection, data: data }, testNode)
 
-    var selectElem = testNode.childNodes[0] as HTMLElement
+    const selectElem = testNode.childNodes[0] as HTMLElement
     expect(selectElem.scrollTop).toBe(0)
     expect(selectElem).toHaveSelectedValues([])
 
@@ -149,7 +149,7 @@ describe('Binding: Selected Options', function () {
     expect(selectElem).toHaveSelectedValues(['0000100'])
 
     selectElem.scrollTop = 80
-    var previousScrollTop = selectElem.scrollTop   // some browsers modify the scrollTop right away
+    const previousScrollTop = selectElem.scrollTop   // some browsers modify the scrollTop right away
     selection.push('000050')
     expect(selectElem.scrollTop).toBe(previousScrollTop)
     expect(selectElem).toHaveSelectedValues(['000050', '0000100'])

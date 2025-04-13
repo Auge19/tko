@@ -29,32 +29,32 @@ import {
 } from '../dist/test-helper'
 
 describe('Binding: Options', function () {
-  var testNode : HTMLElement
+  let testNode : HTMLElement
   beforeEach(function() { testNode = jasmine.prepareTestNode() })
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    const provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
     this.addMatchers(matchers)
   })
 
   it('Should only be applicable to SELECT nodes', function () {
-    var threw = false
+    let threw = false
     testNode.innerHTML = "<input data-bind='options:{}' />"
     try { applyBindings({}, testNode) } catch (ex) { threw = true }
     expect(threw).toEqual(true)
   })
 
   it('Should set the SELECT node\'s options set to match the model value', function () {
-    var observable = observableArray(['A', 'B', 'C'])
+    const observable = observableArray(['A', 'B', 'C'])
     testNode.innerHTML = "<select data-bind='options:myValues'><option>should be deleted</option></select>"
     applyBindings({ myValues: observable }, testNode)
     expect(testNode.childNodes[0]).toHaveTexts(['A', 'B', 'C'])
   })
 
   it('Should accept optionsText and optionsValue params to display subproperties of the model values', function () {
-    var modelValues = observableArray([
+    const modelValues = observableArray([
             { name: 'bob', id: observable(6) }, // Note that subproperties can be observable
             { name: observable('frank'), id: 13 }
     ])
@@ -65,7 +65,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should accept function in optionsText param to display subproperties of the model values', function () {
-    var modelValues = observableArray([
+    const modelValues = observableArray([
             { name: 'bob', job: 'manager' },
             { name: 'frank', job: 'coder & tester' }
     ])
@@ -78,7 +78,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should accept lambda in optionsText param to compute text from model values', function () {
-    var modelValues = observableArray([
+    const modelValues = observableArray([
             { name: 'bob' },
             { name: 'frank' }
     ])
@@ -90,7 +90,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should accept a function in optionsValue param to select subproperties of the model values (and use that for the option text)', function () {
-    var modelValues = observableArray([
+    const modelValues = observableArray([
             { name: 'bob', job: 'manager' },
             { name: 'frank', job: 'coder & tester' }
     ])
@@ -104,7 +104,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should exclude any items marked as destroyed', function () {
-    var modelValues = observableArray([
+    const modelValues = observableArray([
             { name: 'bob', _destroy: true },
             { name: 'frank' }
     ])
@@ -114,7 +114,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should include items marked as destroyed if optionsIncludeDestroyed is set', function () {
-    var modelValues = observableArray([
+    const modelValues = observableArray([
             { name: 'bob', _destroy: true },
             { name: 'frank' }
     ])
@@ -124,7 +124,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should update the SELECT node\'s options if the model changes', function () {
-    var observable = observableArray(['A', 'B', 'C'])
+    const observable = observableArray(['A', 'B', 'C'])
     testNode.innerHTML = "<select data-bind='options:myValues'><option>should be deleted</option></select>"
     applyBindings({ myValues: observable }, testNode)
     observable.splice(1, 1)
@@ -132,7 +132,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should retain as much selection as possible when changing the SELECT node\'s options', function () {
-    var observable = observableArray(['A', 'B', 'C'])
+    const observable = observableArray(['A', 'B', 'C'])
     testNode.innerHTML = "<select data-bind='options:myValues' multiple='multiple'></select>"
     applyBindings({ myValues: observable }, testNode);
     (testNode.childNodes[0] as HTMLSelectElement).options[1].selected = true
@@ -142,7 +142,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should retain selection when replacing the options data with new objects that have the same "value"', function () {
-    var observable = observableArray([{x: 'A'}, {x: 'B'}, {x: 'C'}])
+    const observable = observableArray([{x: 'A'}, {x: 'B'}, {x: 'C'}])
     testNode.innerHTML = "<select data-bind='options:myValues, optionsValue:\"x\"' multiple='multiple'></select>"
     applyBindings({ myValues: observable }, testNode);
     (testNode.childNodes[0] as HTMLSelectElement).options[1].selected = true
@@ -154,7 +154,7 @@ describe('Binding: Options', function () {
   it('Should select first option when removing the selected option and the original first option', function () {
         // This test failed in IE<=8 and Firefox without changes made in #1208
     testNode.innerHTML = '<select data-bind="options: filterValues, optionsText: \'x\', optionsValue: \'x\'">'
-    var viewModel = {
+    const viewModel = {
       filterValues: observableArray([{x: 1}, {x: 2}, {x: 3}])
     }
     applyBindings(viewModel, testNode);
@@ -168,12 +168,12 @@ describe('Binding: Options', function () {
   it('Should select caption by default and retain selection when adding multiple items', function () {
         // This test failed in IE<=8 without changes made in #1208
     testNode.innerHTML = '<select data-bind="options: filterValues, optionsCaption: \'foo\'">'
-    var viewModel = {
+    const viewModel = {
       filterValues: observableArray(undefined)
     }
     applyBindings(viewModel, testNode)
     expect(testNode.childNodes[0]).toHaveSelectedValues([undefined])
-    var captionElement = (testNode.childNodes[0] as HTMLSelectElement).options[0]
+    const captionElement = (testNode.childNodes[0] as HTMLSelectElement).options[0]
 
     viewModel.filterValues.push('1')
     viewModel.filterValues.push('2')
@@ -184,7 +184,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should trigger a change event when the options selection is populated or changed by modifying the options data (single select)', function () {
-    var myObservable: ObservableArray<string | number> = observableArray(['A', 'B', 'C']), changeHandlerFireCount = 0
+    let myObservable: ObservableArray<string | number> = observableArray(['A', 'B', 'C']), changeHandlerFireCount = 0
     testNode.innerHTML = "<select data-bind='options:myValues'></select>"
     registerEventHandler(testNode.childNodes[0] as HTMLSelectElement, 'change', function () {
       changeHandlerFireCount++
@@ -215,7 +215,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should trigger a change event when the options selection is changed by modifying the options data (multiple select)', function () {
-    var myObservable: ObservableArray<any> = observableArray(['A', 'B', 'C']), changeHandlerFireCount = 0
+    let myObservable: ObservableArray<any> = observableArray(['A', 'B', 'C']), changeHandlerFireCount = 0
     testNode.innerHTML = "<select data-bind='options:myValues' multiple='multiple'></select>"
     registerEventHandler(testNode.childNodes[0] as HTMLSelectElement, 'change', function () {
       changeHandlerFireCount++
@@ -289,7 +289,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should allow the caption to be given by an observable, and update it when the model value changes (without affecting selection)', function () {
-    var myCaption = observable('Initial caption')
+    const myCaption = observable('Initial caption')
     testNode.innerHTML = "<select data-bind='options:[\"A\", \"B\"], optionsCaption: myCaption'></select>"
     applyBindings({ myCaption: myCaption }, testNode);
 
@@ -309,7 +309,7 @@ describe('Binding: Options', function () {
   })
 
   it('Should allow the option text to be given by an observable and update it when the model changes without affecting selection', function () {
-    var people = [
+    const people = [
             { name: observable('Annie'), id: 'A' },
             { name: observable('Bert'), id: 'B' }
     ]
@@ -328,7 +328,7 @@ describe('Binding: Options', function () {
 
   it('Should call an optionsAfterRender callback function and not cause updates if an observable accessed in the callback is changed', function () {
     testNode.innerHTML = "<select data-bind=\"options: someItems, optionsText: 'childprop', optionsAfterRender: callback\"></select>"
-    var callbackObservable = observable(1),
+    let callbackObservable = observable(1),
       someItems: any = observableArray([{ childprop: 'first child' }]),
       callbacks = 0
     applyBindings({ someItems: someItems, callback: function () { callbackObservable(); callbacks++ } }, testNode)
@@ -348,7 +348,7 @@ describe('Binding: Options', function () {
 
   it('Should ignore the optionsAfterRender binding if the callback was not provided or not a function', function () {
     testNode.innerHTML = "<select data-bind=\"options: someItems, optionsText: 'childprop', optionsAfterRender: callback\"></select>"
-    var someItems = observableArray([{ childprop: 'first child' }])
+    const someItems = observableArray([{ childprop: 'first child' }])
 
     applyBindings({ someItems: someItems, callback: null }, testNode)
         // Ensure bindings were applied normally

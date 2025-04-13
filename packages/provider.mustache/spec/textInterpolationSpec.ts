@@ -41,54 +41,54 @@ describe('Interpolation Markup preprocessor', function () {
   }
 
   it('Should do nothing when there are no expressions', function () {
-    var result = testPreprocess(document.createTextNode('some text'));
+    const result = testPreprocess(document.createTextNode('some text'));
     expect(result).toBeUndefined();
   });
 
   it('Should do nothing when empty', function () {
-    var result = testPreprocess(document.createTextNode(''));
+    const result = testPreprocess(document.createTextNode(''));
     expect(result).toBeUndefined();
   });
 
   it('Should not parse unclosed binding', function () {
-    var result = testPreprocess(document.createTextNode('some {{ text'));
+    const result = testPreprocess(document.createTextNode('some {{ text'));
     expect(result).toBeUndefined();
   });
 
   it('Should not parse unopened binding', function () {
-    var result = testPreprocess(document.createTextNode('some }} text'));
+    const result = testPreprocess(document.createTextNode('some }} text'));
     expect(result).toBeUndefined();
   });
 
   it('Should create binding from {{...}} expression', function () {
-    var result = testPreprocess(document.createTextNode('some {{ expr }} text'));
+    const result = testPreprocess(document.createTextNode('some {{ expr }} text'));
     expect(result).toHaveNodeTypes([3, 8, 8, 3]);   // text, comment, comment, text
     expect(result[1].nodeValue).toEqual('ko text:expr');
     expect(result[2].nodeValue).toEqual('/ko');
   });
 
   it('Should ignore unmatched delimiters', function () {
-    var result = testPreprocess(document.createTextNode('some {{ expr }} }} text'));
+    const result = testPreprocess(document.createTextNode('some {{ expr }} }} text'));
     expect(result).toHaveNodeTypes([3, 8, 8, 3]);   // text, comment, comment, text
     expect(result[1].nodeValue).toEqual('ko text:expr }}');
   });
 
   it('Should support two expressions', function () {
-    var result = testPreprocess(document.createTextNode('some {{ expr1 }} middle {{ expr2 }} text'));
+    const result = testPreprocess(document.createTextNode('some {{ expr1 }} middle {{ expr2 }} text'));
     expect(result).toHaveNodeTypes([3, 8, 8, 3, 8, 8, 3]);   // text, comment, comment, text, comment, comment, text
     expect(result[1].nodeValue).toEqual('ko text:expr1');
     expect(result[4].nodeValue).toEqual('ko text:expr2');
   });
 
   it('Should skip empty text', function () {
-    var result = testPreprocess(document.createTextNode('{{ expr1 }}{{ expr2 }}'));
+    const result = testPreprocess(document.createTextNode('{{ expr1 }}{{ expr2 }}'));
     expect(result).toHaveNodeTypes([8, 8, 8, 8]);   // comment, comment, comment, comment
     expect(result[0].nodeValue).toEqual('ko text:expr1');
     expect(result[2].nodeValue).toEqual('ko text:expr2');
   });
 
   it('Should support more than two expressions', function () {
-    var result = testPreprocess(document.createTextNode('x {{ expr1 }} y {{ expr2 }} z {{ expr3 }}'));
+    const result = testPreprocess(document.createTextNode('x {{ expr1 }} y {{ expr2 }} z {{ expr3 }}'));
     expect(result).toHaveNodeTypes([3, 8, 8, 3, 8, 8, 3, 8, 8]);   // text, comment, comment, text, comment, comment, text, comment, comment
     expect(result[1].nodeValue).toEqual('ko text:expr1');
     expect(result[4].nodeValue).toEqual('ko text:expr2');
@@ -97,30 +97,30 @@ describe('Interpolation Markup preprocessor', function () {
 
   describe('Using unescaped HTML syntax', function () {
     it('Should not parse unclosed binding', function () {
-      var result = testPreprocess(document.createTextNode('some {{{ text'));
+      const result = testPreprocess(document.createTextNode('some {{{ text'));
       expect(result).toBeUndefined();
     });
 
     it('Should not parse unopened binding', function () {
-      var result = testPreprocess(document.createTextNode('some }}} text'));
+      const result = testPreprocess(document.createTextNode('some }}} text'));
       expect(result).toBeUndefined();
     });
 
     it('Should create binding from {{{...}}} expression', function () {
-      var result = testPreprocess(document.createTextNode('some {{{ expr }}} text'));
+      const result = testPreprocess(document.createTextNode('some {{{ expr }}} text'));
       expect(result).toHaveNodeTypes([3, 8, 8, 3]);   // text, comment, comment, text
       expect(result[1].nodeValue).toEqual('ko html:expr');
       expect(result[2].nodeValue).toEqual('/ko');
     });
 
     it('Should ignore unmatched delimiters', function () {
-      var result = testPreprocess(document.createTextNode('some {{{ expr }}} }}} text'));
+      const result = testPreprocess(document.createTextNode('some {{{ expr }}} }}} text'));
       expect(result).toHaveNodeTypes([3, 8, 8, 3]);   // text, comment, comment, text
       expect(result[1].nodeValue).toEqual('ko html:expr }}}');
     });
 
     it('Should support two expressions', function () {
-      var result = testPreprocess(document.createTextNode('some {{{ expr1 }}} middle {{{ expr2 }}} text'));
+      const result = testPreprocess(document.createTextNode('some {{{ expr1 }}} middle {{{ expr2 }}} text'));
       expect(result).toHaveNodeTypes([3, 8, 8, 3, 8, 8, 3]);   // text, comment, comment, text, comment, comment, text
       expect(result[1].nodeValue).toEqual('ko html:expr1');
       expect(result[4].nodeValue).toEqual('ko html:expr2');
@@ -129,47 +129,47 @@ describe('Interpolation Markup preprocessor', function () {
 
   describe('Using block syntax', function () {
     it('Should create binding from {{#....}}{{/....}} expression', function () {
-      var result = testPreprocess(document.createTextNode('some {{#binding:value}}{{/binding}} text'));
+      const result = testPreprocess(document.createTextNode('some {{#binding:value}}{{/binding}} text'));
       expect(result).toHaveNodeTypes([3, 8, 8, 3]);   // text, comment, comment, text
       expect(result[1].nodeValue).toEqual('ko binding:value');
       expect(result[2].nodeValue).toEqual('/ko');
     });
 
     it('Should tolerate spaces around expressions from {{ #.... }}{{ /.... }} expression', function () {
-      var result = testPreprocess(document.createTextNode('some {{ #binding:value }}{{ /binding }} text'));
+      const result = testPreprocess(document.createTextNode('some {{ #binding:value }}{{ /binding }} text'));
       expect(result).toHaveNodeTypes([3, 8, 8, 3]);   // text, comment, comment, text
       expect(result[1].nodeValue).toEqual('ko binding:value');
       expect(result[2].nodeValue).toEqual('/ko');
     });
 
     it('Should tolerate spaces around various components', function () {
-      var result = testPreprocess(document.createTextNode('some {{# binding : value }}{{/ binding }} text'));
+      const result = testPreprocess(document.createTextNode('some {{# binding : value }}{{/ binding }} text'));
       expect(result).toHaveNodeTypes([3, 8, 8, 3]);   // text, comment, comment, text
       expect(result[1].nodeValue).toEqual('ko  binding : value');
       expect(result[2].nodeValue).toEqual('/ko');
     });
 
     it('Should insert semicolon if missing', function () {
-      var result = testPreprocess(document.createTextNode('some {{#binding value}}{{/binding}} text'));
+      const result = testPreprocess(document.createTextNode('some {{#binding value}}{{/binding}} text'));
       expect(result).toHaveNodeTypes([3, 8, 8, 3]);   // text, comment, comment, text
       expect(result[1].nodeValue).toEqual('ko binding:value');
     });
 
     it('Should not insert semicolon if binding has no value', function () {
-      var result = testPreprocess(document.createTextNode('some {{#binding}}{{/binding}} text'));
+      const result = testPreprocess(document.createTextNode('some {{#binding}}{{/binding}} text'));
       expect(result).toHaveNodeTypes([3, 8, 8, 3]);   // text, comment, comment, text
       expect(result[1].nodeValue).toEqual('ko binding');
     });
 
     it('Should support self-closing syntax', function () {
-      var result = testPreprocess(document.createTextNode('some {{#binding:value/}} text'));
+      const result = testPreprocess(document.createTextNode('some {{#binding:value/}} text'));
       expect(result).toHaveNodeTypes([3, 8, 8, 3]);   // text, comment, comment, text
       expect(result[1].nodeValue).toEqual('ko binding:value');
       expect(result[2].nodeValue).toEqual('/ko');
     });
 
     it('Should tolerate space around self-closing syntax', function () {
-      var result = testPreprocess(document.createTextNode('some {{ # binding:value / }} text'));
+      const result = testPreprocess(document.createTextNode('some {{ # binding:value / }} text'));
       expect(result).toHaveNodeTypes([3, 8, 8, 3]);   // text, comment, comment, text
       expect(result[1].nodeValue).toEqual('ko  binding:value ');
       expect(result[2].nodeValue).toEqual('/ko');
@@ -178,13 +178,13 @@ describe('Interpolation Markup preprocessor', function () {
 });
 
 describe('Interpolation Markup bindings', function () {
-  var bindingHandlers;
+  let bindingHandlers;
 
-  var testNode : HTMLElement
+  let testNode : HTMLElement
   beforeEach(function() { testNode = jasmine.prepareTestNode() });
 
   beforeEach(function () {
-    var provider = new MultiProvider({
+    const provider = new MultiProvider({
       providers: [
         new TextMustacheProvider(),
         new DataBindProvider(),
@@ -226,7 +226,7 @@ describe('Interpolation Markup bindings', function () {
 
   it('Should update when observable changes', function () {
     jasmine.setNodeText(testNode, 'The best {{what}}.');
-    var observable = Observable('time');
+    const observable = Observable('time');
     applyBindings({what: observable}, testNode);
     expect(testNode).toContainText('The best time.');
     observable('fun');
@@ -316,7 +316,7 @@ describe('Interpolation Markup bindings', function () {
 
     it('Should update when observable changes', function () {
       jasmine.setNodeText(testNode, 'The best {{{what}}}.');
-      var observable = Observable('<b>time</b>');
+      const observable = Observable('<b>time</b>');
       applyBindings({what: observable}, testNode);
       expect(testNode).toContainText('The best time.');
       expect(testNode.childNodes[2].nodeName.toLowerCase()).toEqual('b');

@@ -6,7 +6,7 @@ import {
 import { filters } from '../dist'
 
 
-declare var ko : any
+declare let ko : any
 /* can be remove https://tc39.es/ecma262/multipage/indexed-collections.html#sec-array.isarray
 if (!Array.isArray) {
   Array.isArray = function (arg) {
@@ -16,7 +16,7 @@ if (!Array.isArray) {
 */
 
 describe('Text filters preprocessor', function () {
-  var filterPreprocessor = function(string) { return "todo deactivated, see xit" } //var filterPreprocessor = ko.punches.textFilter.preprocessor;
+  const filterPreprocessor = function(string) { return "todo deactivated, see xit" } //var filterPreprocessor = ko.punches.textFilter.preprocessor;
 
     /* Skipping the following five since they are tests that apply to the
        filter-runner moreso than any specific filter exported here. */
@@ -88,7 +88,7 @@ describe('Text filters preprocessor', function () {
     attempt('default', [null, 'blank'], 'blank')
     attempt('default', [undefined, 'blank'], 'blank')
         // a function is not converted
-    var emptyFunction = function () {}
+    const emptyFunction = function () {}
     attempt('default', [emptyFunction, 'blank'], emptyFunction)
         // Should unwrap observable value
     attempt('default', [observable('someText'), 'blank'], 'someText')
@@ -129,7 +129,7 @@ describe('Text filters preprocessor', function () {
 
 /* Skip this since */
 xdescribe('Text filter bindings', function () {
-  var testNode : HTMLElement
+  let testNode : HTMLElement
   beforeEach(function() { testNode = jasmine.prepareTestNode() })
 
   it('Should convert input into appropriate output', function () {

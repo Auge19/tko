@@ -142,7 +142,7 @@ function nodeOrChildHasBindings (node: Node) : boolean {
 }
 
 function applyBindingsToNodeAndDescendantsInternal(bindingContext: BindingContext, nodeVerified: Node, asyncBindingsApplied) {
-  var isElement = nodeVerified.nodeType === 1
+  const isElement = nodeVerified.nodeType === 1
   if (isElement) { // Workaround IE <= 8 HTML parsing weirdness
     virtualElements.normaliseVirtualElementDomStructure(nodeVerified)
   }
@@ -151,7 +151,7 @@ function applyBindingsToNodeAndDescendantsInternal(bindingContext: BindingContex
   // (1) We need to store the binding info for the node (all element nodes)
   // (2) It might have bindings (e.g., it has a data-bind attribute, or it's a marker for a containerless template)
 
-  let shouldApplyBindings = isElement || // Case (1)
+  const shouldApplyBindings = isElement || // Case (1)
       hasBindings(nodeVerified)          // Case (2)
 
   const { shouldBindDescendants }: any = shouldApplyBindings
@@ -225,7 +225,7 @@ function applyBindingsToNodeInternal (node: Node, sourceBindings: any, bindingCo
   }
 
   // Use bindings if given, otherwise fall back on asking the bindings provider to give us some bindings
-  var bindings
+  let bindings
   if (sourceBindings && typeof sourceBindings !== 'function') {
     bindings = sourceBindings
   } else {
@@ -359,7 +359,7 @@ function applyBindingsToNodeInternal (node: Node, sourceBindings: any, bindingCo
  * @param {Object} bindings
  * @param {[Promise]} nodeAsyncBindingPromises
  */
-function triggerDescendantsComplete (node : Node, bindings : Object, nodeAsyncBindingPromises : Set<Promise<any>>) {
+function triggerDescendantsComplete (node : Node, bindings : object, nodeAsyncBindingPromises : Set<Promise<any>>) {
   /** descendantsComplete ought to be an instance of the descendantsComplete
     *  binding handler. */
   const hasBindingHandler = bindingEvent.descendantsComplete in bindings
@@ -413,8 +413,8 @@ export function applyBindingsToDescendants<T = any>(viewModelOrBindingContext: T
 export function applyBindings(viewModelOrBindingContext: BindingContext | Observable<any> | any, rootNode: HTMLElement, extendContextCallback?: BindingContextExtendCallback): Promise<unknown> {
   const asyncBindingsApplied = new Set()
   // If jQuery is loaded after Knockout, we won't initially have access to it. So save it here.
-  if (options.jQuery === undefined && globalThis.jQuery) {
-    options.jQuery = globalThis.jQuery
+  if (options.jQuery === undefined && (globalThis as any).jQuery) {
+    options.jQuery = (globalThis as any).jQuery
   }
 
   // rootNode is optional

@@ -54,6 +54,7 @@ export interface Subscribable<T = any> extends SubscribableFunctions<T> {
   _subscriptions: any;
   _versionNumber: number;
   _id: number;
+  _evalIfChanged(): T
 }
 
 export interface subscribable {
@@ -158,7 +159,7 @@ var ko_subscribable_fn: SubscribableFunctions = {
     if (event) {
       return this._subscriptions[event] && this._subscriptions[event].length || 0
     } else {
-      var total = 0
+      let total = 0
       objectForEach(this._subscriptions, function (eventName, subscriptions) {
         if (eventName !== 'dirty') {
           total += subscriptions.length

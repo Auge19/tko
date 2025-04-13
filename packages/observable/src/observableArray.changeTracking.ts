@@ -33,8 +33,8 @@ export function trackArrayChanges (target: ObservableArray, options?: CompareArr
   let arrayChangeSubscription
   let pendingNotifications = 0
   let underlyingNotifySubscribersFunction
-  let underlyingBeforeSubscriptionAddFunction = target.beforeSubscriptionAdd
-  let underlyingAfterSubscriptionRemoveFunction = target.afterSubscriptionRemove
+  const underlyingBeforeSubscriptionAddFunction = target.beforeSubscriptionAdd
+  const underlyingAfterSubscriptionRemoveFunction = target.afterSubscriptionRemove
 
     // Watch "subscribe" calls, and for array change events, ensure change tracking is enabled
   target.beforeSubscriptionAdd = function (event) {
@@ -83,7 +83,7 @@ export function trackArrayChanges (target: ObservableArray, options?: CompareArr
 
         // Each time the array changes value, capture a clone so that on the next
         // change it's possible to produce a diff
-    var previousContents = new Array().concat(target.peek() === undefined ? [] : target.peek())
+    let previousContents = new Array().concat(target.peek() === undefined ? [] : target.peek())
     cachedDiff = null
     arrayChangeSubscription = target.subscribe(function (currentContents) {
       let changes
@@ -124,7 +124,7 @@ export function trackArrayChanges (target: ObservableArray, options?: CompareArr
     if (!trackingChanges || pendingNotifications) {
       return
     }
-    var diff = new Array(),
+    let diff = new Array(),
       arrayLength = rawArray.length,
       argsLength = args.length,
       offset = 0

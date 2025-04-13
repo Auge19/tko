@@ -29,7 +29,7 @@ export function extend<T, U>  (target:T , source: U): T & U {
 
 export function objectForEach<T=any> (obj: { [key:string]: T },
                                       action: (key: string, value: T) => void): void {
-  for (var prop in obj) {
+  for (const prop in obj) {
     if (hasOwnProperty(obj, prop)) {
       action(prop, obj[prop])
     }
@@ -39,8 +39,8 @@ export function objectForEach<T=any> (obj: { [key:string]: T },
 export function objectMap (source, mapping, thisArg? : any) {
   if (!source) { return source }
   if (arguments.length > 2) { mapping = mapping.bind(thisArg) }
-  var target = {}
-  for (var prop in source) {
+  const target = {}
+  for (const prop in source) {
     if (hasOwnProperty(source, prop)) {
       target[prop] = mapping(source[prop], prop, source)
     }
@@ -64,8 +64,8 @@ export function clonePlainObjectDeep (obj, seen?: any[]) {
     // been seen/cloned.
   seen.push(obj)
 
-  var result = {}
-  for (var prop in obj) {
+  const result = {}
+  for (const prop in obj) {
     if (hasOwnProperty(obj, prop)) {
       result[prop] = clonePlainObjectDeep(obj[prop], seen)
     }

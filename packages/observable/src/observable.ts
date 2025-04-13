@@ -22,7 +22,7 @@ export interface ObservableFunctions<T = any> extends Subscribable<T> {
   valueHasMutated(): void;
   valueWillMutate(): void;
 
-  modify(fn, peek? : Boolean): Observable
+  modify(fn, peek? : boolean): Observable
 }
 
 export interface Observable<T = any> extends ObservableFunctions<T> {
@@ -103,17 +103,17 @@ function limitNotifySubscribers(value, event?: string) {
 
 // Add `limit` function to the subscribable prototype
 (subscribable.fn as any).limit = function limit(limitFunction) {
-  var self = this
-  var selfIsObservable = isObservable(self)
-  var beforeChange = 'beforeChange'
-  var ignoreBeforeChange: boolean, notifyNextChange: boolean, previousValue: any, pendingValue: any, didUpdate: boolean
+  const self = this
+  const selfIsObservable = isObservable(self)
+  const beforeChange = 'beforeChange'
+  let ignoreBeforeChange: boolean, notifyNextChange: boolean, previousValue: any, pendingValue: any, didUpdate: boolean
 
   if (!self._origNotifySubscribers) {
     self._origNotifySubscribers = self.notifySubscribers
     self.notifySubscribers = limitNotifySubscribers
   }
 
-  var finish = limitFunction(function () {
+  const finish = limitFunction(function () {
     self._notificationIsPending = false
 
     // If an observable provided a reference to itself, access it to get the latest value.
@@ -162,7 +162,7 @@ function limitNotifySubscribers(value, event?: string) {
 
 Object.setPrototypeOf(observable.fn, subscribable.fn)
 
-var protoProperty = observable.protoProperty = options.protoProperty
+const protoProperty = observable.protoProperty = options.protoProperty
 observable.fn[protoProperty] = observable
 
 // Subclasses can add themselves to observableProperties so that
@@ -182,7 +182,7 @@ export function unwrap(value) {
 }
 
 export function peek<T = any>(value: MaybeSubscribable<T>): T {
-  return isObservable(value) ? value.peek() : value
+  return isObservable(value) ? value.peek() : value as T
 }
 
 export function isWriteableObservable<T = any>(instance: any): instance is Observable<T> {

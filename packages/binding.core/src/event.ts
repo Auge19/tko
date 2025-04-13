@@ -15,8 +15,8 @@ import type { AllBindings, BindingContext } from '@tko/bind'
 export function makeEventHandlerShortcut (eventName) {
   return {
     init: function (element, valueAccessor, allBindings: AllBindings, viewModel, bindingContext: BindingContext) {
-      var newValueAccessor = function () {
-        var result = {}
+      const newValueAccessor = function () {
+        const result = {}
         result[eventName] = valueAccessor()
         return result
       }
@@ -31,13 +31,13 @@ function makeDescriptor (handlerOrObject) {
 
 export const eventHandler = {
   init: function (element, valueAccessor, allBindings, viewModel, bindingContext: BindingContext) {
-    var eventsToHandle = valueAccessor() || {}
+    const eventsToHandle = valueAccessor() || {}
     objectForEach(eventsToHandle, function (eventName, descriptor) {
       const {passive, capture, once, debounce, throttle} = makeDescriptor(descriptor)
       const eventOptions = (capture || passive || once) && {capture, passive, once}
 
       let eventHandlerFn = (event, ...more) => {
-        var handlerReturnValue
+        let handlerReturnValue
         const {handler, passive, bubble, preventDefault} = makeDescriptor(valueAccessor()[eventName])
 
         try {

@@ -26,7 +26,7 @@ import type { AllBindings } from '@tko/bind'
 const MAX_LIST_SIZE = 9007199254740991
 
 // from https://github.com/jonschlinkert/is-plain-object
-function isPlainObject (o): o is Object {
+function isPlainObject (o): o is object {
   return !!o && typeof o === 'object' && o.constructor === Object
 }
 
@@ -49,8 +49,8 @@ const supportsDocumentFragment = options.document && typeof options.document.cre
 // Get a copy of the (possibly virtual) child nodes of the given element,
 // put them into a container, then empty the given node.
 function makeTemplateNode (sourceNode) {
-  var container = document.createElement('div')
-  var parentNode
+  const container = document.createElement('div')
+  let parentNode
   if (sourceNode.content) {
     // For e.g. <template> tags
     parentNode = sourceNode.content
@@ -180,7 +180,7 @@ export class ForEachBinding extends AsyncBindingHandler {
 
   // If the array changes we register the change.
   onArrayChange (changeSet, isInitial) {
-    var changeMap: ChangeMap = {
+    const changeMap: ChangeMap = {
       added: [],
       deleted: []
     }
@@ -190,10 +190,10 @@ export class ForEachBinding extends AsyncBindingHandler {
     // - sends the new array indexes for adds
     // - sorts them all by index in ascending order
     // because of this, when checking for possible batch additions, any delete can be between to adds with neighboring indexes, so only additions should be checked
-    for (var i = 0, len = changeSet.length; i < len; i++) {
+    for (let i = 0, len = changeSet.length; i < len; i++) {
       if (changeMap.added.length && changeSet[i].status === 'added') {
-        var lastAdd = changeMap.added[changeMap.added.length - 1]
-        var lastIndex = lastAdd.isBatch ? lastAdd.index + lastAdd.values!.length - 1 : lastAdd.index
+        let lastAdd = changeMap.added[changeMap.added.length - 1]
+        const lastIndex = lastAdd.isBatch ? lastAdd.index + lastAdd.values!.length - 1 : lastAdd.index
         if (lastIndex + 1 === changeSet[i].index) {
           if (!lastAdd.isBatch) {
             // transform the last addition into a batch addition object
@@ -246,8 +246,8 @@ export class ForEachBinding extends AsyncBindingHandler {
 
   // Reflect all the changes in the queue in the DOM, then wipe the queue.
   processQueue () {
-    var isEmpty = !unwrap(this.data).length
-    var lowestIndexChanged = MAX_LIST_SIZE
+    const isEmpty = !unwrap(this.data).length
+    let lowestIndexChanged = MAX_LIST_SIZE
 
     this.startQueueFlush()
 
@@ -330,22 +330,22 @@ export class ForEachBinding extends AsyncBindingHandler {
 
   // Process a changeItem with {status: 'added', ...}
   added (changeItem: ChangeAddItem) {
-    var index = changeItem.index
-    var valuesToAdd = changeItem.isBatch ? changeItem.values! : [changeItem.value!]
-    var referenceElement = this.getLastNodeBeforeIndex(index)
+    const index = changeItem.index
+    const valuesToAdd = changeItem.isBatch ? changeItem.values! : [changeItem.value!]
+    const referenceElement = this.getLastNodeBeforeIndex(index)
     // gather all childnodes for a possible batch insertion
     const allChildNodes: Node[] = []
     const asyncBindingResults = new Array()
-    var children
+    let children
 
-    for (var i = 0, len = valuesToAdd.length; i < len; ++i) {
+    for (let i = 0, len = valuesToAdd.length; i < len; ++i) {
       // we check if we have a pending delete with reusable nodesets for this data, and if yes, we reuse one nodeset
-      var pendingDelete = this.getPendingDeleteFor(valuesToAdd[i])
+      const pendingDelete = this.getPendingDeleteFor(valuesToAdd[i])
       if (pendingDelete && pendingDelete.nodesets.length) {
         children = pendingDelete.nodesets.pop()
         this.updateFirstLastNodesList(index + i, children)
       } else {
-        var templateClone = this.templateNode.cloneNode(true)
+        const templateClone = this.templateNode.cloneNode(true)
         children = virtualElements.childNodes(templateClone)
         this.updateFirstLastNodesList(index + i, children)
 
@@ -373,9 +373,9 @@ export class ForEachBinding extends AsyncBindingHandler {
   }
 
   getNodesForIndex (index) {
-    let result = new Array()
+    const result = new Array()
     let ptr = this.firstLastNodesList[index].first
-    let last = this.firstLastNodesList[index].last
+    const last = this.firstLastNodesList[index].last
     result.push(ptr)
     while (ptr && ptr !== last) {
       ptr = ptr.nextSibling!
@@ -393,7 +393,7 @@ export class ForEachBinding extends AsyncBindingHandler {
    * Get the active (focused) node, if it's a child of the given node.
    */
   activeChildElement (node) {
-    var active = document.activeElement
+    const active = document.activeElement
     if (domNodeIsContainedBy(active!, node)) {
       return active
     }
@@ -404,7 +404,7 @@ export class ForEachBinding extends AsyncBindingHandler {
     let len
     let i
     let active: any = null
-    let containerNode = this.$element
+    const containerNode = this.$element
 
     // Poor man's node and array check.
     if (nodeOrNodeArrayToInsert.nodeType === undefined && nodeOrNodeArrayToInsert.length === undefined) {
@@ -429,7 +429,7 @@ export class ForEachBinding extends AsyncBindingHandler {
       // the last node for the previous item or as the first node of element.
       for (i = nodeOrNodeArrayToInsert.length - 1; i >= 0; --i) {
         active = active || this.activeChildElement(nodeOrNodeArrayToInsert[i])
-        var child = nodeOrNodeArrayToInsert[i]
+        const child = nodeOrNodeArrayToInsert[i]
         if (!child) { break }
         virtualElements.insertAfter(containerNode, child, insertAfterNode)
       }
@@ -447,14 +447,14 @@ export class ForEachBinding extends AsyncBindingHandler {
 
   // gets the pending deletion info for this data item
   getPendingDeleteFor (data: any[]) {
-    var index = data && data[PENDING_DELETE_INDEX_SYM]
+    const index = data && data[PENDING_DELETE_INDEX_SYM]
     if (index === undefined) return null
     return this.pendingDeletes[index]
   }
 
   // tries to find the existing pending delete info for this data item, and if it can't, it registeres one
   getOrCreatePendingDeleteFor (data) {
-    var pd = this.getPendingDeleteFor(data)
+    let pd = this.getPendingDeleteFor(data)
     if (pd) {
       return pd
     }
@@ -471,7 +471,7 @@ export class ForEachBinding extends AsyncBindingHandler {
   deleted (changeItem) {
     // if we should delay the deletion of this data, we add the nodeset to the pending delete info object
     if (this.shouldDelayDeletion(changeItem.value)) {
-      let pd = this.getOrCreatePendingDeleteFor(changeItem.value)
+      const pd = this.getOrCreatePendingDeleteFor(changeItem.value)
       pd.nodesets.push(this.getNodesForIndex(changeItem.index))
     } else { // simple data, just remove the nodes
       this.removeNodes(this.getNodesForIndex(changeItem.index))
@@ -484,15 +484,15 @@ export class ForEachBinding extends AsyncBindingHandler {
     if (!nodes.length) { return }
 
     function removeFn () {
-      var parent = nodes[0].parentNode
-      for (var i = nodes.length - 1; i >= 0; --i) {
+      const parent = nodes[0].parentNode
+      for (let i = nodes.length - 1; i >= 0; --i) {
         cleanNode(nodes[i])
         parent.removeChild(nodes[i])
       }
     }
 
     if (this.beforeRemove) {
-      var beforeRemoveReturn = this.beforeRemove({
+      const beforeRemoveReturn = this.beforeRemove({
         nodesToRemove: nodes, foreachInstance: this
       }) || {}
       // If beforeRemove returns a `then`–able e.g. a Promise, we remove
@@ -511,7 +511,7 @@ export class ForEachBinding extends AsyncBindingHandler {
   // we also call it on dispose not to leave any mess
   flushPendingDeletes () {
     for (let i = 0, len = this.pendingDeletes.length; i !== len; ++i) {
-      var pd = this.pendingDeletes[i]
+      const pd = this.pendingDeletes[i]
       while (pd.nodesets.length) {
         this.removeNodes(pd.nodesets.pop())
       }

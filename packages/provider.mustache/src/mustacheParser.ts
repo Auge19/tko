@@ -28,8 +28,8 @@ class Expression extends Interpolated {
     const ownerDocument = textNode ? textNode.ownerDocument : document
     const firstChar = text[0]
     const lastChar = text[text.length - 1]
-    var closeComment = true
-    var binding
+    let closeComment = true
+    let binding
 
     if (firstChar === '#') {
       if (lastChar === '/') {
@@ -86,7 +86,7 @@ export function * innerParse (text: string) {
 
 export function * parseOuterMatch (outerMatch?: RegExpMatchArray | null) {
   if (!outerMatch) { return }
-  let [pre, inner, post] = outerMatch.slice(1)
+  const [pre, inner, post] = outerMatch.slice(1)
   yield new Text(pre)
   yield * innerParse(inner)
   yield new Text(post)

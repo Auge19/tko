@@ -13,12 +13,12 @@ import {
 import '@tko/utils/helpers/jasmine-13-helper'
 
 describe('Dependent Observable DOM', function () {
-  var testNode : HTMLElement
+  let testNode : HTMLElement
   beforeEach(function() { testNode = jasmine.prepareTestNode() })
 
   it('Should register DOM node disposal callback only if active after the initial evaluation', function () {
         // Set up an active one
-    var nodeForActive = document.createElement('DIV'),
+    const nodeForActive = document.createElement('DIV'),
       observable = Observable('initial'),
       activeDependentObservable = Computed({
         read: function () {
@@ -26,8 +26,8 @@ describe('Dependent Observable DOM', function () {
         },
         disposeWhenNodeIsRemoved: nodeForActive
       })
-    var nodeForInactive = document.createElement('DIV')
-    var inactiveDependentObservable = Computed({
+    const nodeForInactive = document.createElement('DIV')
+    const inactiveDependentObservable = Computed({
       read: function () {
         return 123
       },
@@ -47,11 +47,11 @@ describe('Dependent Observable DOM', function () {
 
   it('Should dispose when DOM node is removed from the document and computed is re-evaluated', function () {
         // Create node and add it to the document
-    var node = document.createElement('DIV')
+    const node = document.createElement('DIV')
     testNode.appendChild(node)
 
         // Create a computed that is disposed when the node is removed
-    var observable = Observable('initial'),
+    const observable = Observable('initial'),
       computed = Computed({
         read: function () {
           return observable()
@@ -70,7 +70,7 @@ describe('Dependent Observable DOM', function () {
   })
 
   it('Should dispose when DOM node is removed from the document, but not before it\'s added', function () {
-    var node = document.createElement('DIV'),
+    const node = document.createElement('DIV'),
       observable = Observable('initial'),
       computed = Computed({
         read: function () {
