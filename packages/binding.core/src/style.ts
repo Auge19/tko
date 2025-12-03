@@ -7,8 +7,6 @@ import {
     unwrap
 } from '@tko/observable'
 
-const {jQuery} = options
-
 export var style = {
   update: function (element, valueAccessor) {
     var value = unwrap(valueAccessor() || {})
@@ -20,8 +18,8 @@ export var style = {
         styleValue = ''
       }
 
-      if (jQuery) {
-        jQuery(element).css(styleName, styleValue)
+      if (options.jQuery) {
+        options.jQuery(element).css(styleName, styleValue)
       } else {
         styleName = styleName.replace(/-(\w)/g, (all, letter) => letter.toUpperCase())
         const previousStyle = element.style[styleName]

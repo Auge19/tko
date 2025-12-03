@@ -381,7 +381,7 @@ function triggerDescendantsComplete (node : Node, bindings : Object, nodeAsyncBi
 // used in applyBinding, bindingContext.ts
 export type BindingContextExtendCallback<T = any> = (self: BindingContext<T>, parentContext?: BindingContext<T>, dataItem?: T) => void;
 
-function getBindingContext<T = any>(viewModelOrBindingContext: any, extendContextCallback?: BindingContextExtendCallback<T>) : BindingContext<T> {
+function getBindingContext<T = any>(viewModelOrBindingContext?: any, extendContextCallback?: BindingContextExtendCallback<T>) : BindingContext<T> {
   return viewModelOrBindingContext && (viewModelOrBindingContext instanceof bindingContext)
     ? viewModelOrBindingContext
     : new bindingContext<T>(viewModelOrBindingContext, undefined, undefined, extendContextCallback)
@@ -394,7 +394,7 @@ export function applyBindingAccessorsToNode<T = any>(node: HTMLElement, bindings
   return applyBindingsToNodeInternal<T>(node, bindings, getBindingContext(viewModelOrBindingContext), asyncBindingsApplied)
 }
 
-export function applyBindingsToNode<T = any>(node: HTMLElement, bindings : Record<string, any>, viewModelOrBindingContext : BindingContext<T> | Observable<T> | T): BindingResult {
+export function applyBindingsToNode<T = any>(node: HTMLElement, bindings : Record<string, any>, viewModelOrBindingContext? : BindingContext<T> | Observable<T> | T): BindingResult {
   const asyncBindingsApplied = new Set()
   const bindingContext = getBindingContext<T>(viewModelOrBindingContext)
   const bindingAccessors = getBindingProvider().makeBindingAccessors(bindings, bindingContext, node)
@@ -414,10 +414,6 @@ export function applyBindingsToDescendants<T = any>(viewModelOrBindingContext: T
 
 export function applyBindings<T = any>(viewModelOrBindingContext: BindingContext<T> | Observable<T> | T, rootNode: HTMLElement, extendContextCallback?: BindingContextExtendCallback<T>): Promise<unknown> {
   const asyncBindingsApplied = new Set()
-  // If jQuery is loaded after Knockout, we won't initially have access to it. So save it here.
-  if (options.jQuery === undefined && (globalThis as any).jQuery) {
-    options.jQuery = (globalThis as any).jQuery
-  }
 
   // rootNode is optional
   if (!rootNode) {
