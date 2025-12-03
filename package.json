@@ -61,5 +61,6 @@
     "packages/*",
     "builds/*"
   ],
-  "private": true
+  "private": true,
+  "version": "0.0.1-rc.2.0.0"
 }
