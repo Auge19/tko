@@ -110,7 +110,7 @@ dist/browser.min.js: $(src) package.json
 		--global-name=$(iife-global-name) \
 		--log-level=$(log-level) \
 		--banner:js="$(banner) IIFE" \
-		--footer:js="(typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : global).$(iife-global-name) = $(iife-global-name).default; var $(iife-global-name) = $(iife-global-name).default;" \
+		--footer:js="(typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : global).$(iife-global-name) = $(iife-global-name).default;" \
 		--define:BUILD_VERSION='"${version}"' \
 		--bundle \
 		--minify \
@@ -127,7 +127,7 @@ dist/browser.js: $(src) package.json
 		--global-name=$(iife-global-name) \
 		--log-level=$(log-level) \
 		--banner:js="$(banner) IIFE" \
-		--footer:js="(typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : global).$(iife-global-name) = $(iife-global-name).default; var $(iife-global-name) = $(iife-global-name).default;" \
+		--footer:js="(typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : global).$(iife-global-name) = $(iife-global-name).default;" \
 		--define:BUILD_VERSION='"${version}"' \
 		--bundle \
 		--sourcemap=external \
