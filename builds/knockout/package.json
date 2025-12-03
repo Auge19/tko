@@ -7,10 +7,10 @@
   "author": "The Knockout Team",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/knockout/tko.git"
+    "url": "git+https://github.com/Auge19/tko.git"
   },
   "bugs": {
-    "url": "https://github.com/knockout/tko/issues"
+    "url": "https://github.com/Auge19/tko/issues"
   },
   "testling": {
     "preprocess": "build/build.sh",
