@@ -62,5 +62,5 @@
     "builds/*"
   ],
   "private": true,
-  "version": "0.0.1-4.0.0-rc.2.0.0"
+  "version": "0.0.1-rc.3.0.0"
 }
