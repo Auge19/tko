@@ -56,6 +56,16 @@ repackage: tools/repackage.mjs
 bump:
 	$(LERNA) version
 
+release-knockout:
+	@echo "Parameters:"
+	@echo "  version = $(PARAM1)"
+	@if [ -z "$(PARAM1)" ]; then \
+		echo "FEHLER: PARAM1 ist nicht gesetzt!"; \
+		exit 1; \
+	fi
+	/builds/knockout/$(NPM) version prerelease --preid $(PARAM1) --no-git-tag-version
+	/builds/knockout/$(NPM) publish 
+
 # from-git "identify packages tagged by lerna version and publish them to npm."
 # from-package "packages where the latest version is not present in the registry"
 publish-unpublished: all link
