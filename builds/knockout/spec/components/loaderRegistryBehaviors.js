@@ -65,8 +65,8 @@ describe('Components: Loader registry', function() {
                 onLoaded();
             } else {
                 // Will complete asynchronously
-                waitsFor(function() { return loadedDefinition !== "Not yet loaded"; }, 300);
-                runs(onLoaded);
+                jasmine.waitsFor(function() { return loadedDefinition !== "Not yet loaded"; }, 300);
+                jasmine.runs(onLoaded);
             }
         };
 
@@ -300,14 +300,14 @@ describe('Components: Loader registry', function() {
 
         // See we can choose to force a refresh by clearing a cache entry before fetching a definition.
         // This facility probably won't be used by most applications, but it is helpful for tests.
-        runs(function() { ko.components.clearCachedDefinition('some-component'); });
+        jasmine.runs(function() { ko.components.clearCachedDefinition('some-component'); });
         getComponentDefinition('some-component', function(definition3) {
             expect(definition3).not.toBe(definition1);
             expect(definition3.createViewModel().isTheTestComponent).toBe(true);
         });
 
         // See that unregistering a component implicitly clears the cache entry too
-        runs(function() { ko.components.unregister('some-component'); });
+        jasmine.runs(function() { ko.components.unregister('some-component'); });
         getComponentDefinition('some-component', function(definition4) {
             expect(definition4).toBe(null);
         });
@@ -335,8 +335,8 @@ describe('Components: Loader registry', function() {
 
         // Even a little while later, the module hasn't yet loaded
         var definition2 = undefined;
-        waits(20);
-        runs(function() {
+        jasmine.waits(20);
+        jasmine.runs(function() {
             expect(definition1).toBe(undefined);
 
             // ... but let's make a second request for the same module
@@ -349,8 +349,8 @@ describe('Components: Loader registry', function() {
         });
 
         // And when the loading eventually completes, both requests are satisfied with the same definition
-        waitsFor(function() { return definition1 }, 300);
-        runs(function() {
+        jasmine.waitsFor(function() { return definition1 }, 300);
+        jasmine.runs(function() {
             expect(definition1.template).toBe(someModuleTemplate);
             expect(definition2).toBe(definition1);
         });
@@ -365,14 +365,14 @@ describe('Components: Loader registry', function() {
     function getComponentDefinition(componentName, assertionCallback) {
         var loadedDefinition,
             hasCompleted = false;
-        runs(function() {
+        jasmine.runs(function() {
             ko.components.get(componentName, function(definition) {
                 loadedDefinition = definition;
                 hasCompleted = true;
             });
             expect(hasCompleted).toBe(false); // Should always complete asynchronously
         });
-        waitsFor(function() { return hasCompleted; });
-        runs(function() { assertionCallback(loadedDefinition); });
+        jasmine.waitsFor(function() { return hasCompleted; });
+        jasmine.runs(function() { assertionCallback(loadedDefinition); });
     }
 });

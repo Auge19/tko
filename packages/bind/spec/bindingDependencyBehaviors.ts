@@ -356,7 +356,7 @@ describe('Binding dependencies', function () {
     applyBindings(vm, testNode);
     expect(callbackSpy1).toHaveBeenCalled();
 
-    callbackSpy1.reset();
+    callbackSpy1.calls.reset();
     vm.callback = callbackSpy2;
 
     vm.observable('new value');

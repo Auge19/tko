@@ -10,12 +10,12 @@ describe('Cross-window support', function() {
                 win2.close();
             });
 
-            waitsFor(function () {
+            jasmine.waitsFor(function () {
                 return (win2.document && win2.document.readyState == 'complete' && (body2 = win2.document.body));
             }, 5000);
 
             // renderTemplate
-            runs(function () {
+            jasmine.runs(function () {
                 ko.setTemplateEngine(new dummyTemplateEngine({ someTemplate: "<div data-bind='text: text'></div>" }));
                 ko.renderTemplate("someTemplate", { text: 'abc' }, null, body2);
                 expect(body2.childNodes.length).toEqual(1);
@@ -24,7 +24,7 @@ describe('Cross-window support', function() {
             });
 
             // template/foreach binding
-            runs(function () {
+            jasmine.runs(function () {
                 ko.setTemplateEngine(new ko.nativeTemplateEngine());
                 body2.innerHTML = "<div id='tmpl'><span data-bind='text: childProp'></span></div><div data-bind='template: {name: \"tmpl\", foreach: someItems}'></div>";
                 var someItems = [
@@ -37,7 +37,7 @@ describe('Cross-window support', function() {
             });
 
             // foreach binding
-            runs(function () {
+            jasmine.runs(function () {
                 body2.innerHTML = "<div data-bind='foreach: someItems'><span data-bind='text: childProp'></span></div>";
                 var someItems = [
                     { childProp: 'first child' },
@@ -49,7 +49,7 @@ describe('Cross-window support', function() {
             });
 
             // with binding
-            runs(function () {
+            jasmine.runs(function () {
                 var someItem = ko.observable(undefined);
                 body2.innerHTML = "<div data-bind='with: someItem'><span data-bind='text: occasionallyExistentChildProp'></span></div>";
                 ko.applyBindings({ someItem: someItem }, body2);

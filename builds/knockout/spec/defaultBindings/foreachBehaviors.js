@@ -646,7 +646,7 @@ describe('Binding: Foreach', function() {
     it('Should not clean unrelated nodes when beforeRemove callback removes some nodes before others', function() {
         // In this scenario, a beforeRemove callback removes non-element nodes (such as text nodes)
         // immediately, but delays removing element nodes (for a fade effect, for example). See #1903.
-        jasmine.Clock.useMock();
+        jasmine.clock().install();
         testNode.innerHTML = "<div data-bind='foreach: {data: planets, beforeRemove: beforeRemove}'>--<span data-bind='text: name'></span>++</div>";
         var planets = ko.observableArray([
             { name: ko.observable('Mercury') },
@@ -684,7 +684,7 @@ describe('Binding: Foreach', function() {
         expect(testNode).toContainText('--Mercury++--Venus++--Earth++Moon--Mars++--Jupiter++--Saturn++');
 
         // After the delay, the deleted item's node is removed
-        jasmine.Clock.tick(1);
+        jasmine.clock().tick(1);
         expect(testNode).toContainText('--Mercury++--Venus++--Earth++--Mars++--Jupiter++--Saturn++');
 
     });

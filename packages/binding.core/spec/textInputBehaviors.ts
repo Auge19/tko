@@ -149,7 +149,7 @@ describe('Binding: TextInput', function () {
 
     ((testNode.children[0] as HTMLInputElement).value as any) = 789 // only string values are accepted
     triggerEvent(testNode.children[0], 'change')
-    expect(model.modelProperty123).toEqual('789')
+    expect(model.modelProperty123).toEqual(789)
   })
 
   it('Should support alias "textinput"', function () {
@@ -166,7 +166,7 @@ describe('Binding: TextInput', function () {
 
     ((testNode.children[0] as HTMLInputElement).value as any) = 789;
     triggerEvent(testNode.children[0], 'change')
-    expect(model.modelProperty123).toEqual('789')
+    expect(model.modelProperty123).toEqual(789)
   })
 
   it('Should be able to read and write to a property of an object returned by a function', function () {
@@ -188,17 +188,17 @@ describe('Binding: TextInput', function () {
     // .property
     ((testNode.children[0] as HTMLInputElement).value as any) = 667
     triggerEvent(testNode.children[0], 'change')
-    expect(mySetter.set).toEqual('667');
+    expect(mySetter.set).toEqual(667);
 
     // ["property"]
     ((testNode.childNodes[1] as HTMLInputElement).value as any) = 668;
     triggerEvent(testNode.childNodes[1] as Element, 'change')
-    expect(mySetter.set).toEqual('668');
+    expect(mySetter.set).toEqual(668);
 
     // ['property']
     ((testNode.children[0] as HTMLInputElement).value as any) = 669
     triggerEvent(testNode.children[0], 'change')
-    expect(mySetter.set).toEqual('669');
+    expect(mySetter.set).toEqual(669);
   })
 
   it('Should be able to write to observable subproperties of an observable, even after the parent observable has changed', function () {
@@ -233,7 +233,7 @@ describe('Binding: TextInput', function () {
     }
     if (jasmine.ieVersion === 9) {
             // IE 9 responds to the event asynchronously (see #1788)
-      waitsFor(function () {
+      jasmine.waitsFor(function () {
         return myObservable() === 'some user-entered value'
       }, "Timeout", 50)
     } else {
@@ -308,7 +308,7 @@ describe('Binding: TextInput', function () {
         options.debug = true
         this.restoreAfter(bindingHandlers.textInput, '_forceUpdateOn')
         bindingHandlers.textInput._forceUpdateOn = ['afterkeydown']
-        jasmine.Clock.useMock()
+        jasmine.clock().install()
       })
 
       afterEach(function () {
@@ -323,7 +323,7 @@ describe('Binding: TextInput', function () {
         (testNode.children[0] as HTMLInputElement).value = 'some user-entered value'
         expect(myObservable()).toEqual('123')  // observable is not changed yet
 
-        jasmine.Clock.tick(20)
+        jasmine.clock().tick(20)
         expect(myObservable()).toEqual('some user-entered value')  // it's changed after a delay
       })
 
@@ -339,7 +339,7 @@ describe('Binding: TextInput', function () {
         expect((testNode.children[0] as HTMLInputElement).value).toEqual('some user-entered value')
 
                 // Observable is updated to new element value
-        jasmine.Clock.tick(20)
+        jasmine.clock().tick(20)
         expect(myObservable()).toEqual('some user-entered value')
       })
 
@@ -355,7 +355,7 @@ describe('Binding: TextInput', function () {
         expect((testNode.children[0] as HTMLInputElement).value).toEqual('some value from the server')
 
                 // New value remains when event is processed
-        jasmine.Clock.tick(20)
+        jasmine.clock().tick(20)
         expect(myObservable()).toEqual('some value from the server')
       })
 
@@ -372,7 +372,7 @@ describe('Binding: TextInput', function () {
 
                 // even after a delay, the keydown event isn't processed
         model.someProp = undefined
-        jasmine.Clock.tick(20)
+        jasmine.clock().tick(20)
         expect(model.someProp).toBeUndefined()
         expect((testNode.children[0] as any)._ko_textInputProcessedEvent).toEqual('change')
       })

@@ -1,15 +1,15 @@
 jasmine.getEnv().updateInterval = 500
 
-jasmine.Clock.mockScheduler = function (callback) {
+jasmine.clock().mockScheduler = function (callback) {
     setTimeout(callback, 0);
 };
-jasmine.Clock.useMockForTasks = function() {
-    jasmine.Clock.useMock();
+jasmine.clock().useMockForTasks = function() {
+    jasmine.clock().install();
 
     // Make sure ko.tasks is using setTimeout so that it uses the mock clock
-    if (ko.options.taskScheduler != jasmine.Clock.mockScheduler) {
+    if (ko.options.taskScheduler != jasmine.clock().mockScheduler) {
         jasmine.getEnv().currentSpec.restoreAfter(ko.options, 'taskScheduler');
-        ko.options.taskScheduler = jasmine.Clock.mockScheduler;
+        ko.options.taskScheduler = jasmine.clock().mockScheduler;
     }
 };
 

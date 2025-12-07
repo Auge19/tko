@@ -68,7 +68,7 @@ describe('Cross-window support', function () {
     const body2 = win2.document.body
 
     // renderTemplate
-    window.runs(function () {
+    window.jasmine.runs(function () {
       setTemplateEngine(new dummyTemplateEngine({ someTemplate: "<div data-bind='text: text'></div>" }))
       renderTemplate('someTemplate', { text: 'abc' }, null, body2)
       expect(body2.childNodes.length).toEqual(1)
@@ -77,7 +77,7 @@ describe('Cross-window support', function () {
     })
 
     // foreach
-    window.runs(function () {
+    window.jasmine.runs(function () {
       body2.innerHTML = "<div data-bind='foreach: someItems'><span data-bind='text: childProp'></span></div>"
       var someItems = [
                 { childProp: 'first child' },
@@ -89,7 +89,7 @@ describe('Cross-window support', function () {
     })
 
     // template/foreach binding
-    window.runs(function () {
+    window.jasmine.runs(function () {
       setTemplateEngine(new nativeTemplateEngine())
       body2.innerHTML = "<div id='tmpl'><span data-bind='text: childProp'></span></div><div data-bind='template: {name: \"tmpl\", foreach: someItems}'></div>"
       var someItems = [
@@ -102,7 +102,7 @@ describe('Cross-window support', function () {
     })
 
     // with
-    window.runs(function () {
+    window.jasmine.runs(function () {
       var someItem = observable(undefined)
       body2.innerHTML = "<div data-bind='with: someItem'><span data-bind='text: occasionallyExistentChildProp'></span></div>"
       applyBindings({ someItem: someItem }, body2)
@@ -123,6 +123,6 @@ describe('Cross-window support', function () {
 
     // The `this.after` appears to not be called consistently, leaving
     // lingering windows open.
-    window.runs(() => win2.close())
+    window.jasmine.runs(() => win2.close())
   })
 })

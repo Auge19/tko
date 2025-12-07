@@ -109,7 +109,7 @@ arrayForEach(['hasfocus', 'hasFocus', 'focusKnockout351'], binding => {
     if (ieVersion) {
       // Workaround for spurious focus-timing-related failures on IE8
       // (issue knockout/knockout#736)
-      beforeEach(function () { waits(100) })
+      beforeEach(function () { jasmine.waits(100) })
     }
 
     it('Should set an observable value to be true on focus and false on blur even if the binding is applied through another binding', function () {
@@ -188,12 +188,12 @@ arrayForEach(['hasfocus', 'hasFocus', 'focusKnockout351'], binding => {
 
       (testNode.childNodes[0] as HTMLElement).focus()
       triggerEvent(testNode.children[0], 'focusin')
-      expect(model.myVal).toEqual(true);
+      expect(model.myVal!).toEqual(true);
 
           // Move the focus elsewhere
       (testNode.childNodes[1] as HTMLElement).focus()
       triggerEvent(testNode.children[0], 'focusout')
-      expect(model.myVal).toEqual(false)
+      expect(model.myVal!).toEqual(false)
     })
 
     function defineSubscription<T>(observable: Observable<T>, func: (widget: T) => void, disposeImmediately?: boolean, eventType?: any): any {
@@ -313,7 +313,7 @@ arrayForEach(['hasfocus', 'hasFocus', 'focusKnockout351'], binding => {
 
           // Can only test for focus in browsers that support it
       if ('activeElement' in document) {
-        expect(document.activeElement).toBe(testNode.childNodes[0])
+        expect(document.activeElement).toBe(testNode.childNodes[0] as Element)
       }
     })
   })

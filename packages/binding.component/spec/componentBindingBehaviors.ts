@@ -78,7 +78,7 @@ describe('Components: Component binding', function () {
 
   afterEach(function () {
     expect(tasks.resetForTesting()).toEqual(0)
-    jasmine.Clock.reset()
+    jasmine.clock().uninstall()
     components.unregister(testComponentName)
   })
 
@@ -97,7 +97,7 @@ describe('Components: Component binding', function () {
   it('Throws if the component name is unknown', function () {
     expect(function () {
       applyBindings(outerViewModel, testNode)
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
     }).toThrow("Unknown component 'test-component'")
   })
 
@@ -105,7 +105,7 @@ describe('Components: Component binding', function () {
     components.register(testComponentName, {})
     expect(function () {
       applyBindings(outerViewModel, testNode)
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
     }).toThrow("Component 'test-component' has no template")
   })
 
@@ -116,7 +116,7 @@ describe('Components: Component binding', function () {
             .toThrowContaining('Multiple bindings (if and component) are trying to control descendant bindings of the same element.')
 
         // Even though applyBindings threw an exception, the component still gets bound (asynchronously)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
   })
 
   it('Replaces the element\'s contents with a clone of the template', function () {
@@ -134,7 +134,7 @@ describe('Components: Component binding', function () {
     applyBindings({ testComponentBindingValue: testComponentName }, testNode)
 
         // See the template asynchronously shows up
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.children[0]).toContainHtml('<div>hello</div> <span>world</span>')
     expect(testTemplate.children[0].childNodes.length).toBe(1)
 
@@ -168,7 +168,7 @@ describe('Components: Component binding', function () {
 
     components.register(testComponentName, componentConfig)
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
     expect(testNode).toContainText('From the viewmodel')
   })
@@ -177,7 +177,7 @@ describe('Components: Component binding', function () {
     components.register(testComponentName, { template: '<div data-bind="text: myvalue"></div>' })
     testComponentParams.myvalue = 'some parameter value'
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
     expect(testNode.children[0]).toContainHtml('<div data-bind="text: myvalue">some parameter value</div>')
   })
@@ -189,7 +189,7 @@ describe('Components: Component binding', function () {
       viewModel: function () { this.myvalue = 123 }
     })
 
-        // Notice the absence of any 'jasmine.Clock.tick' call here. This is synchronous.
+        // Notice the absence of any 'jasmine.clock().tick' call here. This is synchronous.
     applyBindings(outerViewModel, testNode)
     expect(testNode.children[0]).toContainHtml('<div data-bind="text: myvalue">123</div>')
   })
@@ -222,11 +222,11 @@ describe('Components: Component binding', function () {
         // First injection is async, because the loader completes asynchronously
     applyBindings({ testList: testList }, testNode)
     expect(testNode.children[0]).toContainText('')
-    jasmine.Clock.tick(0)
+    jasmine.clock().tick(0)
     expect(testNode.children[0]).toContainText('first')
 
         // Second (cached) injection is synchronous, because the component config says so.
-        // Notice the absence of any 'jasmine.Clock.tick' call here. This is synchronous.
+        // Notice the absence of any 'jasmine.clock().tick' call here. This is synchronous.
     testList.push('second')
     expect(testNode.children[0]).toContainText('firstsecond', /* ignoreSpaces */ true) // Ignore spaces because old-IE is inconsistent
   })
@@ -236,7 +236,7 @@ describe('Components: Component binding', function () {
       template: 'Parent is outer view model: <span data-bind="text: $parent.isOuterViewModel"></span>'
     })
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
     expect(testNode.children[0]).toContainText('Parent is outer view model: true')
   })
@@ -247,7 +247,7 @@ describe('Components: Component binding', function () {
     })
     testNode.innerHTML = '<div data-bind="component: testComponentBindingValue"><em>original</em> child nodes</div>'
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
     expect(testNode.children[0]).toContainHtml('start<span data-bind="template: { nodes: $componenttemplatenodes }"><em>original</em> child nodes</span>end')
   })
@@ -273,7 +273,7 @@ describe('Components: Component binding', function () {
     })
 
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
     expect(testNode.children[0]).toContainText('In child context 123, inside component with property 456. Now in sub-component with property 789.', /* ignoreSpaces */ true) // Ignore spaces because old-IE is inconsistent
   })
@@ -289,7 +289,7 @@ describe('Components: Component binding', function () {
 
         // Instantiate it
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
         // See the params arrived as expected
     expect(receivedParams).toEqual([testComponentParams])
@@ -310,7 +310,7 @@ describe('Components: Component binding', function () {
 
         // Instantiate it
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
         // See the params arrived as expected
     expect(receivedParams).toEqual([testComponentParams])
@@ -356,7 +356,7 @@ describe('Components: Component binding', function () {
     testComponentBindingValue.name = observable('component-alpha')
     testComponentParams.suppliedValue = observable(123)
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
         // See it appeared, and the expected subscriptions were registered
     expect(testNode.firstChild).not.toBeNull();
@@ -385,7 +385,7 @@ describe('Components: Component binding', function () {
         // but it happens asynchronously (because the component has to be loaded)
     testComponentBindingValue.name('component-beta')
     expect(testNode).toContainText('Alpha value is 234.')
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode).toContainText('Beta value is 234.')
 
         // Cleans up by disposing obsolete subscriptions, viewmodels, and cleans DOM nodes
@@ -434,7 +434,7 @@ describe('Components: Component binding', function () {
 
         // Instantiate the first component
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
         // See it appeared, and the expected subscriptions were registered
     expect(testNode.firstChild).not.toBeNull();
@@ -458,7 +458,7 @@ describe('Components: Component binding', function () {
     })
 
     expect(testNode).toContainText('Alpha value is 123.')
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode).toContainText('Beta value is 456.')
 
         // Cleans up by disposing obsolete subscriptions, viewmodels, and cleans DOM nodes
@@ -484,7 +484,7 @@ describe('Components: Component binding', function () {
     var someObservable = observable('First')
     testNode.innerHTML = '<div data-bind="component: { name: \'' + testComponentName + '\', params: { someData: someObservable() } }"></div>'
     applyBindings({ someObservable: someObservable }, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
     expect(testNode.firstChild).not.toBeNull();
     var firstTemplateNode = testNode.firstChild?.firstChild as HTMLElement,
@@ -499,7 +499,7 @@ describe('Components: Component binding', function () {
     expect(testNode).toContainText('Value is First.')
     expect(firstViewModelInstance.wasDisposed).not.toBe(true)
     expect(domData.get(firstTemplateNode, 'TestValue')).toBe('Hello')
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode).toContainText('Value is Second.')
     expect(firstViewModelInstance.wasDisposed).toBe(true)
     expect(domData.get(firstTemplateNode, 'TestValue')).toBe(undefined)
@@ -533,7 +533,7 @@ describe('Components: Component binding', function () {
       outerObservable = observable({ inner: innerObservable })
     testNode.innerHTML = '<div data-bind="component: { name: \'' + testComponentName + '\', params: { somevalue: outer().inner } }"></div>'
     applyBindings({ outer: outerObservable }, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
     expect((testNode.children[0].children[0] as HTMLInputElement).value).toEqual('inner1')
     expect(outerObservable.getSubscriptionsCount()).toBe(1)
@@ -555,7 +555,7 @@ describe('Components: Component binding', function () {
         // See we can mutate the outer value and see the result show up (cleaning subscriptions to the old inner value)
     var newInnerObservable = observable('newinner')
     outerObservable({ inner: newInnerObservable })
-    jasmine.Clock.tick(1)              // modifying the outer observable causes the component to reload, which happens asynchronously
+    jasmine.clock().tick(1)              // modifying the outer observable causes the component to reload, which happens asynchronously
     expect((testNode.children[0].children[0] as HTMLInputElement).value).toEqual('newinner')
     expect(outerObservable.getSubscriptionsCount()).toBe(1)
     expect(innerObservable.getSubscriptionsCount()).toBe(0)
@@ -588,7 +588,7 @@ describe('Components: Component binding', function () {
 
         // Bind an instance of the component; grab its viewmodel
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.firstChild).not.toBeNull();
     var firstTemplateNode = testNode.firstChild?.firstChild as HTMLElement,
       viewModelInstance = dataFor(firstTemplateNode)
@@ -614,7 +614,7 @@ describe('Components: Component binding', function () {
     cleanNode(testNode.firstChild!)
 
         // Now wait and see that, after loading finishes, the component wasn't used
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(numConstructorCalls).toBe(0)
     expect(testNode.firstChild).toContainHtml('')
   })
@@ -657,20 +657,20 @@ describe('Components: Component binding', function () {
     applyBindings(outerViewModel, testNode)
 
         // Even if we wait a while, it's not yet loaded, because we're still waiting for the module
-    jasmine.Clock.tick(10)
+    jasmine.clock().tick(10)
     expect(constructorCallLog.length).toBe(0)
     expect(testNode.firstChild).not.toBeNull();
     expect(testNode.firstChild?.childNodes.length).toBe(0)
 
         // In the meantime, switch to requesting component 2 and then 3
     testComponentBindingValue.name('component-2')
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     testComponentBindingValue.name('component-3')
     expect(constructorCallLog.length).toBe(0)
 
         // Now if component 1 finishes loading, it's irrelevant, so nothing happens
     requireCallbacks['module-1'](testViewModel1)
-    jasmine.Clock.tick(1) // ... even if we wait a bit longer
+    jasmine.clock().tick(1) // ... even if we wait a bit longer
     expect(constructorCallLog.length).toBe(0)
     expect(testNode.firstChild?.childNodes.length).toBe(0)
 
@@ -687,7 +687,7 @@ describe('Components: Component binding', function () {
         // Now if component 2 finishes loading, it's irrelevant, so nothing happens.
         // In particular, the viewmodel isn't disposed.
     requireCallbacks['module-2'](testViewModel2)
-    jasmine.Clock.tick(1) // ... even if we wait a bit longer
+    jasmine.clock().tick(1) // ... even if we wait a bit longer
     expect(constructorCallLog.length).toBe(1)
     expect(testNode).toContainText('Component 3 template')
     expect(viewModelInstance.wasDisposed).not.toBe(true)
@@ -695,7 +695,7 @@ describe('Components: Component binding', function () {
         // However, if we now switch to component 2, the old viewmodel is disposed,
         // and the new component is used without any further module load calls.
     testComponentBindingValue.name('component-2')
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(constructorCallLog.length).toBe(2)
     expect(testNode).toContainText('Component 2 template')
     expect(viewModelInstance.wasDisposed).toBe(true)
@@ -703,7 +703,7 @@ describe('Components: Component binding', function () {
         // Show also that we won't leak memory by applying bindings to nodes
         // after they were disposed (e.g., because they were removed from the document)
     testComponentBindingValue.name('component-4')
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     cleanNode(testNode.firstChild!) // Dispose the node before the module loading completes
     requireCallbacks['module-4'](testViewModel4)
     expect(constructorCallLog.length).toBe(2) // No extra constructor calls
@@ -718,7 +718,7 @@ describe('Components: Component binding', function () {
     testComponentParams.someData = observable(123)
 
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode).toContainText('Hello! Your param is 123 Goodbye.')
 
     testComponentParams.someData(456)
@@ -741,7 +741,7 @@ describe('Components: Component binding', function () {
     applyBindings(outerViewModel, testNode)
     expect(callbacks).toEqual(0)
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.children[0]).toContainHtml('<div data-bind="text: myvalue">some parameter value</div>')
     expect(callbacks).toEqual(1)
   })
@@ -790,13 +790,13 @@ describe('Components: Component binding', function () {
             // Bind an instance
       testComponentParams.someData = observable('First')
       applyBindings(outerViewModel, testNode)
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
       expect(testNode).toContainText('First')
       expect(testComponentParams.someData.getSubscriptionsCount()).toBe(0)
 
             // See that changing the observable will have no effect
       testComponentParams.someData('Second')
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
       expect(testNode).toContainText('First')
     })
 

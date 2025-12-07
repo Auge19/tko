@@ -15,6 +15,8 @@ declare global {
         innerShiv // TODO: For IE<9.. we could also remove it
     }
 
+
+
     //Jasmine and Mocha define duplicated functions, is a problem for the type system
     //This namespace merges the jasmine namespace to correct same tsc warnings
     namespace jasmine {      
@@ -26,18 +28,23 @@ declare global {
         function resolve(promise: Promise<boolean>)
         function prepareTestNode() : HTMLElement
         function nodeText(node)
-        var Clock: Clock
+        
+        //var Clock: Clock
         function getEnv(): any;
 
-        var FakeTimer: any
+        //var FakeTimer: any
         var undefined: undefined
         var browserSupportsProtoAssignment: any
         var ieVersion: any
+        function runs(func : Function) : any;
+        function sleep(timeMillis : number)
+        async function wait (timeMillis : number)
 
+        function waitsFor(conditionFunc : () => boolean,timeoutMsg?: string, timeoutMillis?: number);
         var Matchers: Matchers
 
         interface Matchers<T> {
-            toContainText(expected: string, ignoreSpaces: boolean): boolean
+            toContainText(expected: string, ignoreSpaces?: boolean): boolean
             toHaveOwnProperties(expectedProperties: any): boolean
             toHaveTexts(expectedTexts: any): boolean
             toHaveValues(expectedValues: any): boolean
@@ -50,14 +57,7 @@ declare global {
             toHaveNodeTypes(expectedTypes: any): boolean
             toContainHtmlElementsAndText(expectedHtml: any): boolean
         }
-
-        interface Clock {
-            mockScheduler: any
-        }
-
-        interface Spy {
-            reset(): any
-        }
+       
     }
 
     interface SymbolConstructor {

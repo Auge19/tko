@@ -55,7 +55,7 @@ describe('ComponentABC', function () {
 
   afterEach(function () {
     expect(tasks.resetForTesting()).toEqual(0)
-    jasmine.Clock.reset()
+    jasmine.clock().uninstall()
     components.unregister(testComponentName)
   })
 
@@ -91,7 +91,7 @@ describe('ComponentABC', function () {
 		}
     (CX as any).register()
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
     expect(testNode.childNodes[0])
         	.toContainHtml('<div data-bind="text: myvalue">some parameter value</div>')
@@ -123,7 +123,7 @@ describe('ComponentABC', function () {
         }
     (CX as any).register()
     applyBindings(outerViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
     expect(testNode.childNodes[0])
             .toContainHtml('<i>vid</i>')

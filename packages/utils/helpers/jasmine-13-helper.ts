@@ -21,8 +21,8 @@ jasmine.updateInterval = 500;
  */
 jasmine.resolve = function (promise : Promise<boolean>) {
   let complete = false
-  runs(() => promise.then((result) => { complete = result || true }))
-  waitsFor(() => complete)
+  jasmine.runs(() => promise.then((result) => { complete = result || true }))
+  jasmine.waitsFor(() => complete)
 }
 
 jasmine.prepareTestNode = function() : HTMLElement {
@@ -38,27 +38,24 @@ jasmine.prepareTestNode = function() : HTMLElement {
     return testNode;
 };
 
-jasmine.Clock.mockScheduler = function (callback) {
+export function useMockForTasks(options) {
+    return jasmine.clock().install();
+}
+
+/*
+jasmine.clock().mockScheduler = function (callback) {
     setTimeout(callback, 0);
 };
 
 
-export function useMockForTasks(options) {
-    jasmine.Clock.useMock();
 
-    // Make sure tasks is using setTimeout so that it uses the mock clock
-    if (options.taskScheduler != jasmine.Clock.mockScheduler) {
-        jasmine.getEnv().currentSpec.restoreAfter(options, 'taskScheduler');
-        options.taskScheduler = jasmine.Clock.mockScheduler;
-    }
-}
 
 jasmine.Spec.prototype.restoreAfter = function(object, propertyName) {
     var originalValue = object[propertyName];
     this.after(function() {
         object[propertyName] = originalValue;
     });
-};
+}; */
 
 jasmine.nodeText = function(node) {
     return node.nodeType == 3 ? node.data : 'textContent' in node ? node.textContent : node.innerText;
@@ -74,6 +71,40 @@ jasmine.setNodeText = function(node, text:string) {
 };
 
 
+jasmine.runs = function(func : Function) {
+    return func();
+}
+
+jasmine.sleep = function(timeMillis : number) {
+    return new Promise<void>(resolve => setTimeout(() => resolve(), timeMillis));
+}
+
+jasmine.wait = async function (timeMillis : number) {
+    await jasmine.sleep(timeMillis);
+}
+
+jasmine.waitsFor = async function(conditionFunc : () => boolean,timeoutMsg?: string, timeoutMillis?: number) {
+    timeoutMillis = timeoutMillis || 5000;
+    const start = new Date().getTime();
+
+    await waitInternal(conditionFunc, start, timeoutMillis, timeoutMsg);
+}
+
+function waitInternal(conditionFunc: () => boolean, start: number, timeoutMillis: number | undefined, timeoutMsg: string | undefined): any {
+    return new Promise<void>((resolve, reject) => {
+        function checkCondition() {
+            if (conditionFunc()) {
+                resolve();
+            } else if (new Date().getTime() - start >= timeoutMillis!) {
+                reject(new Error(timeoutMsg || 'Timeout waiting for condition'));
+            } else {
+                setTimeout(checkCondition, 1000);
+            }
+        }
+        checkCondition();
+    });
+}
+
 function cleanedHtml(node) {
     var cleanedHtml = node.innerHTML.toLowerCase().replace(/\r\n/g, "");
     // IE < 9 strips whitespace immediately following comment nodes. Normalize by doing the same on all browsers.
@@ -87,149 +118,187 @@ function cleanedHtml(node) {
     Custom Matchers
     ~~~~~~~~~~~~~~~
  */
-var matchers = {
+var matchers : jasmine.CustomMatcherFactories  = {
 
-    toHaveNodeTypes  (expectedTypes) {
-        var values = arrayMap(this.actual, function (node) {
-            return node.nodeType;
-        });
-        this.actual = values;   // Fix explanatory message
-        return this.env.equals_(values, expectedTypes);
+    toBeInstanceExactlyOf: function (util: jasmine.MatchersUtil): jasmine.CustomMatcher {
+        return {
+            compare: function (actual: any, expected: jasmine.Constructor): jasmine.CustomMatcherResult {
+                if (actual instanceof expected &&
+                actual.constructor.name === expected.name &&
+                actual.constructor.valueOf() === expected.valueOf()) {
+                return {
+                    pass: true,
+                    message: `Instance is exactly of type`
+                };
+                } else {
+                return {
+                    pass: false,
+                    message: `Instance (${actual.constructor.valueOf()}) is not exactly of type (${expected.valueOf()})`
+                };
+                }
+            }
+        };
     },
 
-    toContainHtmlElementsAndText (expectedHtml) {
-        this.actual = cleanedHtml(this.actual).replace(/<!--.+?-->/g, "");  // remove comments
-        return this.actual === expectedHtml;
+    toHaveNodeTypes: function (util: jasmine.MatchersUtil): jasmine.CustomMatcher {
+        return {
+            compare: function (actual: any, expectedTypes: any): jasmine.CustomMatcherResult {
+                const values = arrayMap(actual, function (node) {
+                    return node.nodeType;
+                });
+                const pass = util.equals(values, expectedTypes);
+                return {
+                    pass: pass,
+                    message: `Expected node types to be ${JSON.stringify(expectedTypes)}, but got ${JSON.stringify(values)}`
+                };
+            }
+        };
     },
 
-  toContainText (expectedText, ignoreSpaces) {
-      if (ignoreSpaces) {
-          expectedText = expectedText.replace(/\s/g, "");
-      }
+    toContainHtmlElementsAndText: function (util: jasmine.MatchersUtil): jasmine.CustomMatcher {
+        return {
+            compare: function (actual: any, expectedHtml: string): jasmine.CustomMatcherResult {
+                const cleanedActual = cleanedHtml(actual).replace(/<!--.+?-->/g, "");
+                const pass = cleanedActual === expectedHtml;
+                return {
+                    pass: pass,
+                    message: `Expected HTML to be ${expectedHtml}, but got ${cleanedActual}`
+                };
+            }
+        };
+    },
 
-      var actualText = jasmine.nodeText(this.actual);
-      var cleanedActualText = actualText.replace(/\r\n/g, "\n");
-      if (ignoreSpaces) {
-          cleanedActualText = cleanedActualText.replace(/\s/g, "");
-      }
+    toContainText: function (util: jasmine.MatchersUtil): jasmine.CustomMatcher {
+        return {
+            compare: function (actual: any, expectedText: string, ignoreSpaces?: boolean): jasmine.CustomMatcherResult {
+                let cleanExpectedText = expectedText;
+                if (ignoreSpaces) {
+                    cleanExpectedText = cleanExpectedText.replace(/\s/g, "");
+                }
 
-      this.actual = cleanedActualText;    // Fix explanatory message
-      return cleanedActualText === expectedText;
-  },
+                let cleanedActualText = jasmine.nodeText(actual).replace(/\r\n/g, "\n");
+                if (ignoreSpaces) {
+                    cleanedActualText = cleanedActualText.replace(/\s/g, "");
+                }
 
-  toHaveOwnProperties (expectedProperties) {
-      var ownProperties = new Array();
-      for (var prop in this.actual) {
-          if (hasOwnProperty(this.actual, prop)) {
-              ownProperties.push(prop);
-          }
-      }
-      return this.env.equals_(ownProperties, expectedProperties);
-  },
+                const pass = cleanedActualText === cleanExpectedText;
+                return {
+                    pass: pass,
+                    message: `Expected text to be "${cleanExpectedText}", but got "${cleanedActualText}"`
+                };
+            }
+        };
+    },
 
-  toHaveTexts (expectedTexts) {
-      var texts = arrayMap(this.actual.childNodes, jasmine.nodeText);
-      this.actual = texts;   // Fix explanatory message
-      return this.env.equals_(texts, expectedTexts);
-  },
+    toHaveOwnProperties: function (util: jasmine.MatchersUtil): jasmine.CustomMatcher {
+        return {
+            compare: function (actual: any, expectedProperties: any): jasmine.CustomMatcherResult {
+                const ownProperties: string[] = [];
+                for (const prop in actual) {
+                    if (hasOwnProperty(actual, prop)) {
+                        ownProperties.push(prop);
+                    }
+                }
+                const pass = util.equals(ownProperties, expectedProperties);
+                return {
+                    pass: pass,
+                    message: pass ? 'ok' : 'Expected to equal one but got more'
+                };
+            }
+        };
+    },
 
-  toHaveValues (expectedValues) {
-      var values = arrayFilter(
-        arrayMap(this.actual.childNodes, node => node.value),
-        value => value !== undefined)
-      this.actual = values   // Fix explanatory message
-      return this.env.equals_(values, expectedValues)
-  },
+    toHaveTexts: function (util: jasmine.MatchersUtil): jasmine.CustomMatcher {
+        return {
+            compare: function (actual: any, expectedTexts: any): jasmine.CustomMatcherResult {
+                const texts = arrayMap(actual.childNodes, jasmine.nodeText);
+                const pass = util.equals(texts, expectedTexts);
+                return {
+                    pass: pass,
+                    message: pass ? 'ok' : 'Expected to equal one but got more'
+                };
+            }
+        };
+    },
 
+    toHaveValues: function (util: jasmine.MatchersUtil): jasmine.CustomMatcher {
+        return {
+            compare: function (actual: any, expectedValues: any): jasmine.CustomMatcherResult {
+                const values = arrayFilter(arrayMap(actual.childNodes, (node: any) => node.value), (value: any) => value !== undefined);
+                const pass = util.equals(values, expectedValues);
+                return {
+                    pass: pass,
+                    message: pass ? 'ok' : 'Expected to equal one but got more'
+                };
+            }
+        };
+    },
 
-  toHaveCheckedStates (expectedValues) {
-      const values = arrayMap(this.actual.childNodes, (node) =>  node.checked)
-      this.actual = values;   // Fix explanatory message
-     return this.env.equals_(values, expectedValues)
-  },
+    toHaveCheckedStates: function (util: jasmine.MatchersUtil): jasmine.CustomMatcher {
+        return {
+            compare: function (actual: any, expectedValues: any): jasmine.CustomMatcherResult {
+                const values = arrayMap(actual.childNodes, (node: any) => node.checked);
+                const pass = util.equals(values, expectedValues);
+                return {
+                    pass: pass,
+                    message: pass ? 'ok' : 'Expected to equal one but got more'
+                };
+            }
+        };
+    },
 
-  toThrowContaining(expected) {
-      var exception;
-      try {
-          this.actual();
-      } catch (e) {
-          exception = e;
-      }
-      var exceptionMessage = exception && (exception.message || exception);
+    toThrowContaining: function (util: jasmine.MatchersUtil): jasmine.CustomMatcher {
+        return {
+            compare: function (actual: any, expected: string): jasmine.CustomMatcherResult {
+                let exception: any;
+                try {
+                    actual();
+                } catch (e) {
+                    exception = e;
+                }
+                const exceptionMessage = exception && (exception.message || exception);
+                const pass = exception ? (exceptionMessage as string).includes(expected) : false;
+                return {
+                    pass: pass,
+                    message: pass ? `Expected not to throw containing '${expected}'` : `Expected to throw containing '${expected}', but got '${exceptionMessage}'`
+                };
+            }
+        };
+    },
 
-      this.message = function () {
-          var notText = this.isNot ? " not" : "";
-          var expectation = "Expected " + this.actual.toString() + notText + " to throw exception containing '" + expected + "'";
-          var result = exception ? (", but it threw '" + exceptionMessage + "'") : ", but it did not throw anything";
-          return expectation + result;
-      };
+    toEqualOneOf: function (util: jasmine.MatchersUtil): jasmine.CustomMatcher {
+        return {
+            compare: function (actual: any, expectedPossibilities: any[]): jasmine.CustomMatcherResult {
+                const pass = expectedPossibilities.some(possibility => util.equals(actual, possibility));
+                return {
+                    pass: pass,
+                    message: pass ? 'ok' : 'Expected to equal one but got more'
+                };
+            }
+        };
+    },
 
-      return exception ? this.env.contains_(exceptionMessage, expected) : false;
-  },
-
-  toEqualOneOf (expectedPossibilities) {
-      for (var i = 0; i < expectedPossibilities.length; i++) {
-          if (this.env.equals_(this.actual, expectedPossibilities[i])) {
-              return true;
-          }
-      }
-      return false;
-  },
-
-  toContainHtml (expectedHtml, postProcessCleanedHtml) {
-      var cleanedHtml = this.actual.innerHTML.toLowerCase().replace(/\r\n/g, "");
-      // IE < 9 strips whitespace immediately following comment nodes. Normalize by doing the same on all browsers.
-      cleanedHtml = cleanedHtml.replace(/(<!--.*?-->)\s*/g, "$1");
-      expectedHtml = expectedHtml.replace(/(<!--.*?-->)\s*/g, "$1");
-      // Also remove __ko__ expando properties (for DOM data) - most browsers hide these anyway but IE < 9 includes them in innerHTML
-      cleanedHtml = cleanedHtml.replace(/ __ko__\d+=\"(ko\d+|null)\"/g, "");
-      if (postProcessCleanedHtml) {
-          cleanedHtml = postProcessCleanedHtml(cleanedHtml);
-      }
-      this.actual = cleanedHtml;      // Fix explanatory message
-      return cleanedHtml === expectedHtml;
-  }
+    toContainHtml: function (util: jasmine.MatchersUtil): jasmine.CustomMatcher {
+        return {
+            compare: function (actual: any, expectedHtml: string, postProcessCleanedHtml?: (html: string) => string): jasmine.CustomMatcherResult {
+                let cleanedHtml = actual.innerHTML.toLowerCase().replace(/\r\n/g, "");
+                cleanedHtml = cleanedHtml.replace(/(<!--.*?-->)\s*/g, "$1");
+                cleanedHtml = cleanedHtml.replace(/ __ko__\d+=\"(ko\d+|null)\"/g, "");
+                let processedExpectedHtml = expectedHtml.replace(/(<!--.*?-->)\s*/g, "$1");
+                if (postProcessCleanedHtml) {
+                    cleanedHtml = postProcessCleanedHtml(cleanedHtml);
+                }
+                const pass = cleanedHtml === processedExpectedHtml;
+                return {
+                    pass: pass,
+                    message: pass ? 'ok' : `Expected HTML to be ${processedExpectedHtml}, but got ${cleanedHtml}`
+                };
+            }
+        };
+    }
 }
 
-//
-// bmh: Monkeypatch so we can catch errors in asynchronous functions.
-//
-jasmine.FakeTimer.prototype.runFunctionsWithinRange = function(oldMillis, nowMillis) {
-    var scheduledFunc;
-    var funcsToRun = new Array();
-    for (var timeoutKey in this.scheduledFunctions) {
-        scheduledFunc = this.scheduledFunctions[timeoutKey];
-        if (scheduledFunc != jasmine.undefined &&
-            scheduledFunc.runAtMillis >= oldMillis &&
-            scheduledFunc.runAtMillis <= nowMillis) {
-            funcsToRun.push(scheduledFunc);
-            this.scheduledFunctions[timeoutKey] = jasmine.undefined;
-        }
-    }
-
-    if (funcsToRun.length > 0) {
-        funcsToRun.sort(function(a : any, b : any) {
-            return a.runAtMillis - b.runAtMillis;
-        });
-
-        for (var i = 0; i < funcsToRun.length; ++i) {
-          //try {       // mbest: Removed so we can catch errors in asynchronous functions
-            var funcToRun = funcsToRun[i];
-            this.nowMillis = funcToRun.runAtMillis;
-            funcToRun.funcToCall();
-            if (funcToRun.recurring) {
-                this.scheduleFunction(funcToRun.timeoutKey,
-                  funcToRun.funcToCall,
-                  funcToRun.millis,
-                  true);
-            }
-          //} catch(e) {
-          //}
-        }
-        this.runFunctionsWithinRange(oldMillis, nowMillis);
-    }
-};
 
 beforeEach(function() {
-    this.addMatchers(matchers);
+    jasmine.addMatchers(matchers);
 });

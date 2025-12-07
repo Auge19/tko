@@ -57,7 +57,7 @@ describe('Components: Default loader', function() {
             didComplete = true;
         });
 
-        waitsFor(function() { return didComplete; }, 100);
+        jasmine.waitsFor(function() { return didComplete; }, 100);
     });
 
     it('getConfig supplies null for unknown components', function() {
@@ -68,7 +68,7 @@ describe('Components: Default loader', function() {
             didComplete = true;
         });
 
-        waitsFor(function() { return didComplete; }, 100);
+        jasmine.waitsFor(function() { return didComplete; }, 100);
     });
 
     it('Can load a template and viewmodel simultaneously', function() {
@@ -435,7 +435,7 @@ describe('Components: Default loader', function() {
             didComplete = true;
         });
 
-        waitsFor(function() { return didComplete; }, 1000);
+        jasmine.waitsFor(function() { return didComplete; }, 1000);
     }
 
     function testTemplateFromElement(wrapperMarkup, elementId, extraAssertsCallback) {

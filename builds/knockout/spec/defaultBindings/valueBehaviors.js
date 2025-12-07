@@ -208,7 +208,7 @@ describe('Binding: Value', function() {
     });
 
     it('Should delay reading value and updating observable when prefixing an event with "after"', function () {
-        jasmine.Clock.useMock();
+        jasmine.clock().install();
 
         var myobservable = new ko.observable("123");
         testNode.innerHTML = "<input data-bind='value:someProp, valueUpdate: \"afterkeyup\"' />";
@@ -217,12 +217,12 @@ describe('Binding: Value', function() {
         testNode.childNodes[0].value = "some user-entered value";
         expect(myobservable()).toEqual("123");  // observable is not changed yet
 
-        jasmine.Clock.tick(20);
+        jasmine.clock().tick(20);
         expect(myobservable()).toEqual("some user-entered value");  // it's changed after a delay
     });
 
     it('Should ignore "unchanged" notifications from observable during delayed event processing', function () {
-        jasmine.Clock.useMock();
+        jasmine.clock().install();
 
         var myobservable = new ko.observable("123");
         testNode.innerHTML = "<input data-bind='value:someProp, valueUpdate: \"afterkeyup\"' />";
@@ -235,12 +235,12 @@ describe('Binding: Value', function() {
         expect(testNode.childNodes[0].value).toEqual("some user-entered value");
 
         // Observable is updated to new element value
-        jasmine.Clock.tick(20);
+        jasmine.clock().tick(20);
         expect(myobservable()).toEqual("some user-entered value");
     });
 
     it('Should not ignore actual change notifications from observable during delayed event processing', function () {
-        jasmine.Clock.useMock();
+        jasmine.clock().install();
 
         var myobservable = new ko.observable("123");
         testNode.innerHTML = "<input data-bind='value:someProp, valueUpdate: \"afterkeyup\"' />";
@@ -253,7 +253,7 @@ describe('Binding: Value', function() {
         expect(testNode.childNodes[0].value).toEqual("some value from the server");
 
         // New value remains when event is processed
-        jasmine.Clock.tick(20);
+        jasmine.clock().tick(20);
         expect(myobservable()).toEqual("some value from the server");
     });
 
@@ -361,8 +361,8 @@ describe('Binding: Value', function() {
             expect(testNode.childNodes[0].selectedIndex).toEqual(0);
 
             // Also check that the selection doesn't change later (see https://github.com/knockout/knockout/issues/2218)
-            waits(10);
-            runs(function() {
+            jasmine.waits(10);
+            jasmine.runs(function() {
                 expect(testNode.childNodes[0].selectedIndex).toEqual(0);
             });
         });

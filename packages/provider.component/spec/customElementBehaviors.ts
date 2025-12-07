@@ -64,7 +64,7 @@ describe('Components: Custom elements', function () {
 
   afterEach(function () {
     expect(tasks.resetForTesting()).toEqual(0)
-    jasmine.Clock.reset()
+    jasmine.clock().uninstall()
     components.unregister('test-component')
   })
 
@@ -80,7 +80,7 @@ describe('Components: Custom elements', function () {
     expect(testNode).toContainHtml(initialMarkup)
 
         // ... but when the component is loaded, it does show up
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode).toContainHtml('<div>hello <test-component>custom element <span data-bind="text: 123">123</span></test-component></div>')
   })
 
@@ -99,7 +99,7 @@ describe('Components: Custom elements', function () {
       expect(testNode).toContainHtml(initialMarkup)
 
             // ... but when the component is loaded, it does show up
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
       expect(testNode).toContainHtml('<div>hello <somefaroutname>custom element <span data-bind="text: 123">123</span></somefaroutname></div>')
     }
   })
@@ -114,7 +114,7 @@ describe('Components: Custom elements', function () {
     testNode.innerHTML = initialMarkup
 
     applyBindings(null, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode).toContainHtml(initialMarkup)
   })
 
@@ -135,7 +135,7 @@ describe('Components: Custom elements', function () {
 
       // See the component show up.
     applyBindings(null, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode).toContainHtml('<div>hello <a>custom element</a> <b>ignored</b></div>')
   })
 
@@ -148,7 +148,7 @@ describe('Components: Custom elements', function () {
         // Bind with a viewmodel that controls visibility
     var viewModel = { shouldshow: observable(true) }
     applyBindings(viewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode).toContainHtml('<test-component data-bind="visible: shouldshow">custom element</test-component>')
     const node = testNode.childNodes[0] as HTMLElement;
     expect(node.style.display).not.toBe('none')
@@ -169,7 +169,7 @@ describe('Components: Custom elements', function () {
             .toThrowContaining('Multiple bindings (if and component) are trying to control descendant bindings of the same element.')
 
         // Even though applyBindings threw an exception, the component still gets bound (asynchronously)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
   })
 
   it('Is possible to call applyBindings directly on a custom element', function () {
@@ -181,7 +181,7 @@ describe('Components: Custom elements', function () {
     expect(customElem.tagName.toLowerCase()).toBe('test-component')
 
     applyBindings(null, customElem)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(customElem.innerHTML).toBe('custom element')
   })
 
@@ -215,7 +215,7 @@ describe('Components: Custom elements', function () {
 
     testNode.innerHTML = '<test-component params="nothing: null, num: 123, bool: true, obj: { abc: 123 }, str: \'mystr\'"></test-component>'
     applyBindings(null, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
     delete suppliedParams[0].$raw // Don't include '$raw' in the following assertion, as we only want to compare supplied values
     expect(suppliedParams).toEqual([{ nothing: null, num: 123, bool: true, obj: { abc: 123 }, str: 'mystr' }])
@@ -230,7 +230,7 @@ describe('Components: Custom elements', function () {
 
     testNode.innerHTML = '<test-component></test-component>'
     applyBindings(null, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(suppliedParams).toEqual([{ $raw: {} }])
   })
 
@@ -243,7 +243,7 @@ describe('Components: Custom elements', function () {
 
     testNode.innerHTML = '<test-component params=" "></test-component>'
     applyBindings(null, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(suppliedParams).toEqual([{ $raw: {} }])
   })
 
@@ -272,11 +272,11 @@ describe('Components: Custom elements', function () {
     testNode.innerHTML = '<test-component params="textToShow: value"></test-component>'
     var vm = observable({ value: 'A' })
     applyBindings(vm, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode).toContainText('the value: A')
 
     vm({ value: 'Z' })
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode).toContainText('the value: Z')
   })
 
@@ -303,7 +303,7 @@ describe('Components: Custom elements', function () {
     myobservable.subprop = 'subprop'
     testNode.innerHTML = '<test-component params="suppliedobservable: myobservable"></test-component>'
     applyBindings({ myobservable: myobservable }, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     const node = testNode.childNodes[0].childNodes[0] as HTMLElement;
     var viewModelInstance = dataFor(node)
     expect(testNode.firstChild).toContainText('the observable: 1')
@@ -344,7 +344,7 @@ describe('Components: Custom elements', function () {
         // Bind, using an expression that evaluates the observable during binding
     testNode.innerHTML = '<test-component params=\'suppliedobservable: myobservable().split("").reverse().join("")\'></test-component>'
     applyBindings(rootViewModel, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.firstChild).toContainText('the string reversed: ahplA')
     const node = testNode.childNodes[0].childNodes[0] as HTMLElement;
     var componentViewModelInstance = dataFor(node)
@@ -400,7 +400,7 @@ describe('Components: Custom elements', function () {
       outerObservable = observable({ inner: innerObservable })
     testNode.innerHTML = '<test-component params="somevalue: outer().inner"></test-component>'
     applyBindings({ outer: outerObservable }, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     const node = testNode.childNodes[0].childNodes[0] as HTMLInputElement;
     expect(node.value).toEqual('inner1')
     expect(outerObservable.getSubscriptionsCount()).toBe(1)
@@ -454,7 +454,7 @@ describe('Components: Custom elements', function () {
 
     testNode.innerHTML = '<test-component params="$raw: suppliedValue"></test-component>'
     applyBindings({ suppliedValue: suppliedValue }, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(constructorCallCount).toBe(1)
   })
 
@@ -483,7 +483,7 @@ describe('Components: Custom elements', function () {
 
         // See it binds properly
     applyBindings(null, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.firstChild).toContainHtml('custom element')
 
         // See the viewmodel is disposed when the corresponding DOM element is
@@ -529,7 +529,7 @@ describe('Components: Custom elements', function () {
 
     applyBindings({ outerval: { innerval: 'my value' } }, testNode)
     try {
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
       expect(testNode).toContainText('hello [the outer component [the inner component with value [my value]] goodbye] world')
     } catch (ex : any) {
       if (ex.message.indexOf('Unexpected call to method or property access.') >= 0) {
@@ -585,7 +585,7 @@ describe('Components: Custom elements', function () {
       ]
     }, testNode)
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.childNodes[0]).toContainText('Cheeses')
     const node = testNode.childNodes[1].childNodes[0] as HTMLElement
     expect(node.tagName.toLowerCase()).toEqual('ul')
@@ -619,7 +619,7 @@ describe('Components: Custom elements', function () {
     applyBindings(viewModel, testNode)
     expect(callbacks).toEqual(0)
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode).toContainHtml('<test-component data-bind="afterrender: callback">custom element</test-component>')
   })
 })

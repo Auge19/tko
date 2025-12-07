@@ -146,7 +146,7 @@ describe('Binding: Value', function () {
 
     testNode.childNodes[0].value = 789
     triggerEvent(testNode.childNodes[0], 'change')
-    expect(model.modelProperty123).toEqual('789')
+    expect(model.modelProperty123).toEqual(789)
   })
 
   it('Should be able to read and write to a property of an object returned by a function', function () {
@@ -168,17 +168,17 @@ describe('Binding: Value', function () {
         // .property
     testNode.childNodes[0].value = 667
     triggerEvent(testNode.childNodes[0], 'change')
-    expect(mySetter.set).toEqual('667')
+    expect(mySetter.set).toEqual(667)
 
         // ["property"]
     testNode.childNodes[1].value = 668
     triggerEvent(testNode.childNodes[1], 'change')
-    expect(mySetter.set).toEqual('668')
+    expect(mySetter.set).toEqual(668)
 
         // ['property']
     testNode.childNodes[0].value = 669
     triggerEvent(testNode.childNodes[0], 'change')
-    expect(mySetter.set).toEqual('669')
+    expect(mySetter.set).toEqual(669)
   })
 
   it('Should be able to write to observable subproperties of an observable, even after the parent observable has changed', function () {
@@ -242,7 +242,7 @@ describe('Binding: Value', function () {
   })
 
   it('Should delay reading value and updating observable when prefixing an event with "after"', function () {
-    jasmine.Clock.useMock()
+    jasmine.clock().install()
 
     var myObservable = observable('123')
     testNode.innerHTML = "<input data-bind='value:someProp, valueUpdate: \"afterkeyup\"' />"
@@ -251,12 +251,12 @@ describe('Binding: Value', function () {
     testNode.childNodes[0].value = 'some user-entered value'
     expect(myObservable()).toEqual('123')  // observable is not changed yet
 
-    jasmine.Clock.tick(20)
+    jasmine.clock().tick(20)
     expect(myObservable()).toEqual('some user-entered value')  // it's changed after a delay
   })
 
   it('Should ignore "unchanged" notifications from observable during delayed event processing', function () {
-    jasmine.Clock.useMock()
+    jasmine.clock().install()
 
     var myObservable = observable('123')
     testNode.innerHTML = "<input data-bind='value:someProp, valueUpdate: \"afterkeyup\"' />"
@@ -269,12 +269,12 @@ describe('Binding: Value', function () {
     expect(testNode.childNodes[0].value).toEqual('some user-entered value')
 
         // Observable is updated to new element value
-    jasmine.Clock.tick(20)
+    jasmine.clock().tick(20)
     expect(myObservable()).toEqual('some user-entered value')
   })
 
   it('Should not ignore actual change notifications from observable during delayed event processing', function () {
-    jasmine.Clock.useMock()
+    jasmine.clock().install()
 
     var myObservable = observable('123')
     testNode.innerHTML = "<input data-bind='value:someProp, valueUpdate: \"afterkeyup\"' />"
@@ -287,7 +287,7 @@ describe('Binding: Value', function () {
     expect(testNode.childNodes[0].value).toEqual('some value from the server')
 
         // New value remains when event is processed
-    jasmine.Clock.tick(20)
+    jasmine.clock().tick(20)
     expect(myObservable()).toEqual('some value from the server')
   })
 
@@ -372,8 +372,8 @@ describe('Binding: Value', function () {
       expect(myObservable()).toEqual('A')
 
       // Also check that the selection doesn't change later (see https://github.com/knockout/knockout/issues/2218)
-      waits(10)
-      runs(function () {
+      jasmine.waits(10)
+      jasmine.runs(function () {
         expect(testNode.childNodes[0].selectedIndex).toEqual(0)
       })
     })

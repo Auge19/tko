@@ -430,10 +430,10 @@ describe('Dependent Observable', function() {
 
         expect(computed()).toEqual('A');
         expect(notifySpy).toHaveBeenCalledWith('A');
-        expect(notifySpy.calls.length).toBe(1);
+        expect(notifySpy.calls.count).toBe(1);
 
         // Subscribing or updating data shouldn't trigger any more notifications
-        notifySpy.reset();
+        notifySpy.calls.reset();
         computed.subscribe(function() {});
         data('B');
         computed();

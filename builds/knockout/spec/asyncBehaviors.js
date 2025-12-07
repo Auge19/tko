@@ -1,5 +1,5 @@
 describe("Throttled observables", function() {
-    beforeEach(function() { waits(1); }); // Workaround for spurious timing-related failures on IE8 (issue #736)
+    beforeEach(function() { jasmine.waits(1); }); // Workaround for spurious timing-related failures on IE8 (issue #736)
 
     it("Should notify subscribers asynchronously after writes stop for the specified timeout duration", function() {
         var observable = ko.observable('A').extend({ throttle: 100 });
@@ -8,7 +8,7 @@ describe("Throttled observables", function() {
             notifiedValues.push(value);
         });
 
-        runs(function() {
+        jasmine.runs(function() {
             // Mutate a few times
             observable('B');
             observable('C');
@@ -17,8 +17,8 @@ describe("Throttled observables", function() {
         });
 
         // Wait
-        waits(10);
-        runs(function() {
+        jasmine.waits(10);
+        jasmine.runs(function() {
             // Mutate more
             observable('E');
             observable('F');
@@ -26,10 +26,10 @@ describe("Throttled observables", function() {
         });
 
         // Wait until after timeout
-        waitsFor(function() {
+        jasmine.waitsFor(function() {
             return notifiedValues.length > 0;
         }, 500);
-        runs(function() {
+        jasmine.runs(function() {
             expect(notifiedValues.length).toEqual(1);
             expect(notifiedValues[0]).toEqual("F");
         });
@@ -37,7 +37,7 @@ describe("Throttled observables", function() {
 });
 
 describe("Throttled dependent observables", function() {
-    beforeEach(function() { waits(1); }); // Workaround for spurious timing-related failures on IE8 (issue #736)
+    beforeEach(function() { jasmine.waits(1); }); // Workaround for spurious timing-related failures on IE8 (issue #736)
 
     it("Should notify subscribers asynchronously after dependencies stop updating for the specified timeout duration", function() {
         var underlying = ko.observable();
@@ -51,7 +51,7 @@ describe("Throttled dependent observables", function() {
 
         // Check initial state
         expect(asyncDepObs()).toBeUndefined();
-        runs(function() {
+        jasmine.runs(function() {
             // Mutate
             underlying('New value');
             expect(asyncDepObs()).toBeUndefined(); // Should not update synchronously
@@ -59,17 +59,17 @@ describe("Throttled dependent observables", function() {
         });
 
         // Still shouldn't have evaluated
-        waits(10);
-        runs(function() {
+        jasmine.waits(10);
+        jasmine.runs(function() {
             expect(asyncDepObs()).toBeUndefined(); // Should not update until throttle timeout
             expect(notifiedValues.length).toEqual(0);
         });
 
         // Now wait for throttle timeout
-        waitsFor(function() {
+        jasmine.waitsFor(function() {
             return notifiedValues.length > 0;
         }, 300);
-        runs(function() {
+        jasmine.runs(function() {
             expect(asyncDepObs()).toEqual('New value');
             expect(notifiedValues.length).toEqual(1);
             expect(notifiedValues[0]).toEqual('New value');
@@ -84,7 +84,7 @@ describe("Throttled dependent observables", function() {
             return someDependency();
         }).extend({ throttle: 100 });
 
-        runs(function() {
+        jasmine.runs(function() {
             // Mutate a few times synchronously
             expect(evaluationCount).toEqual(1); // Evaluates synchronously when first created, like all dependent observables
             someDependency("A");
@@ -94,17 +94,17 @@ describe("Throttled dependent observables", function() {
         });
 
         // Also mutate async
-        waits(10);
-        runs(function() {
+        jasmine.waits(10);
+        jasmine.runs(function() {
             someDependency("D");
             expect(evaluationCount).toEqual(1);
         });
 
         // Now wait for throttle timeout
-        waitsFor(function() {
+        jasmine.waitsFor(function() {
             return evaluationCount > 1;
         }, 300);
-        runs(function() {
+        jasmine.runs(function() {
             expect(evaluationCount).toEqual(2); // Finally, it's evaluated
             expect(asyncDepObs()).toEqual("D");
         });
@@ -113,7 +113,7 @@ describe("Throttled dependent observables", function() {
 
 describe('Rate-limited', function() {
     beforeEach(function() {
-        jasmine.Clock.useMock();
+        jasmine.clock().install();
     });
 
     describe('Subscribable', function() {
@@ -136,8 +136,8 @@ describe('Rate-limited', function() {
             expect(notifySpy).toHaveBeenCalledWith('c');
 
             // Advance clock; Change notification happens now using the latest value notified
-            notifySpy.reset();
-            jasmine.Clock.tick(500);
+            notifySpy.calls.reset();
+            jasmine.clock().tick(500);
             expect(notifySpy).toHaveBeenCalledWith('b');
         });
 
@@ -149,16 +149,16 @@ describe('Rate-limited', function() {
             // Push 10 changes every 25 ms
             for (var i = 0; i < 10; ++i) {
                 subscribable.notifySubscribers(i+1);
-                jasmine.Clock.tick(25);
+                jasmine.clock().tick(25);
             }
 
             // Notification happens every 50 ms, so every other number is notified
-            expect(notifySpy.calls.length).toBe(5);
-            expect(notifySpy.argsForCall).toEqual([ [2], [4], [6], [8], [10] ]);
+            expect(notifySpy.calls.count).toBe(5);
+            expect(notifySpy.calls.allArgs).toEqual([ [2], [4], [6], [8], [10] ]);
 
             // No more notifications happen
-            notifySpy.reset();
-            jasmine.Clock.tick(50);
+            notifySpy.calls.reset();
+            jasmine.clock().tick(50);
             expect(notifySpy).not.toHaveBeenCalled();
         });
 
@@ -170,15 +170,15 @@ describe('Rate-limited', function() {
             // Push 10 changes every 25 ms
             for (var i = 0; i < 10; ++i) {
                 subscribable.notifySubscribers(i+1);
-                jasmine.Clock.tick(25);
+                jasmine.clock().tick(25);
             }
 
             // No notifications happen yet
             expect(notifySpy).not.toHaveBeenCalled();
 
             // Notification happens after the timeout period
-            jasmine.Clock.tick(50);
-            expect(notifySpy.calls.length).toBe(1);
+            jasmine.clock().tick(50);
+            expect(notifySpy.calls.count).toBe(1);
             expect(notifySpy).toHaveBeenCalledWith(10);
         });
 
@@ -189,10 +189,10 @@ describe('Rate-limited', function() {
 
             subscribable.notifySubscribers('a');
 
-            jasmine.Clock.tick(250);
+            jasmine.clock().tick(250);
             expect(notifySpy).not.toHaveBeenCalled();
 
-            jasmine.Clock.tick(250);
+            jasmine.clock().tick(250);
             expect(notifySpy).toHaveBeenCalledWith('a');
         });
 
@@ -210,12 +210,12 @@ describe('Rate-limited', function() {
             subscribable.notifySubscribers('b');
 
             // First notification happens using original settings
-            jasmine.Clock.tick(250);
+            jasmine.clock().tick(250);
             expect(notifySpy).toHaveBeenCalledWith('a');
 
             // Second notification happends using later settings
-            notifySpy.reset();
-            jasmine.Clock.tick(250);
+            notifySpy.calls.reset();
+            jasmine.clock().tick(250);
             expect(notifySpy).toHaveBeenCalledWith('b');
         });
 
@@ -231,7 +231,7 @@ describe('Rate-limited', function() {
             var notifySpy = jasmine.createSpy('notifySpy');
             observable.subscribe(notifySpy);
             var beforeChangeSpy = jasmine.createSpy('beforeChangeSpy')
-                .andCallFake(function(value) {expect(observable()).toBe(value); });
+                .and.callFake(function(value) {expect(observable()).toBe(value); });
             observable.subscribe(beforeChangeSpy, null, 'beforeChange');
 
             // Observable is changed, but notification is delayed
@@ -245,9 +245,9 @@ describe('Rate-limited', function() {
             expect(notifySpy).not.toHaveBeenCalled();
 
             // Advance clock; Change notification happens now using the latest value notified
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(notifySpy).toHaveBeenCalledWith('b');
-            expect(beforeChangeSpy.calls.length).toBe(1);   // Only one beforeChange notification
+            expect(beforeChangeSpy.calls.count).toBe(1);   // Only one beforeChange notification
         });
 
         it('Should notify "spectator" subscribers whenever the value changes', function () {
@@ -267,12 +267,12 @@ describe('Rate-limited', function() {
             expect(spectateSpy).toHaveBeenCalledWith('C');
 
             expect(notifySpy).not.toHaveBeenCalled();
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
 
             // "spectate" was called for each new value
-            expect(spectateSpy.argsForCall).toEqual([ ['B'], ['C'] ]);
+            expect(spectateSpy.calls.allArgs).toEqual([ ['B'], ['C'] ]);
             // whereas "change" was only called for the final value
-            expect(notifySpy.argsForCall).toEqual([ ['C'] ]);
+            expect(notifySpy.calls.allArgs).toEqual([ ['C'] ]);
         });
 
         it('Should suppress change notification when value is changed/reverted', function() {
@@ -286,7 +286,7 @@ describe('Rate-limited', function() {
             expect(observable()).toEqual('new');    // access observable to make sure it really has the changed value
             observable('original');                 // but then change it back
             expect(notifySpy).not.toHaveBeenCalled();
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(notifySpy).not.toHaveBeenCalled();
 
             // Check that value is correct and notification hasn't happened
@@ -295,7 +295,7 @@ describe('Rate-limited', function() {
 
             // Changing observable to a new value still works as expected
             observable('new');
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(notifySpy).toHaveBeenCalledWith('new');
             expect(beforeChangeSpy).toHaveBeenCalledWith('original');
             expect(beforeChangeSpy).not.toHaveBeenCalledWith('new');
@@ -316,13 +316,13 @@ describe('Rate-limited', function() {
             expect(notifySpy).not.toHaveBeenCalled();
             expect(observable()).toEqual('b');
 
-            notifySpy.reset();
-            jasmine.Clock.tick(500);
+            notifySpy.calls.reset();
+            jasmine.clock().tick(500);
             expect(notifySpy).toHaveBeenCalledWith('b');
             expect(observable()).toEqual('z');
 
-            notifySpy.reset();
-            jasmine.Clock.tick(500);
+            notifySpy.calls.reset();
+            jasmine.clock().tick(500);
             expect(notifySpy).toHaveBeenCalledWith('z');
         });
 
@@ -342,13 +342,13 @@ describe('Rate-limited', function() {
             expect(notifySpy).not.toHaveBeenCalled();
             expect(observable()).toEqual('b');
 
-            notifySpy.reset();
-            jasmine.Clock.tick(500);
+            notifySpy.calls.reset();
+            jasmine.clock().tick(500);
             expect(notifySpy).toHaveBeenCalledWith('b');
             expect(observable()).toEqual('b');
 
-            notifySpy.reset();
-            jasmine.Clock.tick(500);
+            notifySpy.calls.reset();
+            jasmine.clock().tick(500);
             expect(notifySpy).not.toHaveBeenCalled();
         });
 
@@ -368,7 +368,7 @@ describe('Rate-limited', function() {
             expect(notifySpy2).not.toHaveBeenCalled();
             expect(notifySpy3).not.toHaveBeenCalled();
 
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(notifySpy1).toHaveBeenCalledWith('c');
             expect(notifySpy2).toHaveBeenCalledWith('c');
             expect(notifySpy3).not.toHaveBeenCalled();
@@ -391,7 +391,7 @@ describe('Rate-limited', function() {
             expect(computed()).toBeUndefined();
 
             // Advance clock; Change notification happens now using the latest value notified
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(computed()).toEqual('b');
         });
 
@@ -412,7 +412,7 @@ describe('Rate-limited', function() {
             expect(computed()).toBeUndefined();
 
             // Advance clock; Change notification happens now using the latest value notified
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(computed()).toEqual('b');
         });
 
@@ -425,9 +425,9 @@ describe('Rate-limited', function() {
                 return evalSpy(observable());
             });
             expect(evalSpy).toHaveBeenCalledWith('b');
-            evalSpy.reset();
+            evalSpy.calls.reset();
 
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(evalSpy).not.toHaveBeenCalled();
         });
 
@@ -457,7 +457,7 @@ describe('Rate-limited', function() {
                 one(false);
                 expect(threeNotifications).toEqual([true]);
 
-                jasmine.Clock.tick(100);
+                jasmine.clock().tick(100);
                 expect(threeNotifications).toEqual([true, false]);
             }
         });
@@ -474,7 +474,7 @@ describe('Rate-limited', function() {
 
             myArray.push('Gamma');
             myArray.push('Delta');
-            jasmine.Clock.tick(10);
+            jasmine.clock().tick(10);
             expect(changelist).toEqual([
                 { status : 'added', value : 'Gamma', index : 2 },
                 { status : 'added', value : 'Delta', index : 3 }
@@ -483,7 +483,7 @@ describe('Rate-limited', function() {
             changelist = undefined;
             myArray.shift();
             myArray.shift();
-            jasmine.Clock.tick(10);
+            jasmine.clock().tick(10);
             expect(changelist).toEqual([
                 { status : 'deleted', value : 'Alpha', index : 0 },
                 { status : 'deleted', value : 'Beta', index : 1 }
@@ -492,7 +492,7 @@ describe('Rate-limited', function() {
             changelist = undefined;
             myArray.push('Epsilon');
             myArray.pop();
-            jasmine.Clock.tick(10);
+            jasmine.clock().tick(10);
             expect(changelist).toEqual(undefined);
         });
     });
@@ -504,14 +504,14 @@ describe('Rate-limited', function() {
             var computed = ko.computed(function () { evalSpy(observable()); return observable(); }).extend({rateLimit:500});
 
             // Observable is changed, but evaluation is delayed
-            evalSpy.reset();
+            evalSpy.calls.reset();
             observable('a');
             observable('b');
             expect(evalSpy).not.toHaveBeenCalled();
 
             // Advance clock; Change notification happens now using the latest value notified
-            evalSpy.reset();
-            jasmine.Clock.tick(500);
+            evalSpy.calls.reset();
+            jasmine.clock().tick(500);
             expect(evalSpy).toHaveBeenCalledWith('b');
         });
 
@@ -522,11 +522,11 @@ describe('Rate-limited', function() {
             var notifySpy = jasmine.createSpy('notifySpy');
             computed.subscribe(notifySpy);
             var beforeChangeSpy = jasmine.createSpy('beforeChangeSpy')
-                .andCallFake(function(value) {expect(computed()).toBe(value); });
+                .and.callFake(function(value) {expect(computed()).toBe(value); });
             computed.subscribe(beforeChangeSpy, null, 'beforeChange');
 
             // Observable is changed, but notification is delayed
-            evalSpy.reset();
+            evalSpy.calls.reset();
             observable('a');
             expect(evalSpy).not.toHaveBeenCalled();
             expect(computed()).toEqual('a');
@@ -535,18 +535,18 @@ describe('Rate-limited', function() {
             expect(beforeChangeSpy).toHaveBeenCalledWith(undefined);    // beforeChange notification happens right away
 
             // Second change notification is also delayed
-            evalSpy.reset();
+            evalSpy.calls.reset();
             observable('b');
             expect(computed.peek()).toEqual('a');           // peek returns previously evaluated value
             expect(evalSpy).not.toHaveBeenCalled();
             expect(notifySpy).not.toHaveBeenCalled();
 
             // Advance clock; Change notification happens now using the latest value notified
-            evalSpy.reset();
-            jasmine.Clock.tick(500);
+            evalSpy.calls.reset();
+            jasmine.clock().tick(500);
             expect(evalSpy).toHaveBeenCalledWith('b');
             expect(notifySpy).toHaveBeenCalledWith('b');
-            expect(beforeChangeSpy.calls.length).toBe(1);   // Only one beforeChange notification
+            expect(beforeChangeSpy.calls.count).toBe(1);   // Only one beforeChange notification
         });
 
         it('Should run initial evaluation at first subscribe when using deferEvaluation', function() {
@@ -598,7 +598,7 @@ describe('Rate-limited', function() {
             expect(computed()).toEqual('new');      // access computed to make sure it really has the changed value
             observable('original');                 // and then change the value back
             expect(notifySpy).not.toHaveBeenCalled();
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(notifySpy).not.toHaveBeenCalled();
 
             // Check that value is correct and notification hasn't happened
@@ -607,7 +607,7 @@ describe('Rate-limited', function() {
 
             // Changing observable to a new value still works as expected
             observable('new');
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(notifySpy).toHaveBeenCalledWith('new');
             expect(beforeChangeSpy).toHaveBeenCalledWith('original');
             expect(beforeChangeSpy).not.toHaveBeenCalledWith('new');
@@ -619,14 +619,14 @@ describe('Rate-limited', function() {
             var computed = ko.computed(function () { evalSpy(observable()); return observable(); }).extend({rateLimit:500});
 
             expect(computed()).toEqual('a');
-            expect(evalSpy.calls.length).toBe(1);
+            expect(evalSpy.calls.count).toBe(1);
             expect(evalSpy).toHaveBeenCalledWith('a');
 
-            evalSpy.reset();
+            evalSpy.calls.reset();
             observable('b');
             computed.dispose();
 
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(computed()).toEqual('a');
             expect(evalSpy).not.toHaveBeenCalled();
         });
@@ -684,7 +684,7 @@ describe('Rate-limited', function() {
             expect(dependentComputed()).toBeUndefined();
 
             // Advance clock; Change notification happens now using the latest value notified
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(dependentComputed()).toEqual('b');
         });
 
@@ -706,7 +706,7 @@ describe('Rate-limited', function() {
             expect(dependentComputed()).toBeUndefined();
 
             // Advance clock; Change notification happens now using the latest value notified
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(dependentComputed()).toEqual('b');
         });
 
@@ -736,7 +736,7 @@ describe('Rate-limited', function() {
                 one(false);
                 expect(threeNotifications).toEqual([true]);
 
-                jasmine.Clock.tick(100);
+                jasmine.clock().tick(100);
                 expect(threeNotifications).toEqual([true, false]);
             }
         });
@@ -745,12 +745,12 @@ describe('Rate-limited', function() {
 
 describe('Deferred', function() {
     beforeEach(function() {
-        jasmine.Clock.useMockForTasks();
+        jasmine.clock().useMockForTasks();
     });
 
     afterEach(function() {
         expect(ko.tasks.resetForTesting()).toEqual(0);
-        jasmine.Clock.reset();
+        jasmine.clock().uninstall();
     });
 
     describe('Observable', function() {
@@ -762,8 +762,8 @@ describe('Deferred', function() {
             observable('A');
             expect(notifySpy).not.toHaveBeenCalled();
 
-            jasmine.Clock.tick(1);
-            expect(notifySpy.argsForCall).toEqual([ ['A'] ]);
+            jasmine.clock().tick(1);
+            expect(notifySpy.calls.allArgs).toEqual([ ['A'] ]);
         });
 
         it('Should throw if you attempt to turn off deferred', function() {
@@ -785,8 +785,8 @@ describe('Deferred', function() {
             observable('A');
             observable('B');
 
-            jasmine.Clock.tick(1);
-            expect(notifySpy.argsForCall).toEqual([ ['B'] ]);
+            jasmine.clock().tick(1);
+            expect(notifySpy.calls.allArgs).toEqual([ ['B'] ]);
         });
 
         it('Should suppress notification when value is changed/reverted', function() {
@@ -798,7 +798,7 @@ describe('Deferred', function() {
             expect(observable()).toEqual('new');
             observable('original');
 
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(notifySpy).not.toHaveBeenCalled();
             expect(observable()).toEqual('original');
         });
@@ -819,7 +819,7 @@ describe('Deferred', function() {
             expect(notifySpy2).not.toHaveBeenCalled();
             expect(notifySpy3).not.toHaveBeenCalled();
 
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(notifySpy1).toHaveBeenCalledWith('c');
             expect(notifySpy2).toHaveBeenCalledWith('c');
             expect(notifySpy3).not.toHaveBeenCalled();
@@ -834,9 +834,9 @@ describe('Deferred', function() {
                 return evalSpy(observable());
             });
             expect(evalSpy).toHaveBeenCalledWith('b');
-            evalSpy.reset();
+            evalSpy.calls.reset();
 
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(evalSpy).not.toHaveBeenCalled();
         });
 
@@ -851,8 +851,8 @@ describe('Deferred', function() {
             observable('A');
             expect(notifySpy).not.toHaveBeenCalled();
 
-            jasmine.Clock.tick(1);
-            expect(notifySpy.argsForCall).toEqual([ ['A'] ]);
+            jasmine.clock().tick(1);
+            expect(notifySpy.calls.allArgs).toEqual([ ['A'] ]);
         });
     });
 
@@ -867,7 +867,7 @@ describe('Deferred', function() {
 
             myArray.push('Gamma');
             myArray.push('Delta');
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(changelist).toEqual([
                 { status : 'added', value : 'Gamma', index : 2 },
                 { status : 'added', value : 'Delta', index : 3 }
@@ -876,7 +876,7 @@ describe('Deferred', function() {
             changelist = undefined;
             myArray.shift();
             myArray.shift();
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(changelist).toEqual([
                 { status : 'deleted', value : 'Alpha', index : 0 },
                 { status : 'deleted', value : 'Beta', index : 1 }
@@ -885,7 +885,7 @@ describe('Deferred', function() {
             changelist = undefined;
             myArray.push('Epsilon');
             myArray.pop();
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(changelist).toEqual(undefined);
         });
     });
@@ -900,7 +900,7 @@ describe('Deferred', function() {
 
             expect(computed()).toEqual('A');
             expect(timesEvaluated).toEqual(1);
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(notifySpy).not.toHaveBeenCalled();
 
             data('B');
@@ -909,9 +909,9 @@ describe('Deferred', function() {
             expect(timesEvaluated).toEqual(2);
             expect(notifySpy).not.toHaveBeenCalled();
 
-            jasmine.Clock.tick(1);
-            expect(notifySpy.calls.length).toEqual(1);
-            expect(notifySpy.argsForCall).toEqual([ ['B'] ]);
+            jasmine.clock().tick(1);
+            expect(notifySpy.calls.count).toEqual(1);
+            expect(notifySpy.calls.allArgs).toEqual([ ['B'] ]);
         });
 
         it('Should notify first change of computed with deferEvaluation if value is changed to undefined', function () {
@@ -926,9 +926,9 @@ describe('Deferred', function() {
             expect(computed()).toEqual(undefined);
             expect(notifySpy).not.toHaveBeenCalled();
 
-            jasmine.Clock.tick(1);
-            expect(notifySpy.calls.length).toEqual(1);
-            expect(notifySpy.argsForCall).toEqual([ [undefined] ]);
+            jasmine.clock().tick(1);
+            expect(notifySpy.calls.count).toEqual(1);
+            expect(notifySpy.calls.allArgs).toEqual([ [undefined] ]);
         });
 
         it('Should notify first change to pure computed after awakening if value changed to last notified value', function() {
@@ -940,22 +940,22 @@ describe('Deferred', function() {
             data('B');
             expect(computed()).toEqual('B');
             expect(notifySpy).not.toHaveBeenCalled();
-            jasmine.Clock.tick(1);
-            expect(notifySpy.argsForCall).toEqual([ ['B'] ]);
+            jasmine.clock().tick(1);
+            expect(notifySpy.calls.allArgs).toEqual([ ['B'] ]);
 
             subscription.dispose();
-            notifySpy.reset();
+            notifySpy.calls.reset();
             data('C');
             expect(computed()).toEqual('C');
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(notifySpy).not.toHaveBeenCalled();
 
             subscription = computed.subscribe(notifySpy);
             data('B');
             expect(computed()).toEqual('B');
             expect(notifySpy).not.toHaveBeenCalled();
-            jasmine.Clock.tick(1);
-            expect(notifySpy.argsForCall).toEqual([ ['B'] ]);
+            jasmine.clock().tick(1);
+            expect(notifySpy.calls.allArgs).toEqual([ ['B'] ]);
         });
 
         it('Should delay update of dependent computed observable', function() {
@@ -972,7 +972,7 @@ describe('Deferred', function() {
             data('C');
             expect(dependentComputed()).toEqual('A');
 
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(dependentComputed()).toEqual('C');
         });
 
@@ -990,7 +990,7 @@ describe('Deferred', function() {
             data('C');
             expect(dependentComputed()).toEqual('A');
 
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(dependentComputed()).toEqual('C');
         });
 
@@ -1010,10 +1010,10 @@ describe('Deferred', function() {
             expect(timesEvaluated).toEqual(2);
             expect(notifySpy).not.toHaveBeenCalled();
 
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(computed2()).toEqual('BXY');
             expect(timesEvaluated).toEqual(2);      // Verify that the computed wasn't evaluated again unnecessarily
-            expect(notifySpy.argsForCall).toEqual([ ['BXY'] ]);
+            expect(notifySpy.calls.allArgs).toEqual([ ['BXY'] ]);
         });
 
         it('Should *not* delay update of dependent deferred pure computed observable', function () {
@@ -1029,7 +1029,7 @@ describe('Deferred', function() {
             expect(computed2()).toEqual('BXY');
             expect(timesEvaluated).toEqual(2);
 
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(computed2()).toEqual('BXY');
             expect(timesEvaluated).toEqual(2);      // Verify that the computed wasn't evaluated again unnecessarily
         });
@@ -1051,9 +1051,9 @@ describe('Deferred', function() {
             expect(dependentComputed()).toEqual('C');
             expect(notifySpy).not.toHaveBeenCalled();
 
-            jasmine.Clock.tick(500);
+            jasmine.clock().tick(500);
             expect(dependentComputed()).toEqual('C');
-            expect(notifySpy.argsForCall).toEqual([ ['C'] ]);
+            expect(notifySpy.calls.allArgs).toEqual([ ['C'] ]);
         });
 
         it('Is default behavior when "ko.options.deferUpdates" is "true"', function() {
@@ -1069,8 +1069,8 @@ describe('Deferred', function() {
             data('B');
             expect(notifySpy).not.toHaveBeenCalled();
 
-            jasmine.Clock.tick(1);
-            expect(notifySpy.argsForCall).toEqual([ ['B'] ]);
+            jasmine.clock().tick(1);
+            expect(notifySpy.calls.allArgs).toEqual([ ['B'] ]);
         });
 
         it('Is superseded by rate-limit', function() {
@@ -1091,11 +1091,11 @@ describe('Deferred', function() {
             expect(dependentComputed()).toEqual('RB');
             expect(notifySpy).not.toHaveBeenCalled();       // no notifications yet
 
-            jasmine.Clock.tick(1);
-            expect(notifySpy.argsForCall).toEqual([ ['B'] ]);   // only the deferred computed notifies initially
+            jasmine.clock().tick(1);
+            expect(notifySpy.calls.allArgs).toEqual([ ['B'] ]);   // only the deferred computed notifies initially
 
-            jasmine.Clock.tick(499);
-            expect(notifySpy.argsForCall).toEqual([ ['B'], [ 'RB' ] ]); // the rate-limited computed notifies after the specified timeout
+            jasmine.clock().tick(499);
+            expect(notifySpy.calls.allArgs).toEqual([ ['B'], [ 'RB' ] ]); // the rate-limited computed notifies after the specified timeout
         });
 
         it('Should minimize evaluation at the end of a complex graph', function() {
@@ -1131,8 +1131,8 @@ describe('Deferred', function() {
                 subscription = i.subscribe(notifySpy);
 
             a('x');
-            jasmine.Clock.tick(1);
-            expect(notifySpy.argsForCall).toEqual([['i(x,h(cx,g(ex,fx),d(bx,cx)),bx,fx)']]);    // only one evaluation and notification
+            jasmine.clock().tick(1);
+            expect(notifySpy.calls.allArgs).toEqual([['i(x,h(cx,g(ex,fx),d(bx,cx)),bx,fx)']]);    // only one evaluation and notification
         });
 
         it('Should minimize evaluation when dependent computed doesn\'t actually change', function() {
@@ -1151,7 +1151,7 @@ describe('Deferred', function() {
                 });
 
             source({ key: 'value' });
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(countEval).toEqual(1);
 
             // Reading it again shouldn't cause an update
@@ -1178,10 +1178,10 @@ describe('Deferred', function() {
             expect(dSpy).not.toHaveBeenCalled();
 
             a('something');
-            expect(bSpy.calls.length).toBe(2);  // 1 for a, and 1 for d
-            expect(dSpy.calls.length).toBe(2);  // 1 for a, and 1 for b
+            expect(bSpy.calls.count).toBe(2);  // 1 for a, and 1 for d
+            expect(dSpy.calls.count).toBe(2);  // 1 for a, and 1 for b
 
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
         });
 
         it('Should not cause loss of updates when an intermediate value is read by a dependent computed observable', function() {
@@ -1210,7 +1210,7 @@ describe('Deferred', function() {
                 one(false);
                 expect(threeNotifications).toEqual([true]);
 
-                jasmine.Clock.tick(1);
+                jasmine.clock().tick(1);
                 expect(threeNotifications).toEqual([true, false]);
             }
         });
@@ -1229,17 +1229,17 @@ describe('Deferred', function() {
                 subscription = objIfTruthy.subscribe(notifySpy);
 
             obs('someothervalue');
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(notifySpy).not.toHaveBeenCalled();
 
             obs('');
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(notifySpy).toHaveBeenCalled();
-            expect(notifySpy.argsForCall).toEqual([[false]]);
-            notifySpy.reset();
+            expect(notifySpy.calls.allArgs).toEqual([[false]]);
+            notifySpy.calls.reset();
 
             obs(undefined);
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(notifySpy).not.toHaveBeenCalled();
         });
 
@@ -1266,7 +1266,7 @@ describe('Deferred', function() {
             // When we update the observable, both computeds will be marked dirty and scheduled for notification
             // But the first one will dispose the subscription to the second, putting it to sleep
             data('B');
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(timesEvaluated).toEqual(1);
 
             // When we read the computed it should be evaluated again because its dependencies have changed
@@ -1294,13 +1294,13 @@ describe('Deferred', function() {
             x(4);
             expect(called).toBe(0);
 
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(called).toBe(1);
             expect(x.getSubscriptionsCount()).toBe(0);
 
             x(3);
             x(4);
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(called).toBe(1);
             expect(x.getSubscriptionsCount()).toBe(0);
         });
@@ -1317,13 +1317,13 @@ describe('Deferred', function() {
             expect(called).toBe(0);
             expect(x.getSubscriptionsCount()).toBe(1);
 
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(called).toBe(1);
             expect(x.getSubscriptionsCount()).toBe(0);
 
             x(3);
             x(4);
-            jasmine.Clock.tick(1);
+            jasmine.clock().tick(1);
             expect(called).toBe(1);
             expect(x.getSubscriptionsCount()).toBe(0);
         });

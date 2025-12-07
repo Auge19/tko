@@ -192,15 +192,15 @@ describe('Pure Computed', function() {
 
         // Subscribe to computed; notifies with value
         var subscription = computed.subscribe(function () {});
-        expect(notifySpy.argsForCall).toEqual([ ['awake', 'A'] ]);
+        expect(notifySpy.calls.allArgs).toEqual([ ['awake', 'A'] ]);
         expect(data.getSubscriptionsCount()).toEqual(1);
 
-        notifySpy.reset();
+        notifySpy.calls.reset();
         data('B');
         expect(notifySpy).not.toHaveBeenCalled();
 
         subscription.dispose();
-        expect(notifySpy.argsForCall).toEqual([ ['asleep', undefined] ]);
+        expect(notifySpy.calls.allArgs).toEqual([ ['asleep', undefined] ]);
         expect(data.getSubscriptionsCount()).toEqual(0);
     });
 

@@ -54,7 +54,7 @@ describe('Deferred bindings', function () {
   })
   afterEach(function () {
     expect(tasks.resetForTesting()).toEqual(0)
-    jasmine.Clock.reset()
+    jasmine.clock().uninstall()
     options.deferUpdates = false
     bindingSpy = bindingHandlers.test = null
   })
@@ -65,10 +65,10 @@ describe('Deferred bindings', function () {
         // The initial "applyBindings" is synchronous
     testNode.innerHTML = "<div data-bind='test: myObservable'></div>"
     applyBindings({ myObservable: observable }, testNode)
-    expect(bindingSpy.argsForCall).toEqual([ ['init', 'A'], ['update', 'A'] ])
+    expect(bindingSpy.calls.allArgs).toEqual([ ['init', 'A'], ['update', 'A'] ])
 
         // When changing the observable, the update is deferred
-    bindingSpy.reset()
+    bindingSpy.calls.reset()
     observable('B')
     expect(bindingSpy).not.toHaveBeenCalled()
 
@@ -76,9 +76,9 @@ describe('Deferred bindings', function () {
     observable('C')
     expect(bindingSpy).not.toHaveBeenCalled()
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
         // Only the latest value is notified
-    expect(bindingSpy.argsForCall).toEqual([ ['update', 'C'] ])
+    expect(bindingSpy.calls.allArgs).toEqual([ ['update', 'C'] ])
   })
 
   it('Should update templates asynchronously', function () {
@@ -86,10 +86,10 @@ describe('Deferred bindings', function () {
 
     testNode.innerHTML = "<div data-bind='template: {data: myObservable}'><div data-bind='test: $data'></div></div>"
     applyBindings({ myObservable: observable }, testNode)
-    expect(bindingSpy.argsForCall).toEqual([ ['init', 'A'], ['update', 'A'] ])
+    expect(bindingSpy.calls.allArgs).toEqual([ ['init', 'A'], ['update', 'A'] ])
 
         // mutate; template should not be updated yet
-    bindingSpy.reset()
+    bindingSpy.calls.reset()
     observable('B')
     expect(bindingSpy).not.toHaveBeenCalled()
 
@@ -97,9 +97,9 @@ describe('Deferred bindings', function () {
     observable('C')
     expect(bindingSpy).not.toHaveBeenCalled()
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
         // only the latest value should be used
-    expect(bindingSpy.argsForCall).toEqual([ ['init', 'C'], ['update', 'C'] ])
+    expect(bindingSpy.calls.allArgs).toEqual([ ['init', 'C'], ['update', 'C'] ])
   })
 
   it("Should update 'foreach' items asynchronously", function () {
@@ -107,10 +107,10 @@ describe('Deferred bindings', function () {
 
     testNode.innerHTML = "<div data-bind='foreach: {data: myObservables}'><div data-bind='test: $data'></div></div>"
     applyBindings({ myObservables: observable }, testNode)
-    expect(bindingSpy.argsForCall).toEqual([ ['init', 'A'], ['update', 'A'] ])
+    expect(bindingSpy.calls.allArgs).toEqual([ ['init', 'A'], ['update', 'A'] ])
 
         // mutate; template should not be updated yet
-    bindingSpy.reset()
+    bindingSpy.calls.reset()
     observable(['A', 'B'])
     expect(bindingSpy).not.toHaveBeenCalled()
 
@@ -118,19 +118,19 @@ describe('Deferred bindings', function () {
     observable(['A', 'C'])
     expect(bindingSpy).not.toHaveBeenCalled()
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
         // only the latest value should be used ("C" added but not "B")
-    expect(bindingSpy.argsForCall).toEqual([ ['init', 'C'], ['update', 'C'] ])
+    expect(bindingSpy.calls.allArgs).toEqual([ ['init', 'C'], ['update', 'C'] ])
 
         // When an element is deleted and then added in a new place, it should register as a move and
         // not create new DOM elements or update any child bindings
-    bindingSpy.reset()
+    bindingSpy.calls.reset()
     observable.remove('A')
     observable.push('A')
 
     var nodeA = testNode.childNodes[0].childNodes[0],
       nodeB = testNode.childNodes[0].childNodes[1]
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(bindingSpy).not.toHaveBeenCalled()
     expect(testNode.childNodes[0].childNodes[0]).toBe(nodeB)
     expect(testNode.childNodes[0].childNodes[1]).toBe(nodeA)
@@ -160,7 +160,7 @@ describe('Deferred bindings', function () {
     tasks.runEarly()
     someItems.splice(targetIndex, 0, item)
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.childNodes[0]).toContainHtml('<span data-bind="text: childprop">moving child</span><span data-bind="text: childprop">first child</span><span data-bind="text: childprop">second child</span>')
     expect(testNode.childNodes[0].childNodes[targetIndex]).not.toBe(itemNode)    // node was create anew so it's not the same
   })
@@ -177,15 +177,15 @@ describe('Deferred bindings', function () {
     expect(testNode.childNodes[0]).toContainHtml('')
 
     value(1)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.childNodes[0]).toContainHtml('<div data-bind="text: status">ok</div>')
 
     value(0)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.childNodes[0]).toContainHtml('')
 
     value(1)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.childNodes[0]).toContainHtml('<div data-bind="text: status">ok</div>')
   })
 
@@ -200,17 +200,17 @@ describe('Deferred bindings', function () {
     }
 
     applyBindings(vm, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.childNodes[0]).toContainText('')
 
     vm.street('my street')
     vm.streetNumber('123')
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.childNodes[0]).toContainText('123 my street')
 
     vm.street(null)
     vm.streetNumber(null)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.childNodes[0]).toContainText('')
   })
 
@@ -224,17 +224,17 @@ describe('Deferred bindings', function () {
     }
 
     applyBindings(vm, testNode)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.childNodes[0]).toContainText('')
 
     vm.street('my street')
     vm.streetNumber('123')
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.childNodes[0]).toContainText('123 my street')
 
     vm.street(null)
     vm.streetNumber(null)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(testNode.childNodes[0]).toContainText('')
   })
 
@@ -252,7 +252,7 @@ describe('Deferred bindings', function () {
 
       // Change the value to a different truthy value; see the previous SPAN remains
     someItem('different truthy value')
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
 
     expect(testNode.childNodes[0].childNodes[0]['tagName']['toLowerCase']()).toEqual('span')
     expect(testNode.childNodes[0].childNodes[0]).toEqual(originalNode)

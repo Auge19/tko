@@ -7,7 +7,7 @@ import components from '../dist'
 import '@tko/utils/helpers/jasmine-13-helper'
 
 describe('Components: Default loader', function () {
-  var waitsFor = window.waitsFor
+  var waitsFor = jasmine.waitsFor
   var testComponentName = 'test-component'
 
   afterEach(function () {
@@ -65,7 +65,7 @@ describe('Components: Default loader', function () {
       didComplete = true
     })
 
-    waitsFor(function () {
+    jasmine.waitsFor(function () {
       return didComplete
     }, "timeout", 100)
   })
@@ -78,7 +78,7 @@ describe('Components: Default loader', function () {
       didComplete = true
     })
 
-    waitsFor(function () {
+    jasmine.waitsFor(function () {
       return didComplete
     }, "timeout", 100)
   })
@@ -546,7 +546,7 @@ describe('Components: Default loader', function () {
       didComplete = true
     })
 
-    waitsFor(function () {
+    jasmine.waitsFor(function () {
       return didComplete
     }, "timeout", 1000)
   }

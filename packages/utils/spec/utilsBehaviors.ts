@@ -13,7 +13,7 @@ describe('arrayForEach', function () {
 
     ko.utils.arrayForEach(['a', 'b', 'c'], callback)
 
-    expect(callback.calls.length).toBe(3)
+    expect(callback.calls.count).toBe(3)
     expect(callback.calls[0].args).toEqual(['a', 0, ['a', 'b', 'c']])
     expect(callback.calls[1].args).toEqual(['b', 1, ['a', 'b', 'c']])
     expect(callback.calls[2].args).toEqual(['c', 2, ['a', 'b', 'c']])
@@ -31,7 +31,7 @@ describe('arrayForEach', function () {
     var expectedContext = {}
     var actualContext = null
     utils.arrayForEach(['a'], function () { actualContext = this }, expectedContext)
-    expect(actualContext).toBe(expectedContext)
+    expect(actualContext).toBe(expectedContext as any)
   })
 
   it('Should throw an error for a null array', function () {
@@ -105,14 +105,14 @@ describe('arrayRemoveItem', function () {
 })
 
 describe('arrayFirst', function () {
-  var matchB, matchD
+  var matchB : jasmine.Spy, matchD : jasmine.Spy
 
   beforeEach(function () {
-    matchB = jasmine.createSpy('matchB').andCallFake(function (x) {
+    matchB = jasmine.createSpy('matchB').and.callFake(function (x) {
       return x.charAt(0) === 'b'
     })
 
-    matchD = jasmine.createSpy('matchD').andCallFake(function (x) {
+    matchD = jasmine.createSpy('matchD').and.callFake(function (x) {
       return x.charAt(0) === 'd'
     })
   })
@@ -135,7 +135,7 @@ describe('arrayFirst', function () {
   it('Should test the predicate on every element before the first matching element', function () {
     ko.utils.arrayFirst(['a', 'b', 'c'], matchB)
 
-    expect(matchB.calls.length).toBe(2)
+    expect(matchB.calls.count).toBe(2)
     expect(matchB.calls[0].args).toEqual(['a', 0, [ 'a', 'b', 'c' ]])
     expect(matchB.calls[1].args).toEqual(['b', 1, [ 'a', 'b', 'c' ]])
   })
@@ -148,7 +148,7 @@ describe('arrayFirst', function () {
   it('Should test every element if no element matches', function () {
     ko.utils.arrayFirst(['a', 'b', 'c'], matchD)
 
-    expect(matchD.calls.length).toBe(3)
+    expect(matchD.calls.count).toBe(3)
     expect(matchD.calls[0].args).toEqual(['a', 0, [ 'a', 'b', 'c' ]])
     expect(matchD.calls[1].args).toEqual(['b', 1, [ 'a', 'b', 'c' ]])
     expect(matchD.calls[2].args).toEqual(['c', 2, [ 'a', 'b', 'c' ]])
@@ -240,7 +240,7 @@ describe('arrayMap', function () {
 
     utils.arrayMap(['a'], identityFunction, expectedContext)
 
-    expect(actualContext).toBe(expectedContext)
+    expect(actualContext).toBe(expectedContext as any)
   })
 
   it('Should return an empty array when called with a null array', function () {
@@ -284,7 +284,7 @@ describe('arrayFilter', function () {
 
   it('Should alter "this" context when defined as an argument', function () {
     var expectedContext = {}
-    var actualContext = null
+    var actualContext : object | null = null
     var identityFunction = function (x) {
       actualContext = this
       return x
@@ -292,7 +292,7 @@ describe('arrayFilter', function () {
 
     var result = utils.arrayFilter(['a'], identityFunction, expectedContext)
 
-    expect(expectedContext).toEqual(actualContext)
+    expect(expectedContext).toEqual(actualContext!)
   })
 
   it('Should return an empty array when called with a null array', function () {
@@ -425,7 +425,7 @@ describe('objectMap', function () {
 
     ko.utils.objectMap({x: 1}, identityFunction, expectedContext)
 
-    expect(expectedContext).toEqual(actualContext)
+    expect(expectedContext).toEqual(actualContext as any)
   })
 })
 

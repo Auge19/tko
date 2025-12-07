@@ -10,7 +10,7 @@ describe('Tasks', function () {
   afterEach(function () {
         // Check that task schedule is clear after each test
     expect(tasks.resetForTesting()).toEqual(0)
-    jasmine.Clock.reset()
+    jasmine.clock().uninstall()
   })
 
   it('Should run in next execution cycle', function () {
@@ -20,7 +20,7 @@ describe('Tasks', function () {
     })
     expect(runCount).toEqual(0)
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(runCount).toEqual(1)
   })
 
@@ -33,7 +33,7 @@ describe('Tasks', function () {
     tasks.schedule(func)
     expect(runCount).toEqual(0)
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(runCount).toEqual(2)
   })
 
@@ -46,7 +46,7 @@ describe('Tasks', function () {
     tasks.schedule(func.bind(null, 1))
     tasks.schedule(func.bind(null, 2))
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(runValues).toEqual([1, 2])
   })
 
@@ -58,13 +58,13 @@ describe('Tasks', function () {
     tasks.schedule(func)
     expect(runCount).toEqual(0)
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(runCount).toEqual(1)
 
     tasks.schedule(func)
     expect(runCount).toEqual(1)
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(runCount).toEqual(2)
   })
 
@@ -80,7 +80,7 @@ describe('Tasks', function () {
     tasks.schedule(func.bind(null, 'i'))
     expect(runValues).toEqual([])
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(runValues).toEqual(['i', 'x'])
   })
 
@@ -98,7 +98,7 @@ describe('Tasks', function () {
 
         // When running tasks, it will throw an exception after completing all tasks
     expect(function () {
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
     }).toThrow()
     expect(runValues).toEqual([1, 2])
   })
@@ -115,7 +115,7 @@ describe('Tasks', function () {
     expect(runValues).toEqual([])
 
     expect(function () {
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
     }).toThrowContaining('Too much recursion')
 
         // 5000 is the current limit in the code, but it could change if needed.
@@ -133,7 +133,7 @@ describe('Tasks', function () {
     }
     expect(runValues).toEqual([])
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(runValues.length).toEqual(10000)
   })
 
@@ -145,7 +145,7 @@ describe('Tasks', function () {
       })
       tasks.cancel(handle)
 
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
       expect(runCount).toEqual(0)
     })
 
@@ -158,7 +158,7 @@ describe('Tasks', function () {
       var handle2 = tasks.schedule(func)
       tasks.cancel(handle2)
 
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
       expect(runCount).toEqual(1)
     })
 
@@ -170,7 +170,7 @@ describe('Tasks', function () {
       var handle1 = tasks.schedule(func.bind(null, 1))
       expect(runValues).toEqual([])
 
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
       expect(runValues).toEqual([1])
 
       var handle2 = tasks.schedule(func.bind(null, 2))
@@ -179,7 +179,7 @@ describe('Tasks', function () {
       tasks.cancel(handle1)
 
             // But nothing should happen; the second task will run in the next iteration
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
       expect(runValues).toEqual([1, 2])
     })
 
@@ -202,7 +202,7 @@ describe('Tasks', function () {
 
             // When running tasks, it will throw an exception after completing the tasks
       expect(function () {
-        jasmine.Clock.tick(1)
+        jasmine.clock().tick(1)
       }).toThrow()
       expect(runValues).toEqual([1, 3])  // The canceled task will be skipped
     })
@@ -221,7 +221,7 @@ describe('Tasks', function () {
       tasks.runEarly()
       expect(runValues).toEqual([1])
 
-            // Skip calling jasmine.Clock.tick to show that the queue is clear
+            // Skip calling jasmine.clock().tick to show that the queue is clear
     })
 
     it('Should run tasks early during task processing', function () {
@@ -243,7 +243,7 @@ describe('Tasks', function () {
       })
       tasks.schedule(func.bind(null, 1))
 
-      jasmine.Clock.tick(1)
+      jasmine.clock().tick(1)
       expect(runValues).toEqual([1, 2, 3])
     })
 
@@ -263,7 +263,7 @@ describe('Tasks', function () {
       expect(runValues.length).toEqual(5000)
 
       expect(function () {
-        jasmine.Clock.tick(1)
+        jasmine.clock().tick(1)
       }).toThrowContaining('Too much recursion')
 
             // No additional iterations should happen
@@ -290,7 +290,7 @@ describe('Tasks', function () {
 
             // It will throw an exception after completing all tasks
       expect(function () {
-        jasmine.Clock.tick(1)
+        jasmine.clock().tick(1)
       }).toThrow()
       expect(runValues).toEqual([1, 2, 3])
     })
@@ -299,7 +299,7 @@ describe('Tasks', function () {
 
 describe('Tasks options.taskScheduler', function () {
   if (ieVersion) {
-    beforeEach(function () { waits(100) })
+    beforeEach(function () { jasmine.waits(100) })
         // Workaround for timing-related issues in IE9, where the first few
         // tasks will not actually run asynchronously (and therefore fail).
   }
@@ -312,8 +312,8 @@ describe('Tasks options.taskScheduler', function () {
     tasks.schedule(func)
     expect(runCount).toEqual(0)
 
-    waits(1)
-    runs(function () {
+    jasmine.waits(1)
+    jasmine.runs(function () {
       expect(runCount).toEqual(1)
 
             // Run a second time
@@ -321,8 +321,8 @@ describe('Tasks options.taskScheduler', function () {
       expect(runCount).toEqual(1)
     })
 
-    waits(1)
-    runs(function () {
+    jasmine.waits(1)
+    jasmine.runs(function () {
       expect(runCount).toEqual(2)
     })
   })
@@ -330,7 +330,7 @@ describe('Tasks options.taskScheduler', function () {
   it('Should run only once for a set of tasks', function () {
     var counts = [0, 0]    // scheduler, tasks
 
-    jasmine.Clock.useMock()
+    jasmine.clock().install()
     this.restoreAfter(options, 'taskScheduler')
     options.taskScheduler = function (callback) {
       ++counts[0]
@@ -345,14 +345,14 @@ describe('Tasks options.taskScheduler', function () {
     expect(counts).toEqual([1, 0])
     tasks.schedule(func)
     expect(counts).toEqual([1, 0])
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(counts).toEqual([1, 2])
 
         // Second batch = one scheduler call
     counts = [0, 0]
     tasks.schedule(func)
     tasks.schedule(func)
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(counts).toEqual([1, 2])
 
         // runEarly doesn't cause any extra scheduler call
@@ -366,7 +366,7 @@ describe('Tasks options.taskScheduler', function () {
     tasks.schedule(func)
     expect(counts).toEqual([1, 1])
 
-    jasmine.Clock.tick(1)
+    jasmine.clock().tick(1)
     expect(counts).toEqual([1, 2])
   })
 })

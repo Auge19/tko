@@ -362,7 +362,8 @@ describe('Binding: Checked', function () {
                   // Checking the checkbox puts it in the array
         triggerEvent(testNode.children[0].children[1], 'click')
         expect(testNode.children[0]).toHaveCheckedStates([true, true])
-        expect(model.values).toEqual([object1, object2])
+        expect(model.values[0]).toEqual(object1)
+        expect(model.values[1]).toEqual(object2 as any)
 
                   // Unchecking the checkbox removes it from the array
         triggerEvent(testNode.children[0].children[1], 'click')

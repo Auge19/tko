@@ -2,6 +2,8 @@ import {
     options, tasks
 } from '../dist'
 
+import '../helpers/jasmine-13-helper'
+
 describe('onError handler', function () {
   var koOnErrorCount = 0
   var windowOnErrorCount = 0
@@ -72,7 +74,7 @@ describe('onError handler', function () {
     // });
     //
     // it('fires on async component errors', function () {
-    //     runs(function () {
+    //     jasmine.runs(function () {
     //         var component = {
     //             tagName: 'test-onerror',
     //             template: "<div data-bind='text: name'></div>",
@@ -92,11 +94,11 @@ describe('onError handler', function () {
     //         }, null, window.templateOutput);
     //     });
     //
-    //     waitsFor(function () {
+    //     jasmine.waitsFor(function () {
     //         return koOnErrorCount > 0 && windowOnErrorCount > 0;
     //     }, 'Error counts were not updated', 500);
     //
-    //     runs(function () {
+    //     jasmine.runs(function () {
     //         expect(koOnErrorCount).toBe(1);
     //         expect(windowOnErrorCount).toBe(1);
     //     });
@@ -109,11 +111,11 @@ describe('onError handler', function () {
       throw expectedInstance
     })
 
-    waitsFor(function () {
+    jasmine.waitsFor(function () {
       return koOnErrorCount > 0
     })
 
-    runs(function () {
+    jasmine.runs(function () {
       expect(koOnErrorCount).toBe(1)
       expect(windowOnErrorCount).toBe(0)
       expect(lastSeenError).toBe(expectedInstance)

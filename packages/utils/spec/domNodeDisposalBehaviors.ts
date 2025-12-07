@@ -64,8 +64,7 @@ describe('DOM node disposal', function () {
   it('Should not clean descendant nodes that are removed by a parent dispose handler', function () {
     var childNode = document.createElement('DIV')
     var grandChildNode = document.createElement('DIV')
-    var childSpy = jasmine.createSpy('childSpy')
-            .andCallFake(function () {
+    var childSpy = jasmine.createSpy('childSpy').and.callFake(function () {
               childNode.removeChild(grandChildNode)
             })
     var grandChildSpy = jasmine.createSpy('grandChildSpy')
@@ -85,7 +84,7 @@ describe('DOM node disposal', function () {
     var grandChildNode = document.createElement('DIV')
     var childNode2 = document.createComment('ko comment')
     var childSpy = jasmine.createSpy('childSpy')
-          .andCallFake(function () {
+          .and.callFake(function () {
             testNode.removeChild(grandChildNode)
           })
     var grandChildSpy = jasmine.createSpy('grandChildSpy')
@@ -108,7 +107,7 @@ describe('DOM node disposal', function () {
     var childNode :Node = document.createElement("DIV");
     var childNode2:Node  = document.createElement("DIV");
     var removeChildSpy = jasmine.createSpy('removeChildSpy')
-        .andCallFake(function() {
+        .and.callFake(function() {
             testNode.removeChild(childNode);
         });
     var childSpy = jasmine.createSpy('childSpy');
@@ -123,8 +122,8 @@ describe('DOM node disposal', function () {
     expect(removeChildSpy).toHaveBeenCalledWith(childNode);
     expect(childSpy).toHaveBeenCalledWith(childNode2);
 
-    removeChildSpy.reset();
-    childSpy.reset();
+    removeChildSpy.calls.reset();
+    childSpy.calls.reset();
 
     // Test by removing a previous node
     var childNode3 = document.createElement("DIV");
@@ -138,8 +137,8 @@ describe('DOM node disposal', function () {
     expect(removeChildSpy).toHaveBeenCalledWith(childNode2);
     expect(childSpy).toHaveBeenCalledWith(childNode3);
 
-    removeChildSpy.reset();
-    childSpy.reset();
+    removeChildSpy.calls.reset();
+    childSpy.calls.reset();
 
     // Test by removing a comment node
     var childNode = document.createComment("ko comment") as Node;
