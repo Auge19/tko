@@ -22,20 +22,20 @@ import {
 } from '@tko/observable'
 
 import {
-    templateEngine
+    TemplateEngineBase
 } from './templateEngine'
 
 import type { TemplateEngine, TemplateOptions } from './templateEngine'
 
 import {
-  anonymousTemplate as AnonymousTemplate
+  AnonymousTemplate
 } from './templateSources'
 
 var _templateEngine : TemplateEngine
 const cleanContainerDomDataKey = domData.nextKey()
 
 export function setTemplateEngine (tEngine : TemplateEngine | undefined) : void {
-  if ((tEngine !== undefined) && !(tEngine instanceof templateEngine)) {
+  if ((tEngine !== undefined) && !(tEngine instanceof TemplateEngineBase)) {
         // TODO: ko.templateEngine to appropriate name
     throw new Error('templateEngine must inherit from ko.templateEngine')
   }

@@ -1,0 +1,34 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,
+        "declarationMap": true,
+        "emitDeclarationOnly": true,
+        "isolatedModules": true,
+        "downlevelIteration": true,
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
+        "target": "ES6",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "allowJs": false,
+        "importHelpers": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "baseUrl": ".",
+        "noEmitOnError": true,
+        /*Disable some typing feature from ts to detect first steps to a strong typed version*/
+        "noImplicitAny": false,
+        "noImplicitThis": false,
+        "noImplicitOverride": false,
+        "noImplicitReturns": false,
+        "noUncheckedIndexedAccess": false,
+        "strictPropertyInitialization": false,
+        "strictBindCallApply": false,
+        "strictFunctionTypes": false,
+        "skipLibCheck": true,
+        /* END Disabling */
+        "customConditions": ["@tko/source"]
+    },
+    "files": [],
+}

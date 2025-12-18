@@ -11,7 +11,7 @@ import {
 } from '@tko/observable'
 
 import {
-    renderTemplate, setTemplateEngine, templateEngine, nativeTemplateEngine,
+    renderTemplate, setTemplateEngine, TemplateEngine, NativeTemplateEngine,
     bindings as templateBindings
 } from '@tko/binding.template'
 
@@ -51,7 +51,7 @@ describe('Cross-window support', function () {
         // The dummyTemplateEngine prototype test will fail if we let it just
         // use the one in dummyTemplateEngine.js, because that's imported from
         // the relative node_modules path (and therefore not the same).
-    dummyTemplateEngine.prototype = new templateEngine()
+    dummyTemplateEngine.prototype = new TemplateEngine()
   })
 
   it('Should work in another window', function () {
@@ -90,7 +90,7 @@ describe('Cross-window support', function () {
 
     // template/foreach binding
     window.runs(function () {
-      setTemplateEngine(new nativeTemplateEngine())
+      setTemplateEngine(new NativeTemplateEngine())
       body2.innerHTML = "<div id='tmpl'><span data-bind='text: childProp'></span></div><div data-bind='template: {name: \"tmpl\", foreach: someItems}'></div>"
       var someItems = [
             { childProp: 'first child' },

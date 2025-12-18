@@ -8,14 +8,17 @@
   },
   "exports": {
     ".": {
+      "@tko/source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./helpers/*": "./helpers/*"
   },
   "files": [
-    "dist/",
-    "helpers/"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "keywords": [
     "knockout",
@@ -31,7 +34,7 @@
   },
   "homepage": "https://tko.io",
   "dependencies": {
-    "@tko/utils": "^4.0.0-beta1.3",
+    "@tko/utils": "*",
     "tslib": "^2.2.0"
   },
   "karma": {

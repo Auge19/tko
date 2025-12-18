@@ -46,7 +46,7 @@ interface ChangeAddBatchItem extends ChangeAddItemBase {
 }
 
 interface ChangeAddOneItem extends ChangeAddItemBase {
-  isBatch?: false
+  isBatch: false
   value: any
 }
 
@@ -87,7 +87,8 @@ function valueToChangeAddItem (value, index): ChangeAddItem {
   return {
     status: 'added',
     value: value,
-    index: index
+    index: index,
+    isBatch: false
   }
 }
 

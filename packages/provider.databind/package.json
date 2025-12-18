@@ -4,12 +4,12 @@
   "description": "Link HTML attributes based on a `data-bind` HTML attribute",
   "module": "dist/provider.databind.js",
   "files": [
-    "dist/",
-    "helpers/"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "license": "MIT",
   "dependencies": {
-    "@tko/provider.bindingstring": "^4.0.0-beta1.6",
+    "@tko/provider.bindingstring": "*",
     "tslib": "^2.2.0"
   },
   "karma": {
@@ -28,8 +28,11 @@
   ],
   "exports": {
     ".": {
+      "@tko/source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./helpers/*": "./helpers/*"
   },

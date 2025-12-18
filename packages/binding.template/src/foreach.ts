@@ -4,7 +4,7 @@ import {
 } from '@tko/observable'
 
 import {
-    nativeTemplateEngine
+    NativeTemplateEngine
 } from './nativeTemplateEngine'
 
 import {
@@ -22,7 +22,7 @@ export class TemplateForEachBindingHandler extends TemplateBindingHandler {
         // The value will be unwrapped and tracked within the template binding
         // (See https://github.com/SteveSanderson/knockout/issues/523)
     if (!unwrappedValue || typeof unwrappedValue.length === 'number') {
-      return { foreach: modelValue, templateEngine: nativeTemplateEngine.instance }
+      return { foreach: modelValue, templateEngine: NativeTemplateEngine.instance }
     }
 
     // If unwrappedValue.data is the array, preserve all relevant options and unwrap again value so we get updates
@@ -36,7 +36,7 @@ export class TemplateForEachBindingHandler extends TemplateBindingHandler {
       afterRender: unwrappedValue.afterRender,
       beforeMove: unwrappedValue.beforeMove,
       afterMove: unwrappedValue.afterMove,
-      templateEngine: nativeTemplateEngine.instance
+      templateEngine: NativeTemplateEngine.instance
     }
   }
 }

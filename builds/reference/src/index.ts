@@ -1,4 +1,5 @@
 import { Builder } from '@tko/builder'
+export { KnockoutInstance } from '@tko/builder'
 
 import { VirtualProvider } from '@tko/provider.virtual'
 import { DataBindProvider } from '@tko/provider.databind'

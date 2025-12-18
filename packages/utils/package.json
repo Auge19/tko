@@ -4,8 +4,9 @@
   "description": "TKO Utilities",
   "type": "module",
   "files": [
-    "dist/",
-    "helpers/"
+    "dist",
+    "helpers",
+    "!**/*.tsbuildinfo"
   ],
   "repository": {
     "type": "git",
@@ -30,6 +31,10 @@
   "dependencies": {
     "tslib": "^2.2.0"
   },
+  "devDependencies": {
+    "@tko/provider": "*",
+    "@tko/builder": "*"
+  },
   "licenses": [
     {
       "type": "MIT",
@@ -38,8 +43,11 @@
   ],
   "exports": {
     ".": {
+      "@tko/source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./helpers/*": "./helpers/*"
   }

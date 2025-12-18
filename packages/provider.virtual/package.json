@@ -4,14 +4,14 @@
   "description": "Binding provider for <!-- ko handler: ... --> virtual elements",
   "module": "dist/provider.virtual.js",
   "files": [
-    "dist/",
-    "helpers/"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "author": "The Knockout Team",
   "license": "MIT",
   "dependencies": {
-    "@tko/provider.bindingstring": "^4.0.0-beta1.6",
-    "@tko/utils": "^4.0.0-beta1.3",
+    "@tko/provider.bindingstring": "*",
+    "@tko/utils": "*",
     "tslib": "^2.2.0"
   },
   "karma": {
@@ -29,8 +29,11 @@
   ],
   "exports": {
     ".": {
+      "@tko/source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./helpers/*": "./helpers/*"
   },

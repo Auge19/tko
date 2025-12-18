@@ -46,7 +46,7 @@ function hasIEAttachEvents(el: Element): el is Element
   return typeof (el as any).attachEvent === 'function' && typeof (el as any).detachEvent === 'function';
 }
 
-export function registerEventHandler (element: Element, eventType: string, handler: EventListener, eventOptions = false): void {
+export function registerEventHandler (element: Element, eventType: string, handler: EventListener, eventOptions: boolean | AddEventListenerOptions = false): void {
   const wrappedHandler = catchFunctionErrors(handler)
   const mustUseAttachEvent = ieVersion && eventsThatMustBeRegisteredUsingAttachEvent[eventType]
   const mustUseNative = Boolean(eventOptions)

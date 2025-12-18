@@ -5,10 +5,9 @@ export * from './arrayToDomNodeChildren'
 
 export {
   BindingHandler,
-  AsyncBindingHandler
+  AsyncBindingHandler,
+  type AllBindings
 } from './BindingHandler'
-
-export type { AllBindings } from './BindingHandler'
 
 export {
   DescendantBindingHandler

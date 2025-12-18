@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/karma",
+    "types": [
+      "node"
+    ],
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "spec/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    }
+  ]
+}

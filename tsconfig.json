@@ -1,46 +1,85 @@
 {
-  "compileOnSave": false,  
-  "compilerOptions": {
-    "declaration": true,
-    "downlevelIteration": true,
-    "target": "ES6",
-    "module": "ES2015",
-    "moduleResolution": "node",
-    "allowJs": false,
-    "importHelpers": true,
-    "allowSyntheticDefaultImports":  true,
-    "strict": true,
-    "baseUrl": ".",
-    "noEmit": true,
-    /*Disable some typing feature from ts to detect first steps to a strong typed version*/
-    "noImplicitAny": false,
-    "noImplicitThis": false,
-    "noImplicitOverride": false,
-    "noImplicitReturns": false,
-    "noUncheckedIndexedAccess": false,
-    "strictPropertyInitialization": false,
-    "strictBindCallApply": false,
-    "strictFunctionTypes": false,
-    "skipLibCheck": true,
-    /* END Disabling */
-    "paths": {
-      "@tko/utils/helpers/jasmine-13-helper": [
-        "packages/utils/helpers/jasmine-13-helper.ts"
-      ],
-      "@tko/binding.template/helpers/dummyTemplateEngine": [
-        "packages/binding.template/helpers/dummyTemplateEngine.ts"
-      ],
-      "*": [
-        "*",
-        "packages/*",
-        "builds/*"
-      ]
-    }
-  },
-  "exclude": [
-    "node_modules",
-    "builds",
-    "docs",
-    "tools"
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/builder"
+    },
+    {
+      "path": "./packages/bind"
+    },
+    {
+      "path": "./packages/binding.component"
+    },
+    {
+      "path": "./packages/binding.core"
+    },
+    {
+      "path": "./packages/binding.foreach"
+    },
+    {
+      "path": "./packages/binding.if"
+    },
+    {
+      "path": "./packages/binding.template"
+    },
+    {
+      "path": "./packages/builder"
+    },
+    {
+      "path": "./packages/computed"
+    },
+    {
+      "path": "./packages/filter.punches"
+    },
+    {
+      "path": "./packages/lifecycle"
+    },
+    {
+      "path": "./packages/observable"
+    },
+    {
+      "path": "./packages/provider"
+    },
+    {
+      "path": "./packages/provider.attr"
+    },
+    {
+      "path": "./packages/provider.bindingstring"
+    },
+    {
+      "path": "./packages/provider.component"
+    },
+    {
+      "path": "./packages/provider.databind"
+    },
+    {
+      "path": "./packages/provider.multi"
+    },
+    {
+      "path": "./packages/provider.mustache"
+    },
+    {
+      "path": "./packages/provider.native"
+    },
+    {
+      "path": "./packages/provider.virtual"
+    },
+    {
+      "path": "./packages/utils"
+    },
+    {
+      "path": "./packages/utils.component"
+    },
+    {
+      "path": "./packages/utils.functionrewrite"
+    },
+    {
+      "path": "./packages/utils.jsx"
+    },
+    {
+      "path": "./packages/utils.parser"
+    },
   ]
 }

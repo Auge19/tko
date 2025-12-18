@@ -7,11 +7,7 @@ import {
 } from '@tko/utils'
 
 import {
-    dependencyDetection
-} from '@tko/observable'
-
-import type {
-  Observable
+    dependencyDetection, type Observable
 } from '@tko/observable'
 
 import {
@@ -239,7 +235,7 @@ function applyBindingsToNodeInternal<T>(node: Node, sourceBindings: Record<strin
           // the binding context is updated or if the binding provider accesses observables.
       var bindingsUpdater: any = computed(
               function () {
-                bindings = sourceBindings ? sourceBindings(bindingContext, node) : getBindings.call(provider, node, bindingContext)
+                bindings = sourceBindings ? (sourceBindings as any)(bindingContext, node) : getBindings.call(provider, node, bindingContext)
                   // Register a dependency on the binding context to support observable view models.
                 if (bindings && bindingContext[contextSubscribeSymbol]) { bindingContext[contextSubscribeSymbol]() }
                 return bindings

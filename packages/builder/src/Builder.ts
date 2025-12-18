@@ -90,12 +90,12 @@ import {
 } from '@tko/bind'
 
 import {
-    anonymousTemplate,
-    domElement,
-    nativeTemplateEngine,
+    AnonymousTemplate,
+    DomElement,
+    NativeTemplateEngine,
     renderTemplate,
     setTemplateEngine,
-    templateEngine
+    TemplateEngineBase
     // templateSources
 } from '@tko/binding.template'
 
@@ -221,11 +221,11 @@ export type KnockoutInstance = {
   when: typeof when
 
   // --- Templates ---
-  nativeTemplateEngine: typeof nativeTemplateEngine
+  nativeTemplateEngine: typeof NativeTemplateEngine
   renderTemplate: typeof renderTemplate
   setTemplateEngine: typeof setTemplateEngine
-  templateEngine: typeof templateEngine
-  templateSources: { domElement: typeof domElement; anonymousTemplate: typeof anonymousTemplate }
+  templateEngine: typeof TemplateEngineBase
+  templateSources: { domElement: typeof DomElement; anonymousTemplate: typeof AnonymousTemplate }
 
   // --- Binding ---
   applyBindingAccessorsToNode: typeof applyBindingAccessorsToNode
@@ -280,11 +280,11 @@ const knockout : KnockoutInstance = {
   when: when,
 
   // --- Templates ---
-  nativeTemplateEngine,
+  nativeTemplateEngine: NativeTemplateEngine,
   renderTemplate,
   setTemplateEngine,
-  templateEngine,
-  templateSources: { domElement, anonymousTemplate },
+  templateEngine: TemplateEngineBase,
+  templateSources: { domElement: DomElement, anonymousTemplate: AnonymousTemplate },
 
   // --- Binding ---
   applyBindingAccessorsToNode,

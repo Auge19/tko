@@ -4,8 +4,8 @@
   "description": "Rewrite `function {}` as lambdas (=>)",
   "module": "dist/utils.functionrewrite.js",
   "files": [
-    "dist/",
-    "helpers/"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "license": "MIT",
   "dependencies": {
@@ -26,8 +26,11 @@
   ],
   "exports": {
     ".": {
+      "@tko/source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./helpers/*": "./helpers/*"
   },

@@ -25,8 +25,8 @@
 //     If you don't want to allow that, you can set the property 'allowTemplateRewriting' to false (like ko.nativeTemplateEngine does)
 //     and then you don't need to override 'createJavaScriptEvaluatorBlock'.
 
-import { extend, options } from '@tko/utils'
-import { domElement, anonymousTemplate } from './templateSources'
+import { options } from '@tko/utils'
+import { DomElement, AnonymousTemplate } from './templateSources'
 import type { TemplateSource } from './templateSources'
 import type { BindingContext } from '@tko/bind';
 
@@ -41,42 +41,45 @@ export interface TemplateEngine {
  renderTemplateSource(templateSource: TemplateSource, bindingContext: BindingContext<any>, options: TemplateOptions<any>, templateDocument?: Document): Node[];
  createJavaScriptEvaluatorBlock(script: string): string;
 
- makeTemplateSource(template: string | Node, templateDocument?: Document): TemplateSource;
+ makeTemplateSource(template: string | Node, templateDocument?: Document): TemplateSource | undefined;
 
  renderTemplate(template: string | Node, bindingContext: BindingContext<any>, options: TemplateOptions<any>, templateDocument?: Document): Node[];
 
- isTemplateRewritten(template: string | Node, templateDocument?: Document): boolean;
+//  isTemplateRewritten(template: string | Node, templateDocument?: Document): boolean;
 
- rewriteTemplate(template: string | Node, rewriterCallback: (val: string) => string, templateDocument?: Document): void;
+//  rewriteTemplate(template: string | Node, rewriterCallback: (val: string) => string, templateDocument?: Document): void;
 }
 
-//TODO Class-Migration implements TemplateEngine
-export function templateEngine () { };
+export abstract class TemplateEngineBase implements TemplateEngine {
+  allowTemplateRewriting: boolean;
+  // abstract isTemplateRewritten(template: string | Node, templateDocument?: Document): boolean;
+  // abstract rewriteTemplate(template: string | Node, rewriterCallback: (val: string) => string, templateDocument?: Document): void;
+  abstract renderTemplateSource(templateSource: TemplateSource, bindingContext: BindingContext<any>, options, templateDocument?: Document): Node[];
+  createJavaScriptEvaluatorBlock(script: string): string {
+    if (!this.allowTemplateRewriting)
+      return '';
+    options.onError('Override createJavaScriptEvaluatorBlock');
+    throw 'Override createJavaScriptEvaluatorBlock';
+  }
 
-extend(templateEngine.prototype, {
-  renderTemplateSource(templateSource: TemplateSource, bindingContext: BindingContext<any>, options, templateDocument?: Document) { // templateSource, bindingContext, templateDocument not in use
-    options.onError('Override renderTemplateSource')
-  },
-
-  createJavaScriptEvaluatorBlock(script: string) {
-    options.onError(new Error('Override createJavaScriptEvaluatorBlock'))
-  },
-
-  makeTemplateSource(template: string | Node, templateDocument?: Document) {
+  makeTemplateSource(template: string | Node, templateDocument?: Document): TemplateSource | undefined {
       // Named template
     if (typeof template === 'string') {
       templateDocument = templateDocument || document
       var elem = templateDocument.getElementById(template)
       if (!elem) { options.onError(new Error('Cannot find template with ID ' + template)) }
-      return new domElement(elem)
+      return new DomElement(elem)
     } else if ((template.nodeType == 1) || (template.nodeType == 8)) {
           // Anonymous template
-      return new anonymousTemplate(template)
+      return new AnonymousTemplate(template)
     } else { options.onError(new Error('Unknown template type: ' + template)) }
-  },
+  }
 
   renderTemplate(template: string | Node, bindingContext: BindingContext<any>, options: TemplateOptions<any>, templateDocument?: Document): Node[] {
-    var templateSource = this['makeTemplateSource'](template, templateDocument)
+    var templateSource = this.makeTemplateSource(template, templateDocument)
+    if (templateSource == null) {
+      return []
+    }
     return this.renderTemplateSource(templateSource, bindingContext, options, templateDocument)
   }
-})
+}

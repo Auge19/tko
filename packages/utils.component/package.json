@@ -4,14 +4,14 @@
   "description": "Registry and loading utilities for web components",
   "module": "dist/utils.component.js",
   "files": [
-    "dist/",
-    "helpers/"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "license": "MIT",
   "dependencies": {
-    "@tko/lifecycle": "^4.0.0-beta1.3",
-    "@tko/observable": "^4.0.0-beta1.3",
-    "@tko/utils": "^4.0.0-beta1.3",
+    "@tko/lifecycle": "*",
+    "@tko/observable": "*",
+    "@tko/utils": "*",
     "tslib": "^2.2.0"
   },
   "peerDependencies": {
@@ -35,8 +35,11 @@
   ],
   "exports": {
     ".": {
+      "@tko/source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./helpers/*": "./helpers/*"
   },

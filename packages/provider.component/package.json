@@ -4,17 +4,17 @@
   "description": "Bind custom web components e.g. <custom-binding>",
   "module": "dist/provider.component.js",
   "files": [
-    "dist/",
-    "helpers/"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "license": "MIT",
   "dependencies": {
-    "@tko/computed": "^4.0.0-beta1.3",
-    "@tko/observable": "^4.0.0-beta1.3",
-    "@tko/provider": "^4.0.0-beta1.3",
-    "@tko/utils": "^4.0.0-beta1.3",
-    "@tko/utils.component": "^4.0.0-beta1.3",
-    "@tko/utils.parser": "^4.0.0-beta1.6",
+    "@tko/computed": "*",
+    "@tko/observable": "*",
+    "@tko/provider": "*",
+    "@tko/utils": "*",
+    "@tko/utils.component": "*",
+    "@tko/utils.parser": "*",
     "tslib": "^2.2.0"
   },
   "karma": {
@@ -31,8 +31,11 @@
   ],
   "exports": {
     ".": {
+      "@tko/source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./helpers/*": "./helpers/*"
   },

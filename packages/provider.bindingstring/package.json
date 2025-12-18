@@ -4,13 +4,13 @@
   "description": "Abstract Base Class for providers that parse a binding string",
   "module": "dist/provider.bindingString.js",
   "files": [
-    "dist/",
-    "helpers/"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "license": "MIT",
   "dependencies": {
-    "@tko/provider": "^4.0.0-beta1.3",
-    "@tko/utils.parser": "^4.0.0-beta1.6",
+    "@tko/provider": "*",
+    "@tko/utils.parser": "*",
     "tslib": "^2.2.0"
   },
   "karma": {
@@ -28,8 +28,11 @@
   ],
   "exports": {
     ".": {
+      "@tko/source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./helpers/*": "./helpers/*"
   },

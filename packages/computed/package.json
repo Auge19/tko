@@ -4,12 +4,12 @@
   "description": "TKO Computed Observables",
   "module": "dist/computed.js",
   "files": [
-    "dist/",
-    "helpers/"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "dependencies": {
-    "@tko/observable": "^4.0.0-beta1.3",
-    "@tko/utils": "^4.0.0-beta1.3",
+    "@tko/observable": "*",
+    "@tko/utils": "*",
     "tslib": "^2.2.0"
   },
   "repository": {
@@ -39,8 +39,11 @@
   ],
   "exports": {
     ".": {
+      "@tko/source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./helpers/*": "./helpers/*"
   }

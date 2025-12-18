@@ -34,7 +34,7 @@ declare global {
         var browserSupportsProtoAssignment: any
         var ieVersion: any
 
-        var Matchers: Matchers
+        var Matchers: Matchers<any>
 
         interface Matchers<T> {
             toContainText(expected: string, ignoreSpaces: boolean): boolean

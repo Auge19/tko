@@ -1,22 +1,25 @@
 {
-  "version": "4.0.0-beta1.3",
   "name": "@tko/bind",
+  "version": "4.0.0-beta1.3",
+  "type": "module",
   "description": "TKO DOM-Observable Binding",
-  "module": "dist/bind.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "dependencies": {
-    "@tko/computed": "^4.0.0-beta1.3",
-    "@tko/lifecycle": "^4.0.0-beta1.3",
-    "@tko/observable": "^4.0.0-beta1.3",
-    "@tko/provider": "^4.0.0-beta1.3",
-    "@tko/utils": "^4.0.0-beta1.3",
+    "@tko/computed": "*",
+    "@tko/lifecycle": "*",
+    "@tko/observable": "*",
+    "@tko/provider": "*",
+    "@tko/utils": "*",
     "tslib": "^2.2.0"
   },
   "peerDependencies": {
     "@tko/binding.foreach": "^4.0.0-alpha9.0"
   },
   "files": [
-    "dist/",
-    "helpers/"
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "repository": {
     "type": "git",
@@ -42,8 +45,11 @@
   ],
   "exports": {
     ".": {
+      "@tko/source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./helpers/*": "./helpers/*"
   }
