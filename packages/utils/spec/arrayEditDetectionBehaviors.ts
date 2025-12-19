@@ -1,6 +1,6 @@
 import {
     compareArrays
-} from '../dist'
+} from '../src'
 
 describe('Compare Arrays', function () {
   it('Should recognize when two arrays have the same contents', function () {

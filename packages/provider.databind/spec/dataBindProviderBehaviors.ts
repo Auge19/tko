@@ -32,7 +32,7 @@ import {
 
 import {
   DataBindProvider
-} from '../dist'
+} from '../src'
 
 import * as coreBindings from '@tko/binding.core';
 
@@ -58,7 +58,7 @@ describe('Data-Bind Behaviors', function () {
     beforeEach(function () {
       instance = options.bindingProviderInstance = new DataBindProvider()
       div = document.createElement('div');
-      instance.bindingHandlers.alpha = {
+      (instance.bindingHandlers as any).alpha = {
         init: sinon.spy(),
         update: sinon.spy()
       }
@@ -90,8 +90,8 @@ describe('Data-Bind Behaviors', function () {
 
     it('becomes the valueAccessor', function () {
       div.setAttribute('data-bind', 'alpha: "122.9"');
-      var i_spy = instance.bindingHandlers.alpha.init,
-        u_spy = instance.bindingHandlers.alpha.update,
+      var i_spy = (instance.bindingHandlers as any).alpha.init,
+        u_spy = (instance.bindingHandlers as any).alpha.update,
         args;
       applyBindings({
         vm: true
@@ -116,7 +116,7 @@ describe('Data-Bind Behaviors', function () {
       instance = options.bindingProviderInstance = new DataBindProvider()
       div = document.createElement('div');
       div.setAttribute('data-bind', 'alpha: x');
-      instance.bindingHandlers.alpha = {
+      (instance.bindingHandlers as any).alpha = {
         init: sinon.spy(),
         update: sinon.spy()
       }
@@ -129,8 +129,8 @@ describe('Data-Bind Behaviors', function () {
     });
 
     it('becomes the valueAccessor', function () {
-      var i_spy = instance.bindingHandlers.alpha.init,
-        u_spy = instance.bindingHandlers.alpha.update,
+      var i_spy = (instance.bindingHandlers as any).alpha.init,
+        u_spy = (instance.bindingHandlers as any).alpha.update,
         args;
       applyBindings({
         x: 0xDEADBEEF

@@ -5,14 +5,14 @@ import {
 
 import {
   when
-} from '../dist'
+} from '../src'
 
 describe('when', function () {
   it('Runs callback when predicate function becomes true, but only once', function () {
     var x = observable(3),
       called = 0
 
-    when(function () { return x() === 4 }, function () { called++ })
+    when(function () { return x() === 4 }, function () { called++ }, undefined)
 
     x(5)
     expect(called).toBe(0)
@@ -32,7 +32,7 @@ describe('when', function () {
     var x = observable(4),
       called = 0
 
-    when(function () { return x() === 4 }, function () { called++ })
+    when(function () { return x() === 4 }, function () { called++ }, undefined)
 
     expect(called).toBe(1)
     expect(x.getSubscriptionsCount()).toBe(0)
@@ -47,7 +47,7 @@ describe('when', function () {
     var x = observable(false),
       called = 0
 
-    when(x, function () { called++ })
+    when(x, function () { called++ }, undefined)
 
     expect(called).toBe(0)
     expect(x.getSubscriptionsCount()).toBe(1)
@@ -61,7 +61,7 @@ describe('when', function () {
     var x = observable(false),
       called = 0
 
-    var handle = when(x, function () { called++ })
+    var handle = when(x, function () { called++ }, undefined)
 
     expect(called).toBe(0)
     expect(x.getSubscriptionsCount()).toBe(1)
@@ -81,7 +81,7 @@ describe('when', function () {
       called++
       x(false)
       x(true)
-    })
+    }, undefined)
 
     expect(called).toBe(0)
     expect(x.getSubscriptionsCount()).toBe(1)

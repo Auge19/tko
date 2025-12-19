@@ -16,9 +16,13 @@ import {
 
 import {
     applyBindings
-} from '../dist'
+} from '../src'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+import {
+    initJasmine
+} from '@tko/utils.spec'
+
+initJasmine();
 
 describe('Node preprocessing', function () {
   let testNode : HTMLElement

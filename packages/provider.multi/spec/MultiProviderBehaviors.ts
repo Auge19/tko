@@ -3,7 +3,7 @@ import { assert } from "chai"
 
 import {
   MultiProvider
-} from '../dist'
+} from '../src'
 
 describe('MultiProvider Behavior', function () {
   describe('nodeHasBindings', function () {
@@ -14,7 +14,7 @@ describe('MultiProvider Behavior', function () {
           { nodeHasBindings () { return true }, FOR_NODE_TYPES: [1] }
         ]
       })
-      assert.ok(mp.nodeHasBindings({nodeType: 1}))
+      assert.ok(mp.nodeHasBindings({nodeType: 1} as Node))
     })
 
     it('is true if one provider the first is true', function () {
@@ -24,7 +24,7 @@ describe('MultiProvider Behavior', function () {
           { nodeHasBindings () { return false }, FOR_NODE_TYPES: [1] }
         ]
       })
-      assert.ok(mp.nodeHasBindings({nodeType: 1}))
+      assert.ok(mp.nodeHasBindings({nodeType: 1} as Node))
     })
 
     it('is false if no providers are true', function () {
@@ -34,7 +34,7 @@ describe('MultiProvider Behavior', function () {
           { nodeHasBindings () { return false }, FOR_NODE_TYPES: [1] }
         ]
       })
-      assert.notOk(mp.nodeHasBindings({nodeType: 1}))
+      assert.notOk(mp.nodeHasBindings({nodeType: 1} as Node))
     })
 
     it('skips providers for other node types', function () {
@@ -43,7 +43,7 @@ describe('MultiProvider Behavior', function () {
           { nodeHasBindings () { return true }, FOR_NODE_TYPES: [4] }
         ]
       })
-      assert.notOk(mp.nodeHasBindings({nodeType: 2}))
+      assert.notOk(mp.nodeHasBindings({nodeType: 2} as Node))
     })
   })
 
@@ -55,7 +55,7 @@ describe('MultiProvider Behavior', function () {
           {getBindingAccessors () { return { y: 'Y' } }, preprocessNode () {}, FOR_NODE_TYPES: [1]}
         ]
       })
-      assert.deepEqual(mp.getBindingAccessors({nodeType: 1}), { x: 'X',  y: 'Y' })
+      assert.deepEqual(mp.getBindingAccessors({nodeType: 1} as Node), { x: 'X',  y: 'Y' })
     })
 
     it('performs only the first preemptive binding', function () {
@@ -65,7 +65,7 @@ describe('MultiProvider Behavior', function () {
           {getBindingAccessors () { return { y: 'Y' } }, preprocessNode () {}, FOR_NODE_TYPES: [1]}
         ]
       })
-      assert.deepEqual(mp.getBindingAccessors({nodeType: 1}), {x: 'X'})
+      assert.deepEqual(mp.getBindingAccessors({nodeType: 1} as Node), {x: 'X'})
     })
 
     it('Skips providers for different node types', function () {
@@ -75,7 +75,7 @@ describe('MultiProvider Behavior', function () {
           {getBindingAccessors () { return { y: 'Y' } }, preprocessNode () {}, FOR_NODE_TYPES: [2]}
         ]
       })
-      assert.deepEqual(mp.getBindingAccessors({nodeType: 1}), {x: 'X'})
+      assert.deepEqual(mp.getBindingAccessors({nodeType: 1} as Node), {x: 'X'})
     })
   })
 
@@ -88,7 +88,7 @@ describe('MultiProvider Behavior', function () {
           {preprocessNode () { ++calls }, FOR_NODE_TYPES: [1]}
         ]
       })
-      mp.preprocessNode({ nodeType: 1 })
+      mp.preprocessNode({ nodeType: 1 } as Node)
       assert.equal(calls, 2)
     })
 
@@ -100,7 +100,7 @@ describe('MultiProvider Behavior', function () {
           {preprocessNode () { ++calls }, FOR_NODE_TYPES: [1]}
         ]
       })
-      mp.preprocessNode({ nodeType: 1 })
+      mp.preprocessNode({ nodeType: 1 } as Node)
       assert.equal(calls, 1)
     })
   })

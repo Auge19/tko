@@ -22,11 +22,17 @@ import {
 } from '@tko/utils'
 
 
-import * as coreBindings from '../dist'
+import * as coreBindings from '../src'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+
 import { VirtualProvider } from '@tko/provider.virtual'
 import { MultiProvider } from '@tko/provider.multi'
+
+import {
+    initJasmine
+} from '@tko/utils.spec'
+
+initJasmine();
 
 
 var hasfocusUpdatingProperty = '__ko_hasfocusKnockoutUpdating';

@@ -1,11 +1,11 @@
 
 import {
     observableArray, observable
-} from '../dist'
+} from '../src'
 
 import {
     trackArrayChanges
-} from '../dist/observableArray.changeTracking'
+} from '../src/observableArray.changeTracking'
 
 function captureCompareArraysCalls (callback) {
   var origCompareArrays = trackArrayChanges.compareArrays,
@@ -356,7 +356,8 @@ describe('Observable Array change tracking', function () {
                 { name: '1.3', nodes: [] }
       ]
     }
-    var list = observableArray([])
+
+    var list = observableArray([] as any[])
 
         // This adds all descendent nodes to the list when a node is added
     list.subscribe(function (events) {
@@ -392,7 +393,7 @@ describe('Observable Array change tracking', function () {
     }, null, 'arrayChange')
 
         // The default behavior is to limit moves
-    myArray(array2)
+    myArray(array2 as any)
     expect(changelist[changelist.length - 1]).toEqual({ status: 'deleted', value: 'T', index: 19 })
 
         // Change the behavior by extending again with the dontLimitMoves option

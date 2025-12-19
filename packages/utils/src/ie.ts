@@ -18,7 +18,7 @@ const ieVersion = options.document && (function () {
   if (!version) {
     const userAgent = window.navigator.userAgent
     // Detect IE 10/11
-    return userAgent.match(/MSIE ([^ ]+)/) || userAgent.match(/rv:([^ )]+)/)
+    return +(userAgent.match(/MSIE ([^ ]+)/)?.[1] ?? -1) || +(userAgent.match(/rv:([^ )]+)/)?.[1] ?? -1)
   }
   return version > 4 ? version : undefined
   

@@ -1,6 +1,6 @@
 import {
     applyBindings
-} from '../dist'
+} from '../src'
 
 import {
     cleanNode, options
@@ -28,8 +28,8 @@ import {
 } from '@tko/binding.if'
 
 import {
-    dummyTemplateEngine
-} from '@tko/binding.template/helpers/dummyTemplateEngine'
+    DummyTemplateEngine
+} from '@tko/utils.spec'
 
 const BLANK_HTML = `
 <!doctype html>
@@ -47,11 +47,6 @@ describe('Cross-window support', function () {
     provider.bindingHandlers.set(coreBindings)
     provider.bindingHandlers.set(templateBindings)
     provider.bindingHandlers.set(ifBindings)
-
-        // The dummyTemplateEngine prototype test will fail if we let it just
-        // use the one in dummyTemplateEngine.js, because that's imported from
-        // the relative node_modules path (and therefore not the same).
-    dummyTemplateEngine.prototype = new TemplateEngine()
   })
 
   it('Should work in another window', function () {
@@ -69,7 +64,7 @@ describe('Cross-window support', function () {
 
     // renderTemplate
     window.runs(function () {
-      setTemplateEngine(new dummyTemplateEngine({ someTemplate: "<div data-bind='text: text'></div>" }))
+      setTemplateEngine(new DummyTemplateEngine({ someTemplate: "<div data-bind='text: text'></div>" }))
       renderTemplate('someTemplate', { text: 'abc' }, null, body2)
       expect(body2.childNodes.length).toEqual(1)
       expect(body2).toContainHtml('<div data-bind="text: text">abc</div>')

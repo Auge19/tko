@@ -2,7 +2,7 @@
 import {
     subscribable as Subscribable,
     extenders
-} from '../dist'
+} from '../src'
 
 describe('Extenders', function () {
   it('Should be able to extend any subscribable', function () {
@@ -23,6 +23,6 @@ describe('Extenders', function () {
     }
     var underlyingSubscribable = new Subscribable()
     var result = underlyingSubscribable.extend({ wrapInParentObject: true }).extend({ wrapInParentObject: true })
-    expect(result.inner.inner).toEqual(underlyingSubscribable)
+    expect((result.inner as any).inner).toEqual(underlyingSubscribable)
   })
 })

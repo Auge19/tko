@@ -99,7 +99,7 @@ import {
     // templateSources
 } from '@tko/binding.template'
 
-import type { BindingHandlerObject } from '@tko/provider'
+import type { BindingHandlerObject, Provider } from '@tko/provider'
 
 const domNodeDisposal = {
   addDisposeCallback,
@@ -303,7 +303,7 @@ const knockout : KnockoutInstance = {
 export class Builder {
   providedProperties: { extenders: any; bindingHandlers: BindingHandlerObject; bindingProvider: any }
 
-  constructor ({ provider, bindings, extenders, filters, options }) {
+  constructor ({ provider, bindings, extenders, filters, options }: { provider: Provider, bindings, extenders?, filters, options }) {
     Object.assign(knockout.options, options, {
       filters,
       bindingProviderInstance: provider

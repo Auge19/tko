@@ -1,7 +1,7 @@
 
 import {
     isSubscribable, subscribable
-} from '../dist'
+} from '../src'
 
 describe('Subscribable', function () {
   it('Should declare that it is subscribable', function () {
@@ -25,7 +25,7 @@ describe('Subscribable', function () {
   it('creates/has a Symbol.observable', () => {
     const sub = new subscribable()
     expect(Symbol.observable).toEqual(Symbol.for('@tko/Symbol.observable'))
-    expect(sub[Symbol.observable]()).toBe(sub)
+    expect((sub[Symbol.observable as any] as any)()).toBe(sub)
   })
 
   it('Should be able to notify subscribers', function () {
@@ -147,7 +147,7 @@ describe('Subscribable', function () {
 
     var instance = new subscribable()
     expect(instance.customProp).toEqual('some value')
-    expect(instance.customFunc()).toEqual(instance)
+    expect((instance.customFunc as any)()).toEqual(instance)
   })
 
   it('Should have access to functions added to "fn" on existing instances on supported browsers', function () {

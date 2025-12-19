@@ -20,11 +20,11 @@ import {
   // setTemplateEngine,
   // templateEngine,
   // nativeTemplateEngine
-} from '../dist'
+} from '../src'
 
 import {bindings as coreBindings} from '@tko/binding.core'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+
 
 describe('Binding: Ifnot', function () {
   let testNode : HTMLElement

@@ -118,12 +118,7 @@ class TextInputIE extends TextInput {
   constructor (...args: [any]) {
     super(...args)
 
-    let version: number;
-    if (ieVersion instanceof Array) {
-      version = parseInt(ieVersion[1], 10);
-    } else {
-      version = ieVersion ?? 0;
-    }
+    const version = ieVersion ?? 0;
     if (version < 11) {
       // Internet Explorer <= 8 doesn't support the 'input' event, but does include 'propertychange' that fires whenever
       // any property of an element changes. Unlike 'input', it also fires if a property is changed from JavaScript code,

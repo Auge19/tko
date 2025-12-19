@@ -3,13 +3,15 @@
 //
 
 import {
-    toJS, toJSON, isObservable, observable, observableArray
-} from '../dist'
+  toJS, toJSON, isObservable, observable, observableArray,
+  Observable,
+  ObservableArray
+} from '../src'
 
 describe('Mapping helpers', function () {
   it('toJS should require a parameter', function () {
     expect(function () {
-      toJS()
+      (toJS as any)()
     }).toThrow()
   })
 
@@ -25,12 +27,12 @@ describe('Mapping helpers', function () {
 
   it('toJS should recursively unwrap observables whose values are themselves observable', function () {
     var weirdlyNestedObservable = observable(
-            observable(
-                observable(
-                    observable('Hello')
-                )
-            )
+      observable(
+        observable(
+          observable('Hello')
         )
+      )
+    )
     var result = toJS(weirdlyNestedObservable)
     expect(result).toEqual('Hello')
   })
@@ -51,12 +53,13 @@ describe('Mapping helpers', function () {
   })
 
   it('toJS should unwrap observable arrays and things inside them', function () {
-    var data = observableArray(['a', 1, { someProp: observable('Hey') }])
+    const someObj = { someProp: observable('Hey') };
+    var data = observableArray(['a', 1, someObj])
     var result = toJS(data)
     expect(result.length).toEqual(3)
     expect(result[0]).toEqual('a')
     expect(result[1]).toEqual(1)
-    expect(result[2].someProp).toEqual('Hey')
+    expect((result[2] as typeof someObj).someProp).toEqual('Hey')
   })
 
   it('toJS should resolve reference cycles', function () {
@@ -100,7 +103,7 @@ describe('Mapping helpers', function () {
   it('toJS should serialize functions', function () {
     var obj = {
       include: observable('test'),
-      exclude: function () {}
+      exclude: function () { }
     }
 
     var result = toJS(obj)
@@ -112,7 +115,7 @@ describe('Mapping helpers', function () {
     var data = observableArray(['a', 1, { someProp: observable('Hey') }])
     var result = toJSON(data)
 
-        // Check via parsing so the specs are independent of browser-specific JSON string formatting
+    // Check via parsing so the specs are independent of browser-specific JSON string formatting
     expect(typeof result).toEqual('string')
     var parsedResult = JSON.parse(result)
     expect(parsedResult.length).toEqual(3)
@@ -122,30 +125,31 @@ describe('Mapping helpers', function () {
   })
 
   it('toJSON should respect .toJSON functions on objects', function () {
-    var data: {a: any, b: observable} = {
-      a: { one: 'one', two: 'two'},
+    var data: { a: any, b: Observable<any> } = {
+      a: { one: 'one', two: 'two' },
       b: observable({ one: 'one', two: 'two' })
     }
     data.a.toJSON = function () { return 'a-mapped' }
     data.b().toJSON = function () { return 'b-mapped' }
     var result = toJSON(data)
 
-        // Check via parsing so the specs are independent of browser-specific JSON string formatting
+    // Check via parsing so the specs are independent of browser-specific JSON string formatting
     expect(typeof result).toEqual('string')
     var parsedResult = JSON.parse(result)
     expect(parsedResult).toEqual({ a: 'a-mapped', b: 'b-mapped' })
   })
 
   it('toJSON should respect .toJSON functions on arrays', function () {
-    var data: {a: any, b: observableArray} = {
+    var data: { a: any, b: ObservableArray<any> } = {
       a: [1, 2],
       b: observableArray([3, 4])
     }
     data.a.toJSON = function () { return 'a-mapped' }
-    data.b().toJSON = function () { return 'b-mapped' }
+    const b = data.b()
+      ; (b as any).toJSON = function () { return 'b-mapped' }
     var result = toJSON(data)
 
-        // Check via parsing so the specs are independent of browser-specific JSON string formatting
+    // Check via parsing so the specs are independent of browser-specific JSON string formatting
     expect(typeof result).toEqual('string')
     var parsedResult = JSON.parse(result)
     expect(parsedResult).toEqual({ a: 'a-mapped', b: 'b-mapped' })
@@ -154,17 +158,17 @@ describe('Mapping helpers', function () {
   it('toJSON should respect replacer/space options', function () {
     var data = { a: 1 }
 
-        // Without any options
+    // Without any options
     expect(toJSON(data)).toEqual('{"a":1}')
 
-        // With a replacer
-    function myReplacer (x, obj) {
+    // With a replacer
+    function myReplacer(x, obj) {
       expect(obj).toEqual(data)
       return 'my replacement'
     }
     expect(toJSON(data, myReplacer)).toEqual('"my replacement"')
 
-        // With spacer
+    // With spacer
     expect(toJSON(data, undefined, '    ')).toEqual('{\n    "a": 1\n}')
   })
 })

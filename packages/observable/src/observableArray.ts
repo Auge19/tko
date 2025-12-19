@@ -136,6 +136,8 @@ export interface ObservableArrayFunctions<T = any> extends ObservableFunctions<T
      * @param items
      */
     destroyAll(items: T[]): void;
+
+    [index: number]: T;
 }
 
 export interface ObservableArray<T = any> extends Observable<T[]>, ObservableArrayFunctions<T> {
@@ -145,7 +147,7 @@ export interface ObservableArray<T = any> extends Observable<T[]>, ObservableArr
 }
 
 
-export function observableArray<T = any> (initialValues?: T[]): ObservableArray<T> {
+export function observableArray<T = any> (initialValues?: T[] | null): ObservableArray<T> {
   initialValues = initialValues || []
 
   if (typeof initialValues !== 'object' || !('length' in initialValues)) { throw new Error('The argument passed when initializing an observable array must be an array, or null, or undefined.') }
@@ -157,7 +159,7 @@ export function observableArray<T = any> (initialValues?: T[]): ObservableArray<
   return result
 }
 
-export function isObservableArray (instance: { remove: any; push: any }) {
+export function isObservableArray(instance: unknown): instance is ObservableArray {
   return isObservable(instance) && typeof instance.remove === 'function' && typeof instance.push === 'function'
 }
 
@@ -255,7 +257,7 @@ observableArray.fn = {
   [Symbol.iterator]: function * (): Generator<any, void, any> {
     yield * this()
   }
-}
+} as unknown as ObservableArrayFunctions;
 
 
 

@@ -3,12 +3,15 @@
   "compilerOptions": {
     "outDir": "./out-tsc/karma",
     "types": [
-      "node"
+      "node",
+      "@types/mocha",
+      "@types/jasmine"
     ],
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "spec/**/*.ts"
+    "spec/**/*.ts",
+    "../../global.d.ts"
   ],
   "references": [
     {

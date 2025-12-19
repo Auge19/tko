@@ -1,15 +1,15 @@
 
-import { memoization } from '../dist'
+import { memoization } from '../src'
 
-function parseMemoCommentHtml (commentHtml) {
+function parseMemoCommentHtml (commentHtml: string) {
   commentHtml = commentHtml.replace('<!--', '').replace('-->', '')
-  return memoization.parseMemoText(commentHtml)
+  return memoization.parseMemoText(commentHtml) as string
 }
 
 describe('Memoization', function () {
   it('Should only accept a function', function () {
     var threw = false
-    try { memoization.memoize({}) } catch (ex) { threw = true }
+    try { memoization.memoize({} as any) } catch (ex) { threw = true }
     expect(threw).toEqual(true)
   })
 

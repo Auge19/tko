@@ -10,6 +10,7 @@
   "dependencies": {
     "@tko/observable": "*",
     "@tko/utils": "*",
+    "@tko/utils.spec": "*",
     "tslib": "^2.2.0"
   },
   "repository": {

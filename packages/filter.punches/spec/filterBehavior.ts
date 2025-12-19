@@ -5,7 +5,7 @@ import {
 
 import type { KnockoutInstance } from '@tko/builder'
 
-import { filters } from '../dist'
+import { filters } from '../src'
 
 declare var ko : KnockoutInstance
 /* can be remove https://tc39.es/ecma262/multipage/indexed-collections.html#sec-array.isarray

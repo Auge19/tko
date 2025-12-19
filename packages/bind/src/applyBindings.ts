@@ -3,7 +3,8 @@
 
 import {
     extend, objectMap, virtualElements, tagNameLower, domData, objectForEach,
-    arrayIndexOf, arrayForEach, options
+    arrayIndexOf, arrayForEach, options,
+    MaybeAccessor
 } from '@tko/utils'
 
 import {
@@ -30,7 +31,7 @@ import {
   LegacyBindingHandler
 } from './LegacyBindingHandler'
 
-import type { Provider } from '@tko/provider'
+// import type { Provider } from '@tko/provider'
 import type { BindingHandler, AllBindings } from './BindingHandler'
 import type { BindingContext } from './bindingContext';
 
@@ -62,11 +63,11 @@ const bindingDoesNotRecurseIntoElementTypes = {
   'template': true
 }
 
-function getBindingProvider() : Provider {
+function getBindingProvider() : any { // TODO
   return options.bindingProviderInstance.instance || options.bindingProviderInstance
 }
 
-function isProviderForNode(provider : Provider, node: Node): boolean {
+function isProviderForNode(provider : any /* TODO */, node: Node): boolean {
   const nodeTypes = provider.FOR_NODE_TYPES || [1, 3, 8]
   return nodeTypes.includes(node.nodeType)
 }
@@ -314,7 +315,6 @@ function applyBindingsToNodeInternal<T>(node: Node, sourceBindings: Record<strin
             allBindings,
             $element: node,
             $context: bindingContext,
-            onError: reportBindingError,
             valueAccessor (...v) { return getValueAccessor(key)(...v) }
           })
         )
@@ -377,20 +377,20 @@ function triggerDescendantsComplete (node : Node, bindings : Object, nodeAsyncBi
 // used in applyBinding, bindingContext.ts
 export type BindingContextExtendCallback<T = any> = (self: BindingContext<T>, parentContext?: BindingContext<T>, dataItem?: T) => void;
 
-function getBindingContext<T = any>(viewModelOrBindingContext: any, extendContextCallback?: BindingContextExtendCallback<T>) : BindingContext<T> {
+function getBindingContext<T = any>(viewModelOrBindingContext?: MaybeBindingContextOrObservable<T>, extendContextCallback?: BindingContextExtendCallback<T>) : BindingContext<T> {
   return viewModelOrBindingContext && (viewModelOrBindingContext instanceof bindingContext)
     ? viewModelOrBindingContext
     : new bindingContext<T>(viewModelOrBindingContext, undefined, undefined, extendContextCallback)
 }
 
-export function applyBindingAccessorsToNode<T = any>(node: HTMLElement, bindings: Record<string,any>, viewModelOrBindingContext?: BindingContext<T> | Observable<T> | T, asyncBindingsApplied?: Set<any>) {
+export function applyBindingAccessorsToNode<T = any>(node: Node, bindings: Record<string,any>, viewModelOrBindingContext?: MaybeBindingContextOrObservable<T>, asyncBindingsApplied?: Set<any>) {
   if (node.nodeType === 1) { // If it's an element, workaround IE <= 8 HTML parsing weirdness
     virtualElements.normaliseVirtualElementDomStructure(node)
   }
-  return applyBindingsToNodeInternal<T>(node, bindings, getBindingContext(viewModelOrBindingContext), asyncBindingsApplied)
+  return applyBindingsToNodeInternal<T>(node, bindings, getBindingContext<T>(viewModelOrBindingContext), asyncBindingsApplied)
 }
 
-export function applyBindingsToNode<T = any>(node: HTMLElement, bindings : Record<string, any>, viewModelOrBindingContext : BindingContext<T> | Observable<T> | T): BindingResult {
+export function applyBindingsToNode<T = any>(node: Node, bindings : Record<string, any>, viewModelOrBindingContext : MaybeBindingContextOrObservable<T>): BindingResult {
   const asyncBindingsApplied = new Set()
   const bindingContext = getBindingContext<T>(viewModelOrBindingContext)
   const bindingAccessors = getBindingProvider().makeBindingAccessors(bindings, bindingContext, node)
@@ -398,7 +398,7 @@ export function applyBindingsToNode<T = any>(node: HTMLElement, bindings : Recor
   return new BindingResult({asyncBindingsApplied, rootNode: node, bindingContext})
 }
 
-export function applyBindingsToDescendants<T = any>(viewModelOrBindingContext: T | BindingContext<T>, rootNode: Node): BindingResult {
+export function applyBindingsToDescendants<T = any>(viewModelOrBindingContext: MaybeBindingContextOrObservable<T>, rootNode: Node): BindingResult {
   const asyncBindingsApplied = new Set()
   if (rootNode.nodeType === 1 || rootNode.nodeType === 8) {
     const bindingContext = getBindingContext(viewModelOrBindingContext)
@@ -408,7 +408,9 @@ export function applyBindingsToDescendants<T = any>(viewModelOrBindingContext: T
   return new BindingResult({asyncBindingsApplied, rootNode, bindingContext})
 }
 
-export function applyBindings<T = any>(viewModelOrBindingContext: BindingContext<T> | Observable<T> | T, rootNode: HTMLElement, extendContextCallback?: BindingContextExtendCallback<T>): Promise<unknown> {
+type MaybeBindingContextOrObservable<T> = BindingContext<T> | Observable<T> | T
+
+export function applyBindings<T = any>(viewModelOrBindingContext?: MaybeBindingContextOrObservable<T>, rootNode?: Node, extendContextCallback?: BindingContextExtendCallback<T>): Promise<unknown> {
   const asyncBindingsApplied = new Set()
   // If jQuery is loaded after Knockout, we won't initially have access to it. So save it here.
   if (options.jQuery === undefined && (globalThis as any).jQuery) {

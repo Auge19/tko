@@ -58,7 +58,7 @@ export class ComponentABC extends LifeCycle {
 	 * 2. A DOM node itself
 	 * @return {string|HTMLElement} either the element ID or actual element.
 	 */
-  static get element () {
+  static get element (): string | HTMLElement {
     throw new Error('[ComponentABC] `element` must be overloaded.')
   }
 

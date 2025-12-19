@@ -10,7 +10,7 @@ export const bindingEvent = {
   childrenComplete: 'childrenComplete',
   descendantsComplete: 'descendantsComplete',
 
-  subscribe(node: Node, event: string, callback: SubscriptionCallback, context: any) {
+  subscribe(node: Node, event: string, callback: SubscriptionCallback, context?: any) {
     const bindingInfo = domData.getOrSet(node, boundElementDomDataKey, {})
     if (!bindingInfo.eventSubscribable) {
       bindingInfo.eventSubscribable = new subscribable()

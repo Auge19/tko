@@ -25,9 +25,6 @@
       "path": "../computed/tsconfig.lib.json"
     },
     {
-      "path": "../provider/tsconfig.lib.json"
-    },
-    {
       "path": "../lifecycle/tsconfig.lib.json"
     }
   ]

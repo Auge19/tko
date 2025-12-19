@@ -3,17 +3,49 @@
  */
 
 import {
-  observable, observableArray, unwrap
+  Observable,
+  observable,
+  observableArray,
+  unwrap
 } from '@tko/observable'
 
 import {
-  computed
+  computed,
+  Computed
 } from './computed'
 
 const PROXY_SYM = Symbol('Knockout Proxied Object')
 const MIRROR_SYM = Symbol('Knockout Proxied Observables')
 
-function makeComputed (proxy, fn) {
+type Mirror<T> = {
+  [PROXY_SYM]: T,
+  [MIRROR_SYM]: Mirror<T>,
+  [key: string]: Observable<any> | Computed<any>
+}
+
+
+type ReadableComputeds<T> = {
+  readonly [K in keyof T as T[K] extends () => any ? K : never]:
+  T[K] extends () => infer R ? R : never
+}
+
+type WritableComputeds<T> = {
+  [K in keyof T as T[K] extends (arg: any, ...rest: any[]) => any ? K : never]:
+  T[K] extends (arg: infer A, ...rest: any[]) => any ? A : never
+}
+
+type NonFunctions<T> = {
+  [K in keyof T as T[K] extends Function ? never : K]: T[K]
+}
+
+type MirroredProxy<T extends object> =
+  ReadableComputeds<T> &
+  WritableComputeds<T> &
+  NonFunctions<T> & {
+    (...args: any[]): T
+  }
+
+function makeComputed(proxy, fn) {
   return computed({
     owner: proxy,
     read: fn,
@@ -23,62 +55,74 @@ function makeComputed (proxy, fn) {
   }).extend({ deferred: true })
 }
 
-function setOrCreate (mirror, prop, value, proxy) {
+function setOrCreate<T>(mirror: Mirror<T>, prop: string, value: any, proxy: T) {
   if (!mirror[prop]) {
     const ctr = Array.isArray(value) ? observableArray
       : typeof value === 'function' ? makeComputed.bind(null, proxy)
-      : observable
+        : observable
     mirror[prop] = ctr(value)
   } else {
     mirror[prop](value)
   }
 }
 
-function assignOrUpdate(mirror, object, proxy) {
+function assignOrUpdate<T extends object>(mirror: Mirror<T>, object: T, proxy: T) {
   for (const key of Object.keys(object)) {
     setOrCreate(mirror, key, object[key], proxy)
   }
   return object
 }
 
-export function proxy (object) {
-  const mirror = { [PROXY_SYM]: object }
-  mirror[MIRROR_SYM] = mirror
-  const proxy = new Proxy(function () {}, {
-    has (target, prop) { return prop in mirror },
-    get (target, prop) { return unwrap(mirror[prop]) },
-    set (target, prop, value, receiver) {
+export function proxy<T extends object>(object: T): MirroredProxy<T> {
+  const mirror = createMirror(object)
+  const proxy = new Proxy<T>(object, {
+    has(target, prop) { return prop in mirror },
+    get(target, prop: string) { return unwrap(mirror[prop]) },
+    set(target, prop: string, value, receiver) {
       setOrCreate(mirror, prop, value, proxy)
       object[prop] = value
       return true
     },
-    deleteProperty (property) {
+    deleteProperty(property) {
       delete mirror[property as any]
       return delete object[property as any]
     },
-    apply (target, thisArg, [props]) {
+    apply(target, thisArg, [props]) {
       if (props) {
         assignOrUpdate(mirror, props, proxy)
         return Object.assign(object, props)
       }
       return object
     },
-    getPrototypeOf () { return Object.getPrototypeOf(object) },
-    setPrototypeOf (target, proto) { return Object.setPrototypeOf(object, proto) },
-    defineProperty (target, prop, desc) { return Object.defineProperty(object, prop, desc) },
-    preventExtensions () { return Object.preventExtensions(object) },
-    isExtensible () { return Object.isExtensible(object) },
-    ownKeys () {
+    getPrototypeOf() { return Object.getPrototypeOf(object) },
+    setPrototypeOf(target, proto) { return Object.setPrototypeOf(object, proto) },
+    defineProperty(target, prop, desc) {
+      Object.defineProperty(object, prop, desc)
+      return true
+    },
+    preventExtensions() {
+      Object.preventExtensions(object)
+      return true
+    },
+    isExtensible() { return Object.isExtensible(object) },
+    ownKeys() {
       return [...Object.getOwnPropertyNames(object),
-              ...Object.getOwnPropertySymbols(object)]
+      ...Object.getOwnPropertySymbols(object)]
     }
   })
   assignOrUpdate(mirror, object, proxy)
-  return proxy
+  return proxy as MirroredProxy<T>
+}
+function createMirror<T>(object: T): Mirror<T> {
+  const m: Partial<Mirror<T>> = { [PROXY_SYM]: object }
+  return {
+    [PROXY_SYM]: object,
+    [MIRROR_SYM]: m as Mirror<T>
+  }
 }
 
-export function getObservable (proxied, prop) { return proxied[MIRROR_SYM][prop] }
-export function peek (proxied, prop) { return getObservable(proxied, prop).peek() }
-export function isProxied (proxied) { return PROXY_SYM in proxied }
+export function getObservable<T extends object>(proxied: T, prop: PropertyKey) { return proxied[MIRROR_SYM][prop] }
+export function peek<T extends object>(proxied: T, prop: PropertyKey) { return getObservable(proxied, prop).peek() }
+export function isProxied<T extends object>(proxied: T) { return PROXY_SYM in proxied }
 
 Object.assign(proxy, { getObservable, peek, isProxied })

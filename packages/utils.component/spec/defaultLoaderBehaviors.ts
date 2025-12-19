@@ -2,9 +2,7 @@ import {
     parseHtmlFragment
 } from '@tko/utils'
 
-import components from '../dist'
-
-import '@tko/utils/helpers/jasmine-13-helper'
+import components from '../src'
 
 describe('Components: Default loader', function () {
   var waitsFor = window.waitsFor
@@ -20,8 +18,8 @@ describe('Components: Default loader', function () {
     expect(components.isRegistered(testComponentName)).toBe(true)
     expect(components.isRegistered('other-component')).toBe(false)
 
-    components.unregister(testComponentName, {})
-    components.unregister('nonexistent-component', {}) // No error - it's just a no-op, since it's harmless
+    components.unregister(testComponentName)
+    components.unregister('nonexistent-component') // No error - it's just a no-op, since it's harmless
 
     expect(components.isRegistered(testComponentName)).toBe(false)
   })
@@ -47,11 +45,11 @@ describe('Components: Default loader', function () {
 
   it('Throws if you try to register a falsy value', function () {
     expect(function () {
-      components.register(testComponentName, null)
+      components.register(testComponentName, null as any)
     }).toThrow()
 
     expect(function () {
-      components.register(testComponentName, undefined)
+      components.register(testComponentName, undefined as any)
     }).toThrow()
   })
 
@@ -60,7 +58,7 @@ describe('Components: Default loader', function () {
       didComplete = false
 
     components.register(testComponentName, expectedConfig)
-    components.defaultLoader.getConfig(testComponentName, function (actualConfig) {
+    components.defaultLoader.getConfig?.(testComponentName, function (actualConfig) {
       expect(actualConfig).toBe(expectedConfig)
       didComplete = true
     })
@@ -73,7 +71,7 @@ describe('Components: Default loader', function () {
   it('getConfig supplies null for unknown components', function () {
     var didComplete = false
 
-    components.defaultLoader.getConfig(testComponentName, function (actualConfig) {
+    components.defaultLoader.getConfig?.(testComponentName, function (actualConfig) {
       expect(actualConfig).toBe(null)
       didComplete = true
     })
@@ -174,12 +172,12 @@ describe('Components: Default loader', function () {
   it('Can be asked to resolve a template directly', function () {
     var templateConfig = '<span>Markup string</span><div>More</div>',
       didLoad = false
-    components.defaultLoader.loadTemplate('any-component', templateConfig, function (result) {
-      expect(result.length).toBe(2)
-      expect(result[0].tagName).toBe('SPAN')
-      expect(result[1].tagName).toBe('DIV')
-      expect(result[0].innerHTML).toBe('Markup string')
-      expect(result[1].innerHTML).toBe('More')
+    components.defaultLoader.loadTemplate?.('any-component', templateConfig, function (result: Element[] | null) {
+      expect(result?.length).toBe(2)
+      expect(result?.[0].tagName).toBe('SPAN')
+      expect(result?.[1].tagName).toBe('DIV')
+      expect(result?.[0].innerHTML).toBe('Markup string')
+      expect(result?.[1].innerHTML).toBe('More')
       didLoad = true
     })
     expect(didLoad).toBe(true)
@@ -190,12 +188,12 @@ describe('Components: Default loader', function () {
         this.suppliedParams = params
       },
       didLoad = false
-    components.defaultLoader.loadViewModel('any-component', testConstructor, function (result) {
+    components.defaultLoader.loadViewModel?.('any-component', testConstructor, function (result) {
             // Result is of the form: function(params, componentInfo) { ... }
       var testParams = {},
-        resultInstance = result(testParams, null /* componentInfo */)
+        resultInstance = result?.(testParams, null as any /* componentInfo */)
       expect(resultInstance instanceof testConstructor).toBe(true)
-      expect(resultInstance.suppliedParams).toBe(testParams)
+      expect((resultInstance as any).suppliedParams).toBe(testParams)
       didLoad = true
     })
     expect(didLoad).toBe(true)

@@ -16,12 +16,12 @@ import { bindings as templateBindings } from '@tko/binding.template'
 import { bindings as ifBindings } from '@tko/binding.if'
 import { bindings as componentBindings } from '@tko/binding.component'
 
-import components from '../dist'
+import components from '../src'
 const {ComponentABC} = components
 
 import {
     useMockForTasks
-} from '@tko/utils/helpers/jasmine-13-helper'
+} from '@tko/utils.spec'
 
 describe('ComponentABC', function () {
   let testComponentName = 'test-component',
@@ -82,8 +82,8 @@ describe('ComponentABC', function () {
   it('binds when registered like a normal component', function () {
     class CX extends ComponentABC {
       myvalue: string;
-      constructor (...args) {
-        super(...args)
+      constructor () {
+        super()
         this.myvalue = 'some parameter value'
       }
       static get customElementName () { return 'test-component' }
@@ -100,8 +100,8 @@ describe('ComponentABC', function () {
   it('registers on the components', function () {
     class CX extends ComponentABC {
       myvalue: string;
-      constructor (...args) {
-        super(...args)
+      constructor () {
+        super()
         this.myvalue = 'some parameter value'
       }
       static get customElementName () { return 'test-component' }

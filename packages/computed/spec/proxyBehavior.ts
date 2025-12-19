@@ -1,7 +1,7 @@
 
 import {
   proxy, peek, isProxied, getObservable
-} from '../dist/proxy'
+} from '../src/proxy'
 
 import {
   observable
@@ -86,7 +86,7 @@ describe('Proxy', function () {
     const x = observable(9)
     const p = proxy({
       a() { return x() * 2 }, // readable computed
-      b(nv) { x(nv) } // writeable computed
+      b(nv: number) { x(nv) } // writeable computed
     })
     expect(p.a).toBe(18)
     p.b = 8
@@ -95,7 +95,7 @@ describe('Proxy', function () {
   })
 
   it('allow adding computeds', function () {
-    const p = proxy({ x: 4 })
+    const p = proxy<{x: number; x2?: () => number}>({ x: 4 })
     p.x2 = function () { return this.x * this.x }
     expect(p.x2).toBe(16)
   })

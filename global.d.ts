@@ -12,20 +12,20 @@ declare global {
         amdRequire: any
         require: any
         jQuery: JQueryStatic
-        innerShiv // TODO: For IE<9.. we could also remove it
+        innerShiv :any // TODO: For IE<9.. we could also remove it
     }
 
     //Jasmine and Mocha define duplicated functions, is a problem for the type system
     //This namespace merges the jasmine namespace to correct same tsc warnings
     namespace jasmine {      
        
-        function setNodeText(node, text: string): void
+        function setNodeText(node: any, text: string): void
         var Spec: any;
         function getGlobal(): any;
         var updateInterval: number
-        function resolve(promise: Promise<boolean>)
+        function resolve(promise: Promise<boolean>): any
         function prepareTestNode() : HTMLElement
-        function nodeText(node)
+        function nodeText(node: any): any
         var Clock: Clock
         function getEnv(): any;
 

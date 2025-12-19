@@ -41,31 +41,31 @@ const DISPOSED_STATE = {
   _options: null
 }
 
-export interface Computed<T = any> extends ComputedFunctions<T> {
-  (): T;
-  (value: T): this;
+export interface Computed<T = any, TTarget = any> extends ComputedFunctions<T> {
+  (this: TTarget): T;
+  (this: TTarget, val: T, ...additionalArgs: any[]): TTarget;
 }
 
-export interface ComputedFunctions<T = any> extends Subscribable<T> {
+export interface ComputedFunctions<T = any, TTarget = any> extends Subscribable<T> {
   // It's possible for a to be undefined, since the equalityComparer is run on the initial
   // computation with undefined as the first argument. This is user-relevant for deferred computeds.
-  equalityComparer(a: T | undefined, b: T): boolean;
-  peek(): T;
-  dispose(): void;
-  isActive(): boolean;
-  getDependenciesCount(): number;
-  getDependencies(): Subscribable[];
+  equalityComparer(this: TTarget, a: T | undefined, b: T): boolean;
+  peek(this: TTarget): T;
+  dispose(this: TTarget): void;
+  isActive(this: TTarget): boolean;
+  getDependenciesCount(this: TTarget): number;
+  getDependencies(this: TTarget): Subscribable[];
 }
 
 // used in computed, but empty interface is pointless. Check if it's needed
 export interface PureComputed<T = any> extends Computed<T> { }
 
-export type ComputedReadFunction<T = any, TTarget = void> = Subscribable<T> | Observable<T> | Computed<T> | ((this: TTarget) => T);
-export type ComputedWriteFunction<T = any, TTarget = void> = (this: TTarget, val: T) => void;
+export type ComputedReadFunction<T = any, TTarget = any> = Subscribable<T> | Observable<T> | Computed<T> | ((this: TTarget) => T);
+export type ComputedWriteFunction<T = any, TTarget = any> = (this: TTarget, val: T, ...additionalArgs: any[]) => void;
 export type MaybeComputed<T = any> = T | Computed<T>;
 
 
-export interface ComputedOptions<T = any, TTarget = void> {
+export interface ComputedOptions<T = any, TTarget = any> {
   read?: ComputedReadFunction<T, TTarget>;
   write?: ComputedWriteFunction<T, TTarget>;
   owner?: TTarget;
@@ -75,7 +75,7 @@ export interface ComputedOptions<T = any, TTarget = void> {
   disposeWhen?: () => boolean;
 }
 
-interface State {
+interface State<T = any, TTarget = any> {
   latestValue?: any,
   isStale: boolean,
   isDirty: boolean,
@@ -84,7 +84,7 @@ interface State {
   isDisposed: boolean,
   pure: boolean,
   isSleeping: boolean,
-  readFunction: ComputedReadFunction,
+  readFunction: ComputedReadFunction<T, TTarget>,
   evaluatorFunctionTarget: any,
   disposeWhenNodeIsRemoved: Node | null,
   disposeWhen?: () => boolean,
@@ -94,10 +94,10 @@ interface State {
   evaluationTimeoutInstance: any
 }
 
-export function computed(evaluatorFunctionOrOptions?: ComputedOptions<any, void> | ComputedReadFunction<any, any>, evaluatorFunctionTarget?: any, options?: ComputedOptions): Computed {
+export function computed<T = any, TTarget = any>(evaluatorFunctionOrOptions?: ComputedOptions<T, TTarget> | ComputedReadFunction<T, TTarget>, evaluatorFunctionTarget?: any, options?: ComputedOptions<T, TTarget>): Computed<T, TTarget> {
   if (typeof evaluatorFunctionOrOptions === 'object') {
     // Single-parameter syntax - everything is on this "options" param
-    options = evaluatorFunctionOrOptions as ComputedOptions
+    options = evaluatorFunctionOrOptions as ComputedOptions<T, TTarget>
   } else {
     // Multi-parameter syntax - construct the options according to the params passed
     options = options || {}
@@ -110,7 +110,7 @@ export function computed(evaluatorFunctionOrOptions?: ComputedOptions<any, void>
   }
 
   var writeFunction = options.write
-  var state: State = {
+  var state: State<T, TTarget> = {
     latestValue: undefined,
     isStale: true,
     isDirty: true,
@@ -121,7 +121,7 @@ export function computed(evaluatorFunctionOrOptions?: ComputedOptions<any, void>
     isSleeping: false,
     readFunction: options.read,
     evaluatorFunctionTarget: evaluatorFunctionTarget || options.owner,
-    disposeWhenNodeIsRemoved: options.disposeWhenNodeIsRemoved || options.disposeWhenNodeIsRemoved || null,
+    disposeWhenNodeIsRemoved: options.disposeWhenNodeIsRemoved || null,
     disposeWhen: options.disposeWhen || options.disposeWhen,
     domNodeDisposalCallback: null,
     dependencyTracking: {},
@@ -203,7 +203,7 @@ export function computed(evaluatorFunctionOrOptions?: ComputedOptions<any, void>
     })
   }
 
-  return computedObservable as unknown as Computed;
+  return computedObservable as unknown as Computed<T, TTarget>;
 }
 
 // Utility function that disposes a given dependencyTracking entry

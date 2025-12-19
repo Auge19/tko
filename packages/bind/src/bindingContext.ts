@@ -1,4 +1,4 @@
-import { extend, options, domData, isObjectLike } from '@tko/utils'
+import { extend, options, domData, isObjectLike, MaybeAccessor, isAccessor } from '@tko/utils'
 import type { KnockoutInstance } from '@tko/builder'
 
 import {
@@ -16,6 +16,7 @@ import {
 } from './bindingEvent'
 
 import { BindingContextExtendCallback } from './applyBindings'
+import { MaybeObservable } from '../../observable/src/observable'
 
 
 export const boundElementDomDataKey = domData.nextKey()
@@ -56,16 +57,15 @@ export interface BindingContext<T = any> {
 
 // Interface for the factory method 'bindingContext', which creates and returns a typed instance of BindingContext<T>
 export interface bindingContext {
-  new <T = any>(dataItemOrAccessor: any, parentContext?: BindingContext, dataItemAlias?: string, extendCallback?: BindingContextExtendCallback, settings?: BindingContextSetting): BindingContext<T>;
+  new <T = any>(dataItemOrAccessor?: MaybeAccessor<T>, parentContext?: BindingContext, dataItemAlias?: string, extendCallback?: BindingContextExtendCallback, settings?: BindingContextSetting): BindingContext<T>;
 };
 
 // The bindingContext constructor is only called directly to create the root context. For child
 // contexts, use bindingContext.createChildContext or bindingContext.extend.
-export const bindingContext = function bindingContextFactory<T>(dataItemOrAccessor: any, parentContext?: BindingContext, dataItemAlias?: string, extendCallback?: BindingContextExtendCallback<T>, settings?: BindingContextSetting) {
+export const bindingContext = function bindingContextFactory<T>(dataItemOrAccessor?: MaybeAccessor<T>, parentContext?: BindingContext, dataItemAlias?: string, extendCallback?: BindingContextExtendCallback<T>, settings?: BindingContextSetting) {
   const self = this
   const shouldInheritData = dataItemOrAccessor === inheritParentIndicator
   const realDataItemOrAccessor = shouldInheritData ? undefined : dataItemOrAccessor
-  const isFunc = typeof realDataItemOrAccessor === 'function' && !isObservable(realDataItemOrAccessor)
 
   // Export 'ko' in the binding context so it will be available in bindings and templates
   // even if 'ko' isn't exported as a global, such as when using an AMD loader.
@@ -82,7 +82,7 @@ export const bindingContext = function bindingContextFactory<T>(dataItemOrAccess
         // we call the function to retrieve the view model. If the function accesses any observables or returns
         // an observable, the dependency is tracked, and those observables can later cause the binding
         // context to be updated.
-    const dataItemOrObservable = isFunc ? realDataItemOrAccessor() : realDataItemOrAccessor
+    const dataItemOrObservable = isAccessor<T>(realDataItemOrAccessor) && !isObservable<T>(realDataItemOrAccessor) ? realDataItemOrAccessor() : realDataItemOrAccessor
     let dataItem = unwrap(dataItemOrObservable)
 
     if (parentContext) {

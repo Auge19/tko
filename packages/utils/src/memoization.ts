@@ -31,7 +31,7 @@ export function memoize (callback : (val: any) => void) : string {
   return '<!--[ko_memo:' + memoId + ']-->'
 }
 
-export function unmemoize (memoId : string, callbackParams: any[]) {
+export function unmemoize (memoId : string, callbackParams?: any[]) {
   var callback = memos[memoId]
   if (callback === undefined) { throw new Error("Couldn't find any memo with ID " + memoId + ". Perhaps it's already been unmemoized.") }
   try {
@@ -40,7 +40,7 @@ export function unmemoize (memoId : string, callbackParams: any[]) {
   } finally { delete memos[memoId] }
 }
 
-export function unmemoizeDomNodeAndDescendants (domNode : Node, extraCallbackParamsArray : any[]) {
+export function unmemoizeDomNodeAndDescendants (domNode : Node, extraCallbackParamsArray?: any[]) {
   var memos = new Array()
   findMemoNodes(domNode, memos)
   for (var i = 0, j = memos.length; i < j; i++) {

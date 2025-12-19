@@ -1,7 +1,7 @@
 
 import {
   functionRewrite
-} from '../dist'
+} from '../src'
 import { assert } from 'chai';
 
 describe('Function Rewrite Provider', function () {

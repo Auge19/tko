@@ -1,12 +1,10 @@
-import '../helpers/jasmine-13-helper'
-
-import * as utils from '../dist'
-import { registerEventHandler, virtualElements } from '../dist'
-import options from '../dist/options'
+import * as utils from '../src'
+import { registerEventHandler, virtualElements } from '../src'
+import options from '../src/options'
 import type { KnockoutInstance } from '@tko/builder'
 
 var ko : KnockoutInstance = globalThis.ko || {}
-ko.utils = utils
+ko.utils = utils as any
 ko.options = options
 
 describe('startCommentRegex', function () {
@@ -69,7 +67,7 @@ describe('registerEventHandler', function () {
     ko.options.useOnlyNativeEvents = false
 
         // Verify jQuery is used in event binding.
-    registerEventHandler(element, 'click', function (eventArgs) {
+    registerEventHandler(element, 'click', function (eventArgs: JQuery.ClickEvent) {
       eventFired = true
       jQueryModified = !!eventArgs.originalEvent
     })

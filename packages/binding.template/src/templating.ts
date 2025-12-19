@@ -163,7 +163,7 @@ function resolveTemplateName (template, data, context) {
 
 export type RenderModeEnum = "replaceChildren" | "replaceNode" | "ignoreTargetNode"
 
-export function renderTemplate<T=any>(template : string | Node | (() => string | Node), dataOrBindingContext: T | BindingContext<T> | null | undefined, options : TemplateOptions<T> | null | undefined, targetNodeOrNodeArray : Node | Node[], renderMode? : RenderModeEnum, afterBindingCallback?) : Computed<void> | string {
+export function renderTemplate<T=any>(template : string | Node | (() => string | Node), dataOrBindingContext?: T | BindingContext<T> | null, options?: TemplateOptions<T> | null, targetNodeOrNodeArray?: Node | Node[], renderMode? : RenderModeEnum, afterBindingCallback?) : Computed<void> | string {
   options = options || {}
   if ((options.templateEngine || _templateEngine) === undefined) { throw new Error('Set a template engine before calling renderTemplate') }
   renderMode = renderMode || 'replaceChildren'
@@ -332,7 +332,7 @@ export class TemplateBindingHandler extends AsyncBindingHandler {
     var value = this.value
     var options = unwrap(value)
     var shouldDisplay = true
-    let templateComputed: string | Computed<any> | null = null
+    let templateComputed: ReturnType<typeof renderTemplateForEach> | ReturnType<typeof renderTemplate> | null = null
     var elseChainSatisfied = domData.get(element, 'conditional').elseChainSatisfied
     var templateName
 

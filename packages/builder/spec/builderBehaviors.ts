@@ -1,7 +1,7 @@
 import { VirtualProvider } from '@tko/provider.virtual'
 import { bindings as ifBindings } from '@tko/binding.if'
 
-import { Builder } from '../dist'
+import { Builder } from '../src'
 
 describe('Builder', () => {
   it('creates a ko instance', () => {

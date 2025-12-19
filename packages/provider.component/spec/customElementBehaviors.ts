@@ -37,11 +37,11 @@ import {
   bindings as componentBindings
 } from '@tko/binding.component'
 
-import {ComponentProvider} from '../dist'
+import {ComponentProvider} from '../src'
 
 import {
     useMockForTasks
-} from '@tko/utils/helpers/jasmine-13-helper'
+} from '@tko/utils.spec'
 
 describe('Components: Custom elements', function () {
   let bindingHandlers

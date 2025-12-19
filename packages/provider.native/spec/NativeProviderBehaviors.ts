@@ -7,7 +7,7 @@ import {
 
 import {
   default as NativeProvider, NATIVE_BINDINGS
-} from '../dist/NativeProvider'
+} from '../src/NativeProvider'
 
 import { MultiProvider } from '@tko/provider.multi'
 import { DataBindProvider } from '@tko/provider.databind'

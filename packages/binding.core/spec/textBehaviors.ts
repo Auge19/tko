@@ -14,10 +14,16 @@ import {
     options
 } from '@tko/utils'
 
-import * as coreBindings from '../dist'
+import * as coreBindings from '../src'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+
 import { Provider } from '@tko/provider'
+
+import {
+    initJasmine
+} from '@tko/utils.spec'
+
+initJasmine();
 
 describe('Binding: Text', function () {
   let bindingHandlers

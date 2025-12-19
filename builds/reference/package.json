@@ -15,6 +15,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@tko/bind": "*",
     "@tko/binding.component": "*",
     "@tko/binding.core": "*",
     "@tko/binding.foreach": "*",
@@ -30,13 +31,14 @@
     "@tko/provider.mustache": "*",
     "@tko/provider.native": "*",
     "@tko/provider.virtual": "*",
+    "@tko/utils": "*",
     "@tko/utils.component": "*",
     "@tko/utils.jsx": "*",
     "tslib": "^2.2.0"
   },
   "files": [
-    "dist/"
-    
+    "dist",
+    "!**/*.tsbuildinfo"
   ],
   "homepage": "https://tko.io",
   "licenses": [
@@ -47,12 +49,16 @@
   ],
   "exports": {
     ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
-    },
-    "./helpers/*": "./helpers/*"
+      "default": "./dist/index.js"
+    }
   },
   "bugs": {
     "url": "https://github.com/knockout/tko/issues"
+  },
+  "devDependencies": {
+    "tsdown": "^0.18.1"
   }
 }

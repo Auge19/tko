@@ -7,7 +7,7 @@ import {
     computed
 } from '@tko/computed'
 
-import components from '../dist'
+import components from '../src'
 
 describe('Components: Loader registry', function () {
   var testAsyncDelay = 20,
@@ -227,7 +227,7 @@ describe('Components: Loader registry', function () {
       },
       loadComponent: function (name, config, callback) {
         expect(config).toBe(testSyncComponentConfig)
-        callback(testSyncComponentDefinition)
+        callback(testSyncComponentDefinition as any)
       }
     }]
 

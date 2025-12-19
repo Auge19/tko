@@ -3,7 +3,7 @@ import {
   DataBindProvider
 } from '@tko/provider.databind'
 
-import parseObjectLiteral from '../dist/preparse'
+import parseObjectLiteral from '../src/preparse'
 import {expect} from "chai"
 
 describe('Expression Rewriting', function () {

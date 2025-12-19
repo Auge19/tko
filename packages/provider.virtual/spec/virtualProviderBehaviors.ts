@@ -3,7 +3,7 @@ import { assert } from "chai";
 
 import {
   VirtualProvider
-} from '../dist'
+} from '../src'
 
 /**
  * There aren't many tests here because virtual bindings are used throughout
@@ -41,19 +41,19 @@ describe('Virtual Provider', function () {
     }
 
     it('converts <ko test=x>', function () {
-      const [open, close] = tryKoConvert({ test: 'x' })
+      const [open, close] = tryKoConvert({ test: 'x' })!
       assert.equal(open.nodeValue, 'ko test: x')
       assert.equal(close.nodeValue, '/ko')
     })
 
     it('converts <ko t1=x, t2="y">', function () {
-      const [open, close] = tryKoConvert({ t1: 'x', 't2': '"Y"' })
+      const [open, close] = tryKoConvert({ t1: 'x', 't2': '"Y"' })!
       assert.equal(open.nodeValue, 'ko t1: x,t2: "Y"')
       assert.equal(close.nodeValue, '/ko')
     })
     
     it('replaces "ko-" prefix', function () {
-      const [open, close] = tryKoConvert({ 'ko-t1': 'x', 'ko-t2': '"Y"' })
+      const [open, close] = tryKoConvert({ 'ko-t1': 'x', 'ko-t2': '"Y"' })!
       assert.equal(open.nodeValue, 'ko t1: x,t2: "Y"')
       assert.equal(close.nodeValue, '/ko')
     })
@@ -62,10 +62,10 @@ describe('Virtual Provider', function () {
       const koNode = document.createElement('ko')
       koNode.appendChild(document.createElement('div'))
       koNode.appendChild(document.createComment('abcc'))
-      const [open, d, c, close] = tryKoConvert({ t1: 'x', 't2': '"Y"' }, koNode)
+      const [open, d, c, close] = tryKoConvert({ t1: 'x', 't2': '"Y"' }, koNode)!
       assert.equal(open.nodeValue, 'ko t1: x,t2: "Y"')
       assert.equal(close.nodeValue, '/ko')
-      assert.equal(d.outerHTML, '<div></div>')
+      assert.equal((d as HTMLElement).outerHTML, '<div></div>')
       assert.equal(c.nodeValue, 'abcc')
     })
   })

@@ -21,9 +21,13 @@ import {
     options
 } from '@tko/utils'
 
-import {bindings as coreBindings} from '../dist'
+import {bindings as coreBindings} from '../src'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+import {
+    initJasmine
+} from '@tko/utils.spec'
+
+initJasmine();
 
 describe('Binding: Value', function () {
   let testNode : any //TODO HTMLElement will be better

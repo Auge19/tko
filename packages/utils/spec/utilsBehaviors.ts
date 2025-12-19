@@ -1,10 +1,9 @@
-import * as utils from '../dist'
-import '../helpers/jasmine-13-helper'
+import * as utils from '../src'
 import type { KnockoutInstance } from '@tko/builder'
 
 var ko : KnockoutInstance = globalThis.ko || {}
 
-ko.utils = utils
+ko.utils = utils as any
 ko.tasks = utils.tasks
 
 describe('arrayForEach', function () {

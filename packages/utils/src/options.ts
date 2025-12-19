@@ -1,5 +1,7 @@
-import type { Provider } from "@tko/provider";
-import type { KnockoutInstance } from "@tko/builder";
+/// <reference types="jquery" />
+
+// import type { Provider } from "@tko/provider";
+// import type { KnockoutInstance } from "@tko/builder";
 
 export interface CustomBindingGlobalProperties {
   [customBindingName: string]: any;
@@ -17,7 +19,7 @@ export class Options {
   bindingStringPreparsers: BindingStringPreparsersFunction[] = []
   
   // Reference to the own knockout instance
-  knockoutInstance: KnockoutInstance | null = null
+  knockoutInstance: any | null = null // TODO
   
   deferUpdates: boolean = false
 
@@ -35,7 +37,7 @@ export class Options {
   bindingGlobals: Object & CustomBindingGlobalProperties = Object.create(null)
 
     // An instance of the binding provider.
-  bindingProviderInstance: Provider
+  bindingProviderInstance: any // TODO
 
   // Whether the `with` binding creates a child context when used with `as`.
   createChildContextWithAs: boolean = false

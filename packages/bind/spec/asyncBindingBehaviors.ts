@@ -24,8 +24,11 @@ import {
 } from '@tko/bind'
 
 import {
-    useMockForTasks
-} from '@tko/utils/helpers/jasmine-13-helper'
+    useMockForTasks,
+    initJasmine
+} from '@tko/utils.spec'
+
+initJasmine();
 
 describe('Deferred bindings', function () {
   let bindingSpy, bindingHandlers

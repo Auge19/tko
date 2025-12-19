@@ -18,12 +18,7 @@ export class NativeTemplateEngine extends TemplateEngineBase {
   allowTemplateRewriting = false;
 
   renderTemplateSource(templateSource: TemplateSource, bindingContext: BindingContext<any>, options: TemplateOptions<any>, templateDocument?: Document): Node[] {
-    let version: number;
-    if (ieVersion instanceof Array) {
-      version = parseInt(ieVersion[1], 10);
-    } else {
-      version = ieVersion ?? 0;
-    }
+    const version = ieVersion ?? 0;
     var useNodesIfAvailable = !(version < 9), // IE<9 cloneNode doesn't work properly
       templateNodesFunc = useNodesIfAvailable ? templateSource.nodes : null,
       templateNodes = templateNodesFunc ? templateSource.nodes?.() : null

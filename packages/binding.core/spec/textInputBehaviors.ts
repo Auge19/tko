@@ -17,11 +17,17 @@ import {
 
 import { DataBindProvider } from '@tko/provider.databind'
 
-import { bindings as coreBindings } from '../dist'
+import { bindings as coreBindings } from '../src'
+
+import {
+    initJasmine
+} from '@tko/utils.spec'
+
+initJasmine();
 
 const DEBUG = true
 
-import '@tko/utils/helpers/jasmine-13-helper'
+
 
 describe('Binding: TextInput', function () {
   let bindingHandlers

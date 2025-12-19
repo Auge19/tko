@@ -17,14 +17,14 @@ import {
 } from '@tko/observable'
 
 import {
+    useMockForTasks
+} from '@tko/utils.spec'
+
+import {
     computed as koComputed,
     pureComputed as koPureComputed,
     when
-} from '../dist'
-
-import {
-    useMockForTasks
-} from '@tko/utils/helpers/jasmine-13-helper'
+} from '../src'
 
 describe('Throttled observables', function () {
   beforeEach(function () { waits(1) }) // Workaround for spurious timing-related failures on IE8 (issue #736)
@@ -1246,7 +1246,7 @@ describe('Deferred', function () {
       var x = koObservable(3),
         called = 0
 
-      when(() => x() === 4, () => called++)
+      when(() => x() === 4, () => called++, undefined)
 
       x(5)
       expect(called).toBe(0)
@@ -1273,7 +1273,7 @@ describe('Deferred', function () {
       var x = koObservable(4),
         called = 0
 
-      when(() => x() === 4, () => called++)
+      when(() => x() === 4, () => called++, undefined)
 
       expect(called).toBe(0)
       expect(x.getSubscriptionsCount()).toBe(1)

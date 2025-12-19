@@ -10,7 +10,7 @@ import {
 
 import {
   Parser
-} from '../dist';
+} from '../src';
 
 import { assert } from "chai"
 

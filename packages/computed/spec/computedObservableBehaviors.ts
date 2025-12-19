@@ -3,15 +3,16 @@ import {
 } from '@tko/utils'
 
 import {
-    isSubscribable, isObservable, observable, unwrap, dependencyDetection,
-    isWritableObservable, isWriteableObservable, observableArray, subscribable
+  isSubscribable, isObservable, observable, unwrap, dependencyDetection,
+  isWritableObservable, isWriteableObservable, observableArray, subscribable
 } from '@tko/observable'
 
-import type { ObservableArray } from '@tko/observable'
+import type { Observable, ObservableArray } from '@tko/observable'
 
 import {
-    computed, isPureComputed, isComputed
-} from '../dist'
+  computed, isPureComputed, isComputed,
+  Computed
+} from '../src'
 
 describe('Dependent Observable', function () {
   it('Should be subscribable', function () {
@@ -64,10 +65,10 @@ describe('Dependent Observable', function () {
       undefined,
       null,
       'x',
-            {},
-      function () {},
+      {},
+      function () { },
       observable(),
-            (function () { var x = computed(function () {}); x.__ko_proto__ = {}; return x }())
+      (function () { var x = computed(function () { }); (x as any).__ko_proto__ = {}; return x }())
     ], value => expect(isComputed(value)).toEqual(false))
   })
 
@@ -89,7 +90,7 @@ describe('Dependent Observable', function () {
 
   it('Should invoke the "write" callback, where present, if you attempt to write a value to it', function () {
     var invokedWriteWithValue, invokedWriteWithThis
-    var instance = computed({
+    var instance = computed<any>({
       read: function () {},
       write: function (value) { invokedWriteWithValue = value; invokedWriteWithThis = this }
     })
@@ -101,23 +102,29 @@ describe('Dependent Observable', function () {
   })
 
   it('Should be able to write to multiple computed properties on a model object using chaining syntax', function () {
-    var model = {
-      prop1: computed({
+    type Model = {
+      prop1: Computed<any, Model>;
+      prop2: Computed<any, Model>;
+    };
+    const model: Model = {
+      prop1: computed<any, Model>({
         read: function () {},
         write: function (value) {
           expect(value).toEqual('prop1')
-        } }),
-      prop2: computed({
+        }
+      }),
+      prop2: computed<any, Model>({
         read: function () {},
         write: function (value) {
           expect(value).toEqual('prop2')
-        } })
+        }
+      })
     }
     model.prop1('prop1').prop2('prop2')
   })
 
   it('Should be able to use Function.prototype methods to access/update', function () {
-    var instance = computed({read: function () { return 'A' }, write: function (/* value */) {}})
+    var instance = computed({ read: function () { return 'A' }, write: function (/* value */) { } })
     var obj = {}
 
     expect(instance.call(null)).toEqual('A')
@@ -129,13 +136,13 @@ describe('Dependent Observable', function () {
     var invokedWriteWithArgs, invokedWriteWithThis
     var someOwner = {}
     var obs = observable()
-    var instance = computed({
+    var instance = computed<any, typeof someOwner>({
       read: function () { return obs() },
       write: function () { obs(null); invokedWriteWithArgs = Array.prototype.slice.call(arguments, 0); invokedWriteWithThis = this },
       owner: someOwner
     })
 
-    instance('first', 2, ['third1', 'third2'])
+    instance.bind(this)('first', 2, ['third1', 'third2'])
     expect(invokedWriteWithArgs.length).toEqual(3)
     expect(invokedWriteWithArgs[0]).toEqual('first')
     expect(invokedWriteWithArgs[1]).toEqual(2)
@@ -214,17 +221,17 @@ describe('Dependent Observable', function () {
     expect(dependantObservable()).toEqual('A')
     expect(timesEvaluated).toEqual(1)
 
-        // Changing an unrelated observable doesn't trigger evaluation
+    // Changing an unrelated observable doesn't trigger evaluation
     observableB('B2')
     expect(timesEvaluated).toEqual(1)
 
-        // Switch to other observable
+    // Switch to other observable
     observableToUse = 'B'
     observableA('A2')
     expect(dependantObservable()).toEqual('B2')
     expect(timesEvaluated).toEqual(2)
 
-        // Now changing the first observable doesn't trigger evaluation
+    // Now changing the first observable doesn't trigger evaluation
     observableA('A3')
     expect(timesEvaluated).toEqual(2)
   })
@@ -250,7 +257,7 @@ describe('Dependent Observable', function () {
 
     obs('A')
     obs('B')
-    expect(notifiedValues).toEqual([ 'A', 'B' ])
+    expect(notifiedValues).toEqual(['A', 'B'])
   })
 
   it('Should notify "beforeChange" subscribers before changes', function () {
@@ -311,13 +318,13 @@ describe('Dependent Observable', function () {
     var timeToDispose = false
     var timesEvaluated = 0
     var computedInstance = computed(
-            function () { timesEvaluated++; return underlyingObservable() + 1 },
-            null,
-            { disposeWhen: function () { return timeToDispose } }
-        )
+      function () { timesEvaluated++; return underlyingObservable() + 1 },
+      null,
+      { disposeWhen: function () { return timeToDispose } }
+    )
     expect(timesEvaluated).toEqual(1)
     expect(computedInstance.getDependenciesCount()).toEqual(1)
-    expect(computedInstance.getDependencies()).toEqual([ underlyingObservable ])
+    expect(computedInstance.getDependencies()).toEqual([underlyingObservable])
     expect(computedInstance.isActive()).toEqual(true)
 
     timeToDispose = true
@@ -331,10 +338,10 @@ describe('Dependent Observable', function () {
   it('Should dispose itself as soon as disposeWhen returns true, as long as it isn\'t waiting for a DOM node to be removed', function () {
     var underlyingObservable = observable(100),
       computedInstance = computed(
-                underlyingObservable,
-                null,
-                { disposeWhen: function () { return true } }
-            )
+        underlyingObservable,
+        null,
+        { disposeWhen: function () { return true } }
+      )
 
     expect(underlyingObservable.getSubscriptionsCount()).toEqual(0)
     expect(computedInstance.isActive()).toEqual(false)
@@ -344,24 +351,24 @@ describe('Dependent Observable', function () {
     var underlyingObservable = observable(100),
       shouldDispose = true,
       computedInstance = computed(
-                underlyingObservable,
-                null,
-                { disposeWhen: function () { return shouldDispose }, disposeWhenNodeIsRemoved: true }
-            )
+        underlyingObservable,
+        null,
+        { disposeWhen: function () { return shouldDispose }, disposeWhenNodeIsRemoved: true as any }
+      )
 
-        // Even though disposeWhen returns true, it doesn't dispose yet, because it's
-        // expecting an initial 'false' result to indicate the DOM node is still in the document
+    // Even though disposeWhen returns true, it doesn't dispose yet, because it's
+    // expecting an initial 'false' result to indicate the DOM node is still in the document
     expect(underlyingObservable.getSubscriptionsCount()).toEqual(1)
     expect(computedInstance.isActive()).toEqual(true)
 
-        // Trigger the false result. Of course it still doesn't dispose yet, because
-        // disposeWhen says false.
+    // Trigger the false result. Of course it still doesn't dispose yet, because
+    // disposeWhen says false.
     shouldDispose = false
     underlyingObservable(101)
     expect(underlyingObservable.getSubscriptionsCount()).toEqual(1)
     expect(computedInstance.isActive()).toEqual(true)
 
-        // Now trigger a true result. This time it will dispose.
+    // Now trigger a true result. This time it will dispose.
     shouldDispose = true
     underlyingObservable(102)
     expect(underlyingObservable.getSubscriptionsCount()).toEqual(0)
@@ -385,7 +392,7 @@ describe('Dependent Observable', function () {
       computedInstance = computed(function () { shouldHaveDependency && someObservable() })
     expect(computedInstance.isActive()).toEqual(true)
 
-        // Trigger a refresh
+    // Trigger a refresh
     shouldHaveDependency = false
     someObservable('modified')
     expect(computedInstance.isActive()).toEqual(false)
@@ -398,7 +405,7 @@ describe('Dependent Observable', function () {
       computed2 = computed(computed1)
     expect(computed2.isActive()).toEqual(true)
 
-        // Trigger a refresh
+    // Trigger a refresh
     shouldHaveDependency = false
     someObservable('modified')
     expect(computed2.isActive()).toEqual(false)
@@ -406,8 +413,8 @@ describe('Dependent Observable', function () {
 
   it('Should advertise that instances *can* have values written to them if you supply a "write" callback', function () {
     var instance = computed({
-      read: function () {},
-      write: function () {}
+      read: function () { },
+      write: function () { }
     })
     expect(isWriteableObservable(instance)).toEqual(true)
     expect(isWritableObservable(instance)).toEqual(true)
@@ -429,21 +436,21 @@ describe('Dependent Observable', function () {
       computedInstance = computed({ read: data, deferEvaluation: true }),
       result = observable()
 
-        // initially computed has no dependencies since it has not been evaluated
+    // initially computed has no dependencies since it has not been evaluated
     expect(computedInstance.getDependenciesCount()).toEqual(0)
     expect(computedInstance.getDependencies()).toEqual([])
 
-        // Now subscribe to computed
+    // Now subscribe to computed
     computedInstance.subscribe(result)
 
-        // The dependency should now be tracked
+    // The dependency should now be tracked
     expect(computedInstance.getDependenciesCount()).toEqual(1)
-    expect(computedInstance.getDependencies()).toEqual([ data ])
+    expect(computedInstance.getDependencies()).toEqual([data])
 
-        // But the subscription should not have sent down the initial value
+    // But the subscription should not have sent down the initial value
     expect(result()).toEqual(undefined)
 
-        // Updating data should trigger the subscription
+    // Updating data should trigger the subscription
     data(42)
     expect(result()).toEqual(42)
   })
@@ -461,9 +468,9 @@ describe('Dependent Observable', function () {
     expect(notifySpy).toHaveBeenCalledWith('A')
     expect(notifySpy.calls.length).toBe(1)
 
-        // Subscribing or updating data shouldn't trigger any more notifications
+    // Subscribing or updating data shouldn't trigger any more notifications
     notifySpy.reset()
-    computedInstance.subscribe(function () {})
+    computedInstance.subscribe(function () { })
     data('B')
     computedInstance()
     expect(notifySpy).not.toHaveBeenCalled()
@@ -472,33 +479,33 @@ describe('Dependent Observable', function () {
   it('Should prevent recursive calling of read function', function () {
     var observableInstance = observable(0)
     computed(function () {
-            // this both reads and writes to the observable
-            // will result in errors like "Maximum call stack size exceeded" (chrome)
-            // or "Out of stack space" (IE) or "too much recursion" (Firefox) if recursion
-            // isn't prevented
+      // this both reads and writes to the observable
+      // will result in errors like "Maximum call stack size exceeded" (chrome)
+      // or "Out of stack space" (IE) or "too much recursion" (Firefox) if recursion
+      // isn't prevented
       observableInstance(observableInstance() + 1)
     })
   })
 
   it('Should not subscribe to observables accessed through change notifications of a computed', function () {
-        // See https://github.com/SteveSanderson/knockout/issues/341
+    // See https://github.com/SteveSanderson/knockout/issues/341
     var observableDependent = observable(),
       observableIndependent = observable(),
       computedInstance = computed(function () { return observableDependent() })
 
-        // initially there is only one dependency
+    // initially there is only one dependency
     expect(computedInstance.getDependenciesCount()).toEqual(1)
     expect(computedInstance.getDependencies()).toEqual([observableDependent])
 
-        // create a change subscription that also accesses an observable
+    // create a change subscription that also accesses an observable
     computedInstance.subscribe(function () { observableIndependent() })
-        // now trigger evaluation of the computed by updating its dependency
+    // now trigger evaluation of the computed by updating its dependency
     observableDependent(1)
-        // there should still only be one dependency
+    // there should still only be one dependency
     expect(computedInstance.getDependenciesCount()).toEqual(1)
     expect(computedInstance.getDependencies()).toEqual([observableDependent])
 
-        // also test with a beforeChange subscription
+    // also test with a beforeChange subscription
     computedInstance.subscribe(function () { observableIndependent() }, null, 'beforeChange')
     observableDependent(2)
     expect(computedInstance.getDependenciesCount()).toEqual(1)
@@ -506,25 +513,25 @@ describe('Dependent Observable', function () {
   })
 
   it('Should not subscribe to observables accessed through change notifications of a modified observable', function () {
-        // See https://github.com/SteveSanderson/knockout/issues/341
+    // See https://github.com/SteveSanderson/knockout/issues/341
     var observableDependent = observable(),
       observableIndependent = observable(),
       observableModified = observable(),
       computedInstance = computed(function () { observableModified(observableDependent()) })
 
-        // initially there is only one dependency
+    // initially there is only one dependency
     expect(computedInstance.getDependenciesCount()).toEqual(1)
     expect(computedInstance.getDependencies()).toEqual([observableDependent])
 
-        // create a change subscription that also accesses an observable
+    // create a change subscription that also accesses an observable
     observableModified.subscribe(function () { observableIndependent() })
-        // now trigger evaluation of the computed by updating its dependency
+    // now trigger evaluation of the computed by updating its dependency
     observableDependent(1)
-        // there should still only be one dependency
+    // there should still only be one dependency
     expect(computedInstance.getDependenciesCount()).toEqual(1)
     expect(computedInstance.getDependencies()).toEqual([observableDependent])
 
-        // also test with a beforeChange subscription
+    // also test with a beforeChange subscription
     observableModified.subscribe(function () { observableIndependent() }, null, 'beforeChange')
     observableDependent(2)
     expect(computedInstance.getDependenciesCount()).toEqual(1)
@@ -541,25 +548,25 @@ describe('Dependent Observable', function () {
         }
       })
 
-        // Initially the computed evaluated successfully
+    // Initially the computed evaluated successfully
     expect(computedInstance()).toEqual(1)
 
     expect(function () {
-            // Update observable to cause computed to throw an exception
+      // Update observable to cause computed to throw an exception
       observableSwitch(false)
     }).toThrow('Error during computed evaluation')
 
-        // The value of the computed is now undefined, although currently it keeps the previous value
+    // The value of the computed is now undefined, although currently it keeps the previous value
     expect(computedInstance()).toEqual(1)
-        // The computed should not be dependent on the second observable
+    // The computed should not be dependent on the second observable
     expect(computedInstance.getDependenciesCount()).toEqual(1)
     expect(computedInstance.getDependencies()).toEqual([observableSwitch])
 
-        // Updating the second observable shouldn't re-evaluate computed
+    // Updating the second observable shouldn't re-evaluate computed
     observableValue(2)
     expect(computedInstance()).toEqual(1)
 
-        // Update the first observable to cause computed to re-evaluate
+    // Update the first observable to cause computed to re-evaluate
     observableSwitch(1)
     expect(computedInstance()).toEqual(2)
   })
@@ -572,11 +579,11 @@ describe('Dependent Observable', function () {
 
     expect(notifiedValues).toEqual([])
 
-        // Trigger update without changing value; the computed will not notify the change (default behavior)
+    // Trigger update without changing value; the computed will not notify the change (default behavior)
     observableInstance.valueHasMutated()
     expect(notifiedValues).toEqual([])
 
-        // Set the computed to notify always
+    // Set the computed to notify always
     computedInstance.extend({ notify: 'always' })
     observableInstance.valueHasMutated()
     expect(notifiedValues).toEqual([1])
@@ -586,7 +593,7 @@ describe('Dependent Observable', function () {
     var myArray = observable(['Alpha', 'Beta', 'Gamma']),
       myComputed = computed(function () {
         return myArray().slice(-2)
-      }).extend({trackArrayChanges: true}),
+      }).extend({ trackArrayChanges: true }),
       changelist
 
     expect(myComputed()).toEqual(['Beta', 'Gamma'])
@@ -598,23 +605,23 @@ describe('Dependent Observable', function () {
     myArray(['Alpha', 'Beta', 'Gamma', 'Delta'])
     expect(myComputed()).toEqual(['Gamma', 'Delta'])
     expect(changelist).toEqual([
-            { status: 'deleted', value: 'Beta', index: 0 },
-            { status: 'added', value: 'Delta', index: 1 }
+      { status: 'deleted', value: 'Beta', index: 0 },
+      { status: 'added', value: 'Delta', index: 1 }
     ])
 
-        // Should clean up all subscriptions when arrayChange subscription is disposed
+    // Should clean up all subscriptions when arrayChange subscription is disposed
     arrayChange.dispose()
     expect(myComputed.getSubscriptionsCount()).toBe(0)
   })
 
-    // Borrowed from haberman/knockout (see knockout/knockout#359)
+  // Borrowed from haberman/knockout (see knockout/knockout#359)
   it('Should allow long chains without overflowing the stack', function () {
-        // maximum with previous code (when running this test only): Chrome 28: 1310, IE 10: 2200; FF 23: 103
-        // maximum with changed code: Chrome 28: 2620, +100%, IE 10: 4900, +122%; FF 23: 267, +160%
-        // (per #1622 and #1905, max depth reduced to pass tests in older FF)
+    // maximum with previous code (when running this test only): Chrome 28: 1310, IE 10: 2200; FF 23: 103
+    // maximum with changed code: Chrome 28: 2620, +100%, IE 10: 4900, +122%; FF 23: 267, +160%
+    // (per #1622 and #1905, max depth reduced to pass tests in older FF)
     var depth = 100
     var first = observable(0)
-    var last = first
+    var last: Observable<any> | Computed<any> = first
     for (var i = 0; i < depth; i++) {
       (function () {
         var l = last
@@ -630,39 +637,39 @@ describe('Dependent Observable', function () {
     this.after(function () {
       delete (subscribable.fn as any).customProp       // Will be able to reach this
       delete (subscribable.fn as any).customFunc       // Overridden on computed.fn
-      delete computed.fn.customFunc         // Will be able to reach this
+      delete (computed.fn as any).customFunc         // Will be able to reach this
     });
 
     (subscribable.fn as any).customProp = 'subscribable value';
     (subscribable.fn as any).customFunc = function () { throw new Error('Shouldn\'t be reachable') }
-    computed.fn.customFunc = function () { return this() }
+    ;(computed.fn as any).customFunc = function () { return this() }
 
     var instance = computed(function () { return 123 })
-    expect(instance.customProp).toEqual('subscribable value')
-    expect(instance.customFunc()).toEqual(123)
+    expect((instance as any).customProp).toEqual('subscribable value')
+    expect((instance as any).customFunc()).toEqual(123)
   })
 
   it('Should have access to functions added to "fn" on existing instances on supported browsers', function () {
-        // On unsupported browsers, there's nothing to test
+    // On unsupported browsers, there's nothing to test
     if (!jasmine.browserSupportsProtoAssignment) {
       return
     }
 
     this.after(function () {
       delete (subscribable.fn as any).customFunction1
-      delete computed.fn.customFunction2
+      delete (computed.fn as any).customFunction2
     })
 
-    var computedInstance = computed(function () {})
+    var computedInstance = computed(function () { })
 
-    var customFunction1 = function () {};
-    var customFunction2 = function () {}; // TODO ASI example
+    var customFunction1 = function () { };
+    var customFunction2 = function () { }; // TODO ASI example
 
     (subscribable.fn as any).customFunction1 = customFunction1
-    computed.fn.customFunction2 = customFunction2
+    ;(computed.fn as any).customFunction2 = customFunction2
 
-    expect(computedInstance.customFunction1).toBe(customFunction1)
-    expect(computedInstance.customFunction2).toBe(customFunction2)
+    expect((computedInstance as any).customFunction1).toBe(customFunction1)
+    expect((computedInstance as any).customFunction2).toBe(customFunction2)
   })
 
   it('Should not evaluate (or add dependencies) after it has been disposed', function () {
@@ -675,7 +682,7 @@ describe('Dependent Observable', function () {
     expect(evaluateCount).toEqual(1)
     computedInstance.dispose()
 
-        // This should not cause a new evaluation
+    // This should not cause a new evaluation
     observableInstance(1)
     expect(evaluateCount).toEqual(1)
     expect(computedInstance()).toEqual(1)
@@ -696,7 +703,7 @@ describe('Dependent Observable', function () {
     expect(evaluateCount).toEqual(0)
     computedInstance.dispose()
 
-        // This should not cause a new evaluation
+    // This should not cause a new evaluation
     observableInstance(1)
     expect(evaluateCount).toEqual(0)
     expect(computedInstance()).toEqual(undefined)
@@ -705,10 +712,10 @@ describe('Dependent Observable', function () {
   })
 
   it('Should not add dependencies if disposed during evaluation', function () {
-        // This is a bit of a contrived example and likely won't occur in any actual applications.
-        // A more likely scenario might involve a binding that removes a node connected to the binding,
-        // causing the binding's computed observable to dispose.
-        // See https://github.com/knockout/knockout/issues/1041
+    // This is a bit of a contrived example and likely won't occur in any actual applications.
+    // A more likely scenario might involve a binding that removes a node connected to the binding,
+    // causing the binding's computed observable to dispose.
+    // See https://github.com/knockout/knockout/issues/1041
     var evaluateCount = 0,
       observableToTriggerDisposal = observable(false),
       observableGivingValue = observable(0),
@@ -717,14 +724,14 @@ describe('Dependent Observable', function () {
         return ++evaluateCount + observableGivingValue()
       })
 
-        // Check initial state
+    // Check initial state
     expect(evaluateCount).toEqual(1)
     expect(computedInstance()).toEqual(1)
     expect(computedInstance.getDependenciesCount()).toEqual(2)
     expect(computedInstance.getDependencies()).toEqual([observableToTriggerDisposal, observableGivingValue])
     expect(observableGivingValue.getSubscriptionsCount()).toEqual(1)
 
-        // Now cause a disposal during evaluation
+    // Now cause a disposal during evaluation
     observableToTriggerDisposal(true)
     expect(evaluateCount).toEqual(2)
     expect(computedInstance()).toEqual(2)
@@ -750,7 +757,7 @@ describe('Dependent Observable', function () {
       expect(evaluationCount).toEqual(2)     // second evaluation
       expect(computedInstance()).toEqual(false)      // value of isInitial was false
 
-            // value outside of computed is undefined
+      // value outside of computed is undefined
       expect(dependencyDetection.isInitial()).toBeUndefined()
     })
 
@@ -761,7 +768,7 @@ describe('Dependent Observable', function () {
           ++evaluationCount
           observableInstance()   // for dependency
           return dependencyDetection.isInitial()
-        }, null, {deferEvaluation: true})
+        }, null, { deferEvaluation: true })
 
       expect(evaluationCount).toEqual(0)     // no evaluation yet
       expect(computedInstance()).toEqual(true)       // first access causes evaluation; value of isInitial was true
@@ -778,18 +785,18 @@ describe('Dependent Observable', function () {
         evaluationCount = 0,
         computedInstance = computed(function () {
           ++evaluationCount
-                    // no dependencies at first
+          // no dependencies at first
           expect(dependencyDetection.getDependenciesCount()).toEqual(0)
           expect(dependencyDetection.getDependencies()).toEqual([])
-                    // add a single dependency
+          // add a single dependency
           observable1()
           expect(dependencyDetection.getDependenciesCount()).toEqual(1)
           expect(dependencyDetection.getDependencies()).toEqual([observable1])
-                    // add a second one
+          // add a second one
           observable2()
           expect(dependencyDetection.getDependenciesCount()).toEqual(2)
           expect(dependencyDetection.getDependencies()).toEqual([observable1, observable2])
-                    // accessing observable again doesn't affect count
+          // accessing observable again doesn't affect count
           observable1()
           expect(dependencyDetection.getDependenciesCount()).toEqual(2)
           expect(dependencyDetection.getDependencies()).toEqual([observable1, observable2])
@@ -804,7 +811,7 @@ describe('Dependent Observable', function () {
       expect(computedInstance.getDependenciesCount()).toEqual(2) // matches value from context
       expect(computedInstance.getDependencies()).toEqual([observable1, observable2])
 
-            // value outside of computed is undefined
+      // value outside of computed is undefined
       expect(dependencyDetection.getDependenciesCount()).toBeUndefined()
       expect(dependencyDetection.getDependencies()).toBeUndefined()
     })
@@ -816,15 +823,15 @@ describe('Dependent Observable', function () {
         newArray: ObservableArray = observableArray(['Alpha', 'Beta', 'Gamma'])
 
       computed(function () {
-                // Make a few standard mutations
+        // Make a few standard mutations
         newArray.push('Delta')
         newArray.remove('Beta')
         newArray.splice(2, 1)
 
-                // Peek to ensure we really had the intended effect
+        // Peek to ensure we really had the intended effect
         expect(newArray.peek()).toEqual(['Alpha', 'Gamma'])
 
-                // Also make use of the KO delete/destroy functions to check they don't cause subscriptions
+        // Also make use of the KO delete/destroy functions to check they don't cause subscriptions
         newArray([{ someProp: 123 }])
         newArray.destroyAll()
         expect(newArray.peek()[0]._destroy).toEqual(true)
@@ -834,11 +841,11 @@ describe('Dependent Observable', function () {
         timesEvaluated++
       })
 
-            // Verify that we haven't caused a subscription
+      // Verify that we haven't caused a subscription
       expect(timesEvaluated).toEqual(1)
       expect(newArray.getSubscriptionsCount()).toEqual(0)
 
-            // Don't just trust getSubscriptionsCount - directly verify that mutating newArray doesn't cause a re-eval
+      // Don't just trust getSubscriptionsCount - directly verify that mutating newArray doesn't cause a re-eval
       newArray.push('Another')
       expect(timesEvaluated).toEqual(1)
     })

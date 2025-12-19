@@ -37,13 +37,13 @@ import {
 
 import {
   bindings as componentBindings
-} from '../dist'
+} from '../src'
 
 import components from '@tko/utils.component'
 
 import {
     useMockForTasks
-} from '@tko/utils/helpers/jasmine-13-helper'
+} from '@tko/utils.spec'
 
 
 describe('Components: Component binding', function () {

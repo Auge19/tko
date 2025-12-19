@@ -78,8 +78,9 @@ export interface BaseExtendersType{
   notify(target: any, notifyWhen: string): void,
   deferred(target: any, option: boolean): void,
   rateLimit(target: any, options: string | any): void,
-  trackArrayChanges? (target: ObservableArray, options?: CompareArraysOptions) : void
-  throttle?(target: any, timout: number): void
+  trackArrayChanges?(target: ObservableArray, options?: CompareArraysOptions) : void,
+  throttle?(target: any, timout: number): void,
+  [key: PropertyKey]: ((target: any, ...args: any[]) => any) | undefined
 }
 
 export var extenders: BaseExtendersType = {

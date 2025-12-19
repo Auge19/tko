@@ -1,5 +1,5 @@
 
-import { options } from '@tko/utils'
+import { Accessor, options } from '@tko/utils'
 import { isWriteableObservable } from '@tko/observable'
 import { LifeCycle } from '@tko/lifecycle'
 import type { BindingContext } from './bindingContext';
@@ -25,14 +25,14 @@ export class BindingHandler<T = any> extends LifeCycle {
   preprocess?: (value: string | undefined, name: string, addBinding: BindingHandlerAddBinding) => string | undefined | void;
 
   $context: BindingContext // most likly BindingContext but params must be typed first
-  $element: HTMLElement
+  $element: Node
   $data: any
   bindingCompletion: any
   valueAccessor: Function
   completeBinding: any
   allBindings: AllBindings
 
-  constructor (params) {
+  constructor (params: { $element: Node; valueAccessor: Accessor<T>; allBindings: AllBindings; $context: BindingContext }) {
     super()
     const {$element, valueAccessor, allBindings, $context} = params
 
@@ -74,7 +74,7 @@ export class BindingHandler<T = any> extends LifeCycle {
     provider.bindingHandlers.set(name, this) //todo dangerous javascript: this in static function = this is calling object
   }
 
-  static registerBindingHandler(handler: BindingHandler, name: string, provider = options.bindingProviderInstance) {
+  static registerBindingHandler<T extends BindingHandler<T> = any>(handler: T, name: string, provider = options.bindingProviderInstance) {
     provider.bindingHandlers.set(name, handler)
   }
 }

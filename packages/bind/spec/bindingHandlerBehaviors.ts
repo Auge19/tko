@@ -22,13 +22,17 @@ import {
 
 import {
     applyBindings, BindingHandler, contextFor
-} from '../dist'
+} from '../src'
 
 import { bindings as coreBindings } from '@tko/binding.core'
 import { bindings as templateBindings } from '@tko/binding.template'
 import { bindings as ifBindings } from '@tko/binding.if'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+import {
+    initJasmine
+} from '@tko/utils.spec'
+
+initJasmine();
 
 describe('BindingHandler behaviors', function () {
   let bindingHandlers
@@ -62,8 +66,8 @@ describe('BindingHandler behaviors', function () {
         y : Observable        
         computed;
 
-        constructor (...args) {
-          super(...args)
+        constructor (args) {
+          super(args)
           var v = this.v = koObservable(0)
           instance = this
           this.x = this.computed(() => {
@@ -106,8 +110,8 @@ describe('BindingHandler behaviors', function () {
         handlerInstance
       bindingHandlers.fnHandler = class extends BindingHandler {
         subscribe;
-        constructor (...args) {
-          super(...args)
+        constructor (args) {
+          super(args)
           handlerInstance = this
           this.subscribe(obs, this.cb)
         }
@@ -123,9 +127,9 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('registers a kind with HandlerClass.register', function () {
-      class HC extends BindingHandler {}
+      class HC extends BindingHandler<any> {}
 
-      BindingHandler.registerBindingHandler(HC, 'testHCregistration')
+      BindingHandler.registerBindingHandler<any>(HC, 'testHCregistration')
       expect(bindingHandlers.testHCregistration).toEqual(HC)
     })
   })

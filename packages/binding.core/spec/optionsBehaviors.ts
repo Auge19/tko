@@ -18,15 +18,19 @@ import {
     options
 } from '@tko/utils'
 
-import {bindings as coreBindings} from '../dist'
+import {bindings as coreBindings} from '../src'
 
 import type { ObservableArray } from '@tko/observable'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+import {
+    initJasmine
+} from '@tko/utils.spec'
+
+initJasmine();
 
 import {
     matchers
-} from '../dist/test-helper'
+} from '../src/test-helper'
 
 describe('Binding: Options', function () {
   let testNode : HTMLElement

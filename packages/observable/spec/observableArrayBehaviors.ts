@@ -1,7 +1,7 @@
 
 import {
     observableArray, isObservableArray, observable, isObservable, subscribable
-} from '../dist'
+} from '../src'
 
 describe('Observable Array', function () {
   var testObservableArray, notifiedValues, beforeNotifiedValues
@@ -50,8 +50,8 @@ describe('Observable Array', function () {
 
   it('Should require constructor arg, if given, to be array-like or null or undefined', function () {
         // Try non-array-like args
-    expect(function () { observableArray(1) }).toThrow()
-    expect(function () { observableArray({}) }).toThrow()
+    expect(function () { (observableArray as any)(1) }).toThrow()
+    expect(function () { (observableArray as any)({}) }).toThrow()
 
         // Try allowed args
     expect((observableArray([1, 2, 3]))().length).toEqual(3)
@@ -355,7 +355,7 @@ describe('Observable Array', function () {
     var instance = observableArray([123])
     expect(instance.subscribableProp).toEqual('subscribable value')
     expect(instance.customProp).toEqual('observableArray value')
-    expect(instance.customFunc()).toEqual([123])
+    expect((instance.customFunc as any)()).toEqual([123])
   })
 
   it('Should have access to functions added to "fn" on existing instances on supported browsers', function () {

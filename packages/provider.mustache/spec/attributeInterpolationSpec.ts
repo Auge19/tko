@@ -24,7 +24,7 @@ import {
   DataBindProvider
 } from '@tko/provider.databind'
 
-import '@tko/utils/helpers/jasmine-13-helper';
+;
 import { AttributeMustacheProvider } from '../src';
 
 function ctxStub (obj = {}) { return { lookup (v) { return obj[v] } } }

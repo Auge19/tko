@@ -20,7 +20,36 @@ import { value } from './value'
 import { visible, hidden } from './visible'
 import { using } from './using'
 
-export const bindings = {
+type Bindings = {
+  attr: typeof attr,
+  checked: typeof checked,
+  checkedValue: typeof checkedValue,
+  click: typeof click,
+  css: typeof css,
+  'class': typeof css,
+  descendantsComplete: typeof descendantsComplete,
+  enable: typeof enable,
+  'event': typeof eventHandler,
+  disable: typeof disable,
+  hasfocus: typeof hasfocus,
+  hasFocus: typeof hasfocus,
+  hidden: typeof hidden,
+  html: typeof html,
+  'let': typeof $let,
+  on: typeof onHandler,
+  options: typeof options,
+  selectedOptions: typeof selectedOptions,
+  style: typeof style,
+  submit: typeof submit,
+  text: typeof text,
+  textInput: typeof textInput,
+  uniqueName: typeof uniqueName,
+  using: typeof using,
+  value: typeof value,
+  visible: typeof visible
+}
+
+export const bindings: Bindings = {
   attr,
   checked,
   checkedValue,

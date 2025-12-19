@@ -7,6 +7,7 @@ import Subscription from './Subscription'
 import { SUBSCRIBABLE_SYM } from './subscribableSymbol'
 import { applyExtenders } from './extenders'
 import * as dependencyDetection from './dependencyDetection'
+import { isObservable } from './observable'
 export { isSubscribable } from './subscribableSymbol'
 
 // Descendants may have a LATEST_VALUE, which if present
@@ -14,8 +15,8 @@ export { isSubscribable } from './subscribableSymbol'
 // subscribed.
 export const LATEST_VALUE = Symbol('Knockout latest value')
 
-if (!Symbol.observable) {
-  Symbol.observable = Symbol.for('@tko/Symbol.observable')
+if (!(Symbol as any).observable) {
+  (Symbol as any).observable = Symbol.for('@tko/Symbol.observable')
 }
 
 export type SubscriptionCallback<T = any, TTarget = void> = (this: TTarget, val: T) => void;
@@ -48,6 +49,9 @@ export interface SubscribableFunctions<T = any> {
   // From pureComputedOverrides in computed.ts
   beforeSubscriptionAdd?: (event: string) => void;
   afterSubscriptionRemove?: (event: string) => void;
+
+  limit(func: Function): void;
+  [key: string]: unknown;
 }
 
 
@@ -72,9 +76,24 @@ export const subscribable = function subscribableFactory() {
 
 export var defaultEvent = 'change'
 
+/**
+ * Limits the notifications to subscribers.
+ * @param value The value to notify.
+ * @param event The event type.
+ */
+function limitNotifySubscribers(value, event?: string) {
+  if (!event || event === defaultEvent) {
+    this._limitChange(value)
+  } else if (event === 'beforeChange') {
+    this._limitBeforeChange(value)
+  } else {
+    this._origNotifySubscribers(value, event)
+  }
+}
+
 var ko_subscribable_fn: SubscribableFunctions = {
   [SUBSCRIBABLE_SYM]: true,
-  [Symbol.observable as any]() { return this },
+  [(Symbol as any).observable]() { return this },
 
   init(instance) {
     instance._subscriptions = { change: [] }
@@ -209,7 +228,66 @@ var ko_subscribable_fn: SubscribableFunctions = {
 
   toString() : string { return '[object Object]' },
 
-  extend: applyExtenders
+  extend: applyExtenders,
+
+  limit(limitFunction: Function): void {
+    var self = this
+  var selfIsObservable = isObservable(self)
+  var beforeChange = 'beforeChange'
+  var ignoreBeforeChange: boolean, notifyNextChange: boolean, previousValue: any, pendingValue: any, didUpdate: boolean
+
+  if (!self._origNotifySubscribers) {
+    // Moved out of "limit" to avoid the extra closure
+    self._origNotifySubscribers = self.notifySubscribers
+    self.notifySubscribers = limitNotifySubscribers
+  }
+
+  var finish = limitFunction(function () {
+    self._notificationIsPending = false
+
+    // If an observable provided a reference to itself, access it to get the latest value.
+    // This allows computed observables to delay calculating their value until needed.
+    if (selfIsObservable && pendingValue === self) {
+      pendingValue = self._evalIfChanged ? self._evalIfChanged() : self()
+    }
+    const shouldNotify = notifyNextChange || (
+      didUpdate && self.isDifferent(previousValue, pendingValue)
+    )
+    self._notifyNextChange = didUpdate = ignoreBeforeChange = false
+    if (shouldNotify) {
+      self._origNotifySubscribers(previousValue = pendingValue)
+    }
+  })
+
+  Object.assign(self, {
+    _limitChange(value: any, isDirty: boolean) {
+      if (!isDirty || !self._notificationIsPending) {
+        didUpdate = !isDirty
+      }
+      self._changeSubscriptions = [...self._subscriptions[defaultEvent]]
+      self._notificationIsPending = ignoreBeforeChange = true
+      pendingValue = value
+      finish()
+    },
+
+    _limitBeforeChange(value: any) {
+      if (!ignoreBeforeChange) {
+        previousValue = value
+        self._origNotifySubscribers(value, beforeChange)
+      }
+    },
+
+    _notifyNextChangeIfValueIsDifferent() {
+      if (self.isDifferent(previousValue, self.peek(true /* evaluate */))) {
+        notifyNextChange = true
+      }
+    },
+
+    _recordUpdate() {
+      didUpdate = true
+    }
+  })
+  }
 }
 
 // For browsers that support proto assignment, we overwrite the prototype of each

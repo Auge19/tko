@@ -16,7 +16,7 @@ export default class Node {
   rhs: any
 
 
-  constructor(lhs, op, rhs) {
+  constructor(lhs?, op?, rhs?) {
     this.lhs = lhs
     this.op = op
     this.rhs = rhs
@@ -54,8 +54,8 @@ export default class Node {
    * Note that for a lambda, we do not evaluate the RHS expression until
    * the lambda is called.
    */
-  get_value(notused, context, globals, node: Node) {
-    var node: Node = this;
+  get_value(notused, context, globals?, node?: Node) {
+    var node: Node | undefined = this;
 
     if (node.op === LAMBDA) {
       return (...args) => {

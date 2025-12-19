@@ -41,22 +41,22 @@ export default class MultiProvider extends Provider {
     this.nodeTypes = Object.keys(this.nodeTypeMap).map(k => parseInt(k, 10))
   }
 
-  providersFor (node: Element): any[] {
+  providersFor (node: Node): any[] {
     return this.nodeTypeMap[node.nodeType] || []
   }
 
-  nodeHasBindings (node: Element, context?: BindingContext) : boolean | undefined  {
+  nodeHasBindings (node: Node, context?: BindingContext) : boolean | undefined  {
     return this.providersFor(node).some(p => p.nodeHasBindings(node))
   }
 
-  preprocessNode (node: Element) {
+  preprocessNode (node: Node) {
     for (const provider of this.providersFor(node)) {
       const newNodes = provider.preprocessNode(node)
       if (newNodes) { return newNodes }
     }
   }
 
-  * enumerateProviderBindings (node: Element, context) {
+  * enumerateProviderBindings (node: Node, context) {
     for (const provider of this.providersFor(node)) {
       const bindings = provider.getBindingAccessors(node, context)
       if (!bindings) { continue }
@@ -65,7 +65,7 @@ export default class MultiProvider extends Provider {
     }
   }
 
-  getBindingAccessors (node: Element, context?: BindingContext) {
+  getBindingAccessors (node: Node, context?: BindingContext) {
     const bindings = {}
     for (const [key, accessor] of this.enumerateProviderBindings(node, context)) {
       if (key in bindings) {

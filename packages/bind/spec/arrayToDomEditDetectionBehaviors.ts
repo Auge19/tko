@@ -1,8 +1,8 @@
 
 import { observable as Observable, unwrap } from '@tko/observable'
 import { arrayMap } from '@tko/utils'
-import '@tko/utils/helpers/jasmine-13-helper'
-import { setDomNodeChildrenFromArrayMapping } from '../dist'
+
+import { setDomNodeChildrenFromArrayMapping } from '../src/arrayToDomNodeChildren'
 
 function copyDomNodeChildren (domNode: HTMLElement) {
   const copy: ChildNode[] = []
@@ -37,7 +37,7 @@ describe('Array to DOM node children mapping', function () {
     var mappingInvocations = new Array()
     var mapping = function (arrayItem: string) {
       mappingInvocations.push(arrayItem)
-
+      return []
     }
     setDomNodeChildrenFromArrayMapping(testNode, ['A', 'B'], mapping)
     expect(mappingInvocations).toEqual(['A', 'B'])
@@ -141,25 +141,25 @@ describe('Array to DOM node children mapping', function () {
       expect(mappingInvocations[mappingInvocations.length - 1]).toEqual(arrayItem)
     }
 
-    setDomNodeChildrenFromArrayMapping(testNode, ['A'], mapping, null, callback)
+    setDomNodeChildrenFromArrayMapping(testNode, ['A'], mapping, undefined, callback)
     expect(arrayMap(testNode.children, function (x) { return x.innerHTML })).toEqual(['A'])
     expect(mappingInvocations).toEqual(['A'])
     expect(countCallbackInvocations).toEqual(mappingInvocations.length)
 
     mappingInvocations = new Array(), countCallbackInvocations = 0
-    setDomNodeChildrenFromArrayMapping(testNode, ['B'], mapping, null, callback) // Delete and replace single item
+    setDomNodeChildrenFromArrayMapping(testNode, ['B'], mapping, undefined, callback) // Delete and replace single item
     expect(arrayMap(testNode.children, function (x) { return x.innerHTML })).toEqual(['B'])
     expect(mappingInvocations).toEqual(['B'])
     expect(countCallbackInvocations).toEqual(mappingInvocations.length)
 
     mappingInvocations = new Array(), countCallbackInvocations = 0
-    setDomNodeChildrenFromArrayMapping(testNode, ['A', 'B', 'C'], mapping, null, callback) // Add at beginning and end
+    setDomNodeChildrenFromArrayMapping(testNode, ['A', 'B', 'C'], mapping, undefined, callback) // Add at beginning and end
     expect(arrayMap(testNode.children, function (x) { return x.innerHTML })).toEqual(['A', 'B', 'C'])
     expect(mappingInvocations).toEqual(['A', 'C'])
     expect(countCallbackInvocations).toEqual(mappingInvocations.length)
 
     mappingInvocations = new Array(), countCallbackInvocations = 0
-    setDomNodeChildrenFromArrayMapping(testNode, ['C', 'B', 'A'], mapping, null, callback) // Move items
+    setDomNodeChildrenFromArrayMapping(testNode, ['C', 'B', 'A'], mapping, undefined, callback) // Move items
     expect(arrayMap(testNode.children, function (x) { return x.innerHTML })).toEqual(['C', 'B', 'A'])
     expect(mappingInvocations).toEqual([])
     expect(countCallbackInvocations).toEqual(mappingInvocations.length)
@@ -172,7 +172,7 @@ describe('Array to DOM node children mapping', function () {
       callbackObservable()
       callback(arrayItem, nodes)
     }
-    setDomNodeChildrenFromArrayMapping(testNode, [observable, null, 'B'], mapping, null, callback2) // Add to beginning; delete from end
+    setDomNodeChildrenFromArrayMapping(testNode, [observable, null, 'B'], mapping, undefined, callback2) // Add to beginning; delete from end
     expect(arrayMap(testNode.children, function (x) { return x.innerHTML })).toEqual(['1', 'null', 'B'])
     expect(mappingInvocations).toEqual([observable, null])
     expect(countCallbackInvocations).toEqual(mappingInvocations.length)

@@ -17,13 +17,13 @@ import {
 
 import {
     bindings as ifBindings
-} from '../dist';
+} from '../src';
 
 import {
     bindings as coreBindings
 } from '@tko/binding.core';
 
-import '@tko/utils/helpers/jasmine-13-helper';
+;
 
 describe('else inside an if binding', function () {
   let testNode : HTMLElement

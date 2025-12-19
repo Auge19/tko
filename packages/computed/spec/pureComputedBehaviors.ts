@@ -4,7 +4,7 @@ import {
 
 import {
     isPureComputed, isComputed, computed, pureComputed
-} from '../dist'
+} from '../src'
 
 describe('Pure Computed', function () {
   it('Observables should advertise that instances are not pure computed', function () {
@@ -28,7 +28,7 @@ describe('Pure Computed', function () {
   })
 
   it('Should require an evaluator function as constructor param', function () {
-    expect(function () { pureComputed() }).toThrow()
+    expect(function () { (pureComputed as any)() }).toThrow()
   })
 
   it('Should be able to pass evaluator function using "options" parameter called "read"', function () {

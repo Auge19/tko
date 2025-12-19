@@ -7,7 +7,7 @@ import {
     observable, isSubscribable, isObservable,
     isWriteableObservable, isWritableObservable, subscribable,
     unwrap
-} from '../dist'
+} from '../src'
 
 describe('Observable', function () {
   it('Should be subscribable', function () {
@@ -48,7 +48,7 @@ describe('Observable', function () {
 
   it('ko.isObservable should throw exception for value that has fake observable pointer', function () {
     var x = observable()
-    x.__ko_proto__ = {}
+    (x as any).__ko_proto__ = {}
     expect(() => isObservable(x)).toThrow()
   })
 
@@ -233,7 +233,7 @@ describe('Observable', function () {
     expect(notifiedValues).toEqual([])
 
         // But there is a notification if we null out the equality comparer
-    instance.equalityComparer = null
+    ;(instance as any).equalityComparer = null
     instance('A')
     expect(notifiedValues).toEqual(['A'])
   })
@@ -317,29 +317,29 @@ describe('Observable', function () {
 
   it('Should inherit any properties defined on subscribable.fn or observable.fn', function () {
     this.after(function () {
-      delete subscribable.fn.customProp       // Will be able to reach this
-      delete subscribable.fn.customFunc       // Overridden on observable.fn
-      delete observable.fn.customFunc         // Will be able to reach this
+      delete (subscribable.fn as any).customProp       // Will be able to reach this
+      delete (subscribable.fn as any).customFunc       // Overridden on observable.fn
+      delete (observable.fn as any).customFunc         // Will be able to reach this
     })
 
-    subscribable.fn.customProp = 'subscribable value'
-    subscribable.fn.customFunc = function () { throw new Error('Shouldn\'t be reachable') }
-    observable.fn.customFunc = function () { return this() }
+    (subscribable.fn as any).customProp = 'subscribable value'
+    ;(subscribable.fn as any).customFunc = function () { throw new Error('Shouldn\'t be reachable') }
+    ;(observable.fn as any).customFunc = function () { return this() }
 
     var instance = observable(123)
-    expect(instance.customProp).toEqual('subscribable value')
-    expect(instance.customFunc()).toEqual(123)
+    expect((instance as any).customProp).toEqual('subscribable value')
+    expect((instance as any).customFunc()).toEqual(123)
   })
 
   it('Should have access to functions added to "fn" on existing instances on supported browsers', function () {
         // On unsupported browsers, there's nothing to test
-    if (!jasmine.browserSupportsProtoAssignment) {
+    if (!(jasmine as any).browserSupportsProtoAssignment) {
       return
     }
 
     this.after(function () {
-      delete subscribable.fn.customFunction1
-      delete observable.fn.customFunction2
+      delete (subscribable.fn as any).customFunction1
+      delete (observable.fn as any).customFunction2
     })
 
     var myObservable = observable()
@@ -347,11 +347,11 @@ describe('Observable', function () {
     var customFunction1 = function () {}
     var customFunction2 = function () {}
 
-    subscribable.fn.customFunction1 = customFunction1
-    myObservable.fn.customFunction2 = customFunction2
+    ;(subscribable.fn as any).customFunction1 = customFunction1
+    ;(observable.fn as any).customFunction2 = customFunction2
 
-    expect(myObservable.customFunction1).toBe(customFunction1)
-    expect(myObservable.customFunction2).toBe(customFunction2)
+    expect((myObservable as any).customFunction1).toBe(customFunction1)
+    expect((myObservable as any).customFunction2).toBe(customFunction2)
   })
 
   it('immediately emits any value when called with {next: ...}', function () {

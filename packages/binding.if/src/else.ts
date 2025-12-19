@@ -33,7 +33,7 @@ export class ElseBindingHandler extends IfBindingHandler {
   }
 
   readElseChain () {
-    let node: ChildNode | null = this.$element
+    let node: typeof this.$element | null = this.$element
     do {
       node = node.previousSibling
     } while (node && node.nodeType !== 1 && node.nodeType !== 8)

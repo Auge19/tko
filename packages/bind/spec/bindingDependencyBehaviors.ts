@@ -24,11 +24,11 @@ import { VirtualProvider } from '@tko/provider.virtual';
 import {
     applyBindings, contextFor,
     applyBindingsToDescendants
-} from '../dist';
+} from '../src';
 
 import {bindings as coreBindings} from '@tko/binding.core';
 
-import '@tko/utils/helpers/jasmine-13-helper';
+;
 
 describe('Binding dependencies', function () {
   let bindingHandlers
@@ -419,7 +419,7 @@ describe('Binding dependencies', function () {
     it('Should set $rawData to the observable returned from a function', function () {
       var vm = observableConstructor('text');
       testNode.innerHTML = "<div data-bind='text:$data'></div>";
-      applyBindings(function () { return vm; }, testNode);
+      applyBindings<any>(function () { return vm; }, testNode);
       expect(testNode).toContainText('text');
 
       var context = contextFor(testNode);

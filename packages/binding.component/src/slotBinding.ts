@@ -47,10 +47,10 @@ export default class SlotBinding extends DescendantBindingHandler {
 
   /**
    *
-   * @param {HTMLElement} nodeToReplace
-   * @param {HTMLElement} slotValue
+   * @param {Node} nodeInComponentTemplate
+   * @param {Node} slotNode
    */
-  replaceSlotWithNode (nodeInComponentTemplate: HTMLElement, slotNode: Node): void {
+  replaceSlotWithNode (nodeInComponentTemplate: Node, slotNode: Node): void {
     const nodes = this.cloneNodeFromOriginal(slotNode)
     virtualElements.emptyNode(nodeInComponentTemplate)
     this.addDisposable(new JsxObserver(nodes, nodeInComponentTemplate, undefined, undefined, true))

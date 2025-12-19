@@ -1,7 +1,7 @@
 
 import {
   AttributeProvider
-} from '../dist'
+} from '../src'
 
 import { assert } from "chai"
 

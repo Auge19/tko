@@ -27,7 +27,7 @@ import {
 
 import {
   Identifier, Arguments
-} from '../dist'
+} from '../src'
 
 import { assert } from "chai"
 

@@ -8,9 +8,9 @@ import {
 
 import {
     computed as Computed
-} from '../dist'
+} from '../src'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+
 
 describe('Dependent Observable DOM', function () {
   let testNode : HTMLElement

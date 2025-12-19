@@ -18,13 +18,13 @@ import {
 import {
     bindings as templateBindings,
     renderTemplate,
-    anonymousTemplate
-} from '../dist'
+    AnonymousTemplate
+} from '../src'
 import {
     bindings as coreBindings
 } from '@tko/binding.core'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+
 
 describe('Native template engine', function () {
   function ensureNodeExistsAndIsEmpty (id, tagName?, type?) {
@@ -102,14 +102,14 @@ describe('Native template engine', function () {
 
   describe('Anonymous templates', function () {
     it('can display static content', function () {
-      new anonymousTemplate(testNode).text('this is some static content')
+      new AnonymousTemplate(testNode).text('this is some static content')
       testNode.innerHTML = 'irrelevant initial content'
       renderTemplate(testNode, null, null, testNode)
       expect(testNode).toContainHtml('this is some static content')
     })
 
     it('can data-bind on results', function () {
-      new anonymousTemplate(testNode).text("name: <div data-bind='text: name'></div>")
+      new AnonymousTemplate(testNode).text("name: <div data-bind='text: name'></div>")
       testNode.innerHTML = 'irrelevant initial content'
       renderTemplate(testNode, {
         name: 'bert'

@@ -61,7 +61,7 @@ export default class ComponentProvider extends Provider {
     return { component }
   }
 
-  getComponentNameForNode (node: Element) : string | undefined {
+  getComponentNameForNode (node: Element) : string | undefined | null {
     if (node.nodeType !== node.ELEMENT_NODE) { return }
     const tagName = tagNameLower(node)
     if (registry.isRegistered(tagName)) {

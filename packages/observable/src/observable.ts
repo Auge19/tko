@@ -56,6 +56,8 @@ export interface ObservableFunctions<T = any> extends Subscribable<T> {
    * Some observables may not always be writeable, notably computeds.
    */
   isWriteable: boolean
+
+  [key: string]: unknown;
 }
 
 /**
@@ -167,7 +169,7 @@ observable.fn = {
 
   // Some observables may not always be writeable, notably computeds.
   isWriteable: true
-}
+} as ObservableFunctions;
 
 /**
  * Limits the notifications to subscribers.
@@ -188,7 +190,7 @@ function limitNotifySubscribers(value, event?: string) {
  * Adds a limit function to the subscribable prototype.
  * @param limitFunction The function to limit notifications.
  */
-(subscribable.fn as any).limit = function limit(limitFunction) {
+subscribable.fn.limit = function limit(limitFunction) {
   var self = this
   var selfIsObservable = isObservable(self)
   var beforeChange = 'beforeChange'

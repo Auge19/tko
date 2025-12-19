@@ -2,9 +2,7 @@
 import {
     addDisposeCallback, removeDisposeCallback, cleanNode, removeNode, options,
     otherNodeCleanerFunctions, cleanjQueryData
-} from '../dist'
-
-import '../helpers/jasmine-13-helper'
+} from '../src'
 
 describe('DOM node disposal', function () {
   let jQuery = options.jQuery
@@ -186,7 +184,7 @@ describe('DOM node disposal', function () {
   })
 
   it('If jQuery is referenced, should clear jQuery data when a node is cleaned', function () {
-    if (typeof jQuery === 'undefined') {
+    if (typeof jQuery === 'undefined' || !jQuery) {
       return // Nothing to test. Run the specs with jQuery referenced for this to do anything.
     }
 
@@ -199,7 +197,7 @@ describe('DOM node disposal', function () {
   })
 
   it('If jQuery is referenced, should be able to prevent jQuery data from being cleared by overwriting "cleanExternalData"', function () {
-    if (typeof jQuery === 'undefined') {
+    if (typeof jQuery === 'undefined' || !jQuery) {
       return // Nothing to test. Run the specs with jQuery referenced for this to do anything.
     }
     otherNodeCleanerFunctions.length = 0

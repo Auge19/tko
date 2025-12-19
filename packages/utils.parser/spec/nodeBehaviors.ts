@@ -6,7 +6,7 @@ import {
 
 import {
   Parser, Node, Arguments, Identifier, Ternary
-} from '../dist';
+} from '../src';
 
 import {assert} from "chai"
 

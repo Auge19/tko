@@ -25,7 +25,7 @@ import {
 
 import {
   Parser
-} from '../dist';
+} from '../src';
 
 function ctxStub (ctx?) {
   return {

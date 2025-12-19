@@ -16,6 +16,7 @@ export * from './css'
 export { jQuerySetInstance } from './jquery'
 export { default as options } from './options'
 export { default } from './options'
+export * from './accessor'
 
 // DOM;
 export * from './dom/event'

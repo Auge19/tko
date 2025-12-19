@@ -1,6 +1,7 @@
 /* global testNode */
 import {
-  cleanNode, options, virtualElements, objectForEach
+  cleanNode, options, virtualElements, objectForEach,
+  ieVersion
 } from '@tko/utils'
 
 import {
@@ -19,18 +20,23 @@ import { DataBindProvider } from '@tko/provider.databind'
 import {
   applyBindings, dataFor, bindingContext, bindingEvent,
   applyBindingsToDescendants, applyBindingsToNode, contextFor
-} from '../dist'
+} from '../src'
 
 import { bindings as coreBindings } from '@tko/binding.core'
 import { bindings as templateBindings } from '@tko/binding.template'
 import { bindings as ifBindings } from '@tko/binding.if'
 
-import '@tko/utils/helpers/jasmine-13-helper'
-import { Provider } from '@tko/provider'
 
+import { BindingHandlerObject, Provider } from '@tko/provider'
+
+import {
+    initJasmine
+} from '@tko/utils.spec'
+
+initJasmine();
 
 describe('Binding attribute syntax', function () {
-  let bindingHandlers
+  let bindingHandlers: BindingHandlerObject & Record<string, any>
 
   let testNode : HTMLElement
   beforeEach(function() { testNode = jasmine.prepareTestNode() })
@@ -113,7 +119,7 @@ describe('Binding attribute syntax', function () {
     }
     testNode.innerHTML = "<div id='testElement' data-bind='test'></div>"
     applyBindings(null, testNode, function (context) {
-      context.extraValue = 'extra'
+      (context as any).extraValue = 'extra'
     })
     expect(didInit).toEqual(true)
   })
@@ -438,8 +444,8 @@ describe('Binding attribute syntax', function () {
     expect(contextFor(testNode.childNodes[0].childNodes[0]).$data.name).toEqual('Bert')
 
     // Also test that a non-node object returns nothing and doesn't crash
-    expect(dataFor({})).toBeUndefined()
-    expect(contextFor({})).toBeUndefined()
+    expect(dataFor({} as any)).toBeUndefined()
+    expect(contextFor({} as any)).toBeUndefined()
   })
 
   it('Should not return a context object for unbound elements that are descendants of bound elements', function () {
@@ -758,7 +764,7 @@ describe('Binding attribute syntax', function () {
         nodeHasBindings(node) {
           // IE < 9 can't bind text nodes, as expando properties are not allowed on them.
           // This will still prove that the binding provider was not executed on the children of a restricted element.
-          if (node.nodeType === 3 && jasmine.ieVersion < 9) {
+          if (node.nodeType === 3 && ieVersion != undefined && ieVersion < 9) {
             node.data = 'replaced'
             return false
           }

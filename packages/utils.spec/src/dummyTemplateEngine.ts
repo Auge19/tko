@@ -1,44 +1,58 @@
 
 import {
-  extend, arrayPushAll, parseHtmlFragment
+    extend, arrayPushAll, parseHtmlFragment
 } from '@tko/utils';
 
 import {
-    renderTemplate, anonymousTemplate, templateEngine
-} from '../dist';
+    renderTemplate, AnonymousTemplate, TemplateEngine,
+    TemplateEngineBase,
+    TemplateSource
+} from '@tko/binding.template';
 
 import type { BindingContext } from '@tko/bind';
 
-export function dummyTemplateEngine(templates?) {
-    var inMemoryTemplates = templates || {};
-    var inMemoryTemplateData = {};
+class DummyTemplateSource implements TemplateSource {
+    private inMemoryTemplates;
+    private inMemoryTemplateData;
 
-    function dummyTemplateSource(id) {
-        this.id = id;
+    constructor(private id: string) {
+
     }
-    dummyTemplateSource.prototype = {
-        text: function(val) {
-            if (arguments.length >= 1)
-                inMemoryTemplates[this.id] = val;
-            return inMemoryTemplates[this.id];
-        },
-        data: function(key, val) {
-            if (arguments.length >= 2) {
-                inMemoryTemplateData[this.id] = inMemoryTemplateData[this.id] || {};
-                inMemoryTemplateData[this.id][key] = val;
-            }
-            return (inMemoryTemplateData[this.id] || {})[key];
+
+    text(): string;
+    text(valueToWrite: string): void;
+    text(valueToWrite?: unknown): string | void {
+        if (arguments.length >= 1)
+            this.inMemoryTemplates[this.id] = valueToWrite;
+        return this.inMemoryTemplates[this.id];
+    }
+    data(key: string);
+    data<T>(key: string): T;
+    data<T>(key: string, valueToWrite: T): void;
+    data<T>(key: string, valueToWrite?: T): any {
+        if (arguments.length >= 2) {
+            this.inMemoryTemplateData[this.id] = this.inMemoryTemplateData[this.id] || {};
+            this.inMemoryTemplateData[this.id][key] = valueToWrite;
         }
-    };
+        return (this.inMemoryTemplateData[this.id] || {})[key];
+    }
+    nodes: { (): Node; (valueToWrite: Node): void; };
 
-    this.makeTemplateSource = function(template) {
+}
+
+export class DummyTemplateEngine extends TemplateEngineBase {
+    constructor(templates?: any) {
+        super();
+    }
+
+    override makeTemplateSource(template: string | Node, templateDocument?: Document): TemplateSource | undefined {
         if (typeof template == "string")
-            return new dummyTemplateSource(template); // Named template comes from the in-memory collection
+            return new DummyTemplateSource(template); // Named template comes from the in-memory collection
         else if ((template.nodeType == 1) || (template.nodeType == 8))
-            return new anonymousTemplate(template); // Anonymous template
-    };
+            return new AnonymousTemplate(template); // Anonymous template
+    }
 
-    this.renderTemplateSource = function (templateSource, bindingContext: BindingContext, rt_options, templateDocument) {
+    override renderTemplateSource(templateSource: TemplateSource, bindingContext: BindingContext, rt_options, templateDocument) {
         var data = bindingContext['$data'];
         if (data && typeof data.get_value === 'function') {
             // For cases when data is an Identifier/Expression.
@@ -46,7 +60,7 @@ export function dummyTemplateEngine(templates?) {
         }
         templateDocument = templateDocument || document;
         rt_options = rt_options || {};
-        var templateText = templateSource.text();
+        var templateText: any = templateSource.text();
         if (typeof templateText == "function")
             templateText = templateText(data, rt_options);
 
@@ -69,7 +83,7 @@ export function dummyTemplateEngine(templates?) {
 
         // Dummy [renderTemplate:...] syntax
         result = templateText.replace(/\[renderTemplate\:(.*?)\]/g, function (match, templateName) {
-          return renderTemplate(templateName, data, rt_options);
+            return renderTemplate(templateName, data, rt_options);
         });
 
 
@@ -98,16 +112,15 @@ export function dummyTemplateEngine(templates?) {
         // Use same HTML parsing code as real template engine so as to trigger same combination of IE weirdnesses
         // Also ensure resulting nodelist is an array to mimic what the default templating engine does, so we see the effects of not being able to remove dead memo comment nodes.
         return arrayPushAll([], parseHtmlFragment(result, templateDocument));
-    };
+    }
 
-    this.rewriteTemplate = function (template, rewriterCallback, templateDocument) {
+    rewriteTemplate(template, rewriterCallback, templateDocument) {
         // Only rewrite if the template isn't a function (can't rewrite those)
         var templateSource = this.makeTemplateSource(template, templateDocument);
-        if (typeof templateSource.text() != "function")
-            return templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
+
+        // TODO
+        // if (typeof templateSource?.text() != "function")
+        //     return super.rewriteTemplate(template, rewriterCallback, templateDocument);
     };
-    this.createJavaScriptEvaluatorBlock = function (script) { return "[js:" + script + "]"; };
+    createJavaScriptEvaluatorBlock(script) { return "[js:" + script + "]"; };
 }
-
-
-dummyTemplateEngine.prototype = new templateEngine();

@@ -1,6 +1,6 @@
-import { useMockForTasks } from '../helpers/jasmine-13-helper'
+import { useMockForTasks } from '@tko/utils.spec'
 
-import { tasks, options, ieVersion } from '../dist'
+import { tasks, options, ieVersion } from '../src'
 
 describe('Tasks', function () {
   beforeEach(function () {

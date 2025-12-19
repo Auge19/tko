@@ -256,8 +256,8 @@ function cloneNodesFromTemplateSourceElement (elemInstance) {
 function possiblyGetConfigFromAmd (errorCallback, config, callback) {
   if (typeof config.require === 'string') {
         // The config is the value of an AMD module
-    if (window.amdRequire || window.require) {
-      (window.amdRequire || window.require)([config.require], callback)
+    if ((window as any).amdRequire || window.require) {
+      ((window as any).amdRequire || window.require)([config.require], callback)
     } else {
       errorCallback('Uses require, but no AMD loader is present')
     }

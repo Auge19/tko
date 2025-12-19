@@ -14,10 +14,10 @@ import {
 
 export default class Identifier {
    token: string
-   dereferences: any
-   parser: Parser
+   dereferences?: any
+   parser: Parser | null | {}
 
-  constructor (parser: Parser, token: string, dereferences: any[]) {
+  constructor (parser: Parser | null | {}, token: string, dereferences?: any[]) {
     this.token = token
     this.dereferences = dereferences
     this.parser = parser
@@ -44,7 +44,7 @@ export default class Identifier {
    *
    *     See: `this` tests of our dereference function.
    */
-  dereference (value, $context, globals, node) {
+  dereference (value, $context?, globals?, node?) {
     let member
     let refs = this.dereferences || []
     const $data = $context.$data || {}
@@ -87,7 +87,7 @@ export default class Identifier {
    * @param  {object | Identifier | Expression} parent
    * @return {mixed}  Return the primitive or an accessor.
    */
-  get_value (parent, context, globals, node) {
+  get_value (parent, context?, globals?, node?) {
     const intermediate = parent && !(parent instanceof Identifier)
       ? Node.value_of(parent, context, globals, node)[this.token]
       : context.lookup(this.token, globals, node)

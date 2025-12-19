@@ -1,0 +1,52 @@
+{
+  "version": "4.0.0-beta1.3",
+  "name": "@tko/utils.spec",
+  "description": "TKO Test Utilities",
+  "type": "module",
+  "files": [
+    "dist",
+    "!**/*.tsbuildinfo"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/knockout/tko.git"
+  },
+  "keywords": [
+    "knockout",
+    "tko",
+    "ko"
+  ],
+  "author": "The Knockout Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/knockout/tko/issues"
+  },
+  "homepage": "https://tko.io",
+  "karma": {
+    "frameworks": [
+      "jasmine"
+    ]
+  },
+  "dependencies": {
+    "tslib": "^2.2.0"
+  },
+  "devDependencies": {
+    "@tko/utils": "*",
+    "@tko/binding.template": "*"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  ],
+  "exports": {
+    ".": {
+      "@tko/source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    }
+  }
+}

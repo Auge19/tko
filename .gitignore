@@ -30,3 +30,4 @@ coverage/
 !.vscode/launch.json
 .vscode/settings.json
 **/*.tsbuildinfo
+**/out-tsc/*
