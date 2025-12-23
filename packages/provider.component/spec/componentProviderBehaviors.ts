@@ -1,26 +1,15 @@
+import { options } from '@tko/utils'
 
-import {
-    options
-} from '@tko/utils'
+import { observable, isObservable } from '@tko/observable'
 
-import {
-    observable, isObservable
-} from '@tko/observable'
-
-import {
-    applyBindings
-} from '@tko/bind'
+import { applyBindings } from '@tko/bind'
 
 import { MultiProvider } from '@tko/provider.multi'
 import { DataBindProvider } from '@tko/provider.databind'
 
-import {
-    bindings as coreBindings
-} from '@tko/binding.core'
+import { bindings as coreBindings } from '@tko/binding.core'
 
-import {
-  bindings as componentBindings
-} from '@tko/binding.component'
+import { bindings as componentBindings } from '@tko/binding.component'
 
 import components from '@tko/utils.component'
 
@@ -29,14 +18,12 @@ import { ComponentProvider } from '../dist'
 import '@tko/utils/helpers/jasmine-13-helper'
 
 describe('Components: Provider', function () {
-  var bindingHandlers
+  let bindingHandlers
 
   describe('custom elements', function () {
-        // Note: knockout/spec/components
+    // Note: knockout/spec/components
     beforeEach(function () {
-      var provider = new MultiProvider({
-        providers: [new DataBindProvider(), new ComponentProvider()]
-      })
+      const provider = new MultiProvider({ providers: [new DataBindProvider(), new ComponentProvider()] })
       options.bindingProviderInstance = provider
       bindingHandlers = provider.bindingHandlers
 
@@ -50,20 +37,18 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      var initialMarkup = 'He: <helium></helium>'
-      var root = document.createElement('div')
+      const initialMarkup = 'He: <helium></helium>'
+      const root = document.createElement('div')
       root.innerHTML = initialMarkup
 
-            // Since components are loaded asynchronously, it doesn't show up synchronously
+      // Since components are loaded asynchronously, it doesn't show up synchronously
       applyBindings(null, root)
-            // expect(root.innerHTML).toEqual(initialMarkup);
-      expect(root.innerHTML).toEqual(
-                'He: <helium>X<i data-bind="text: 123">123</i></helium>'
-            )
+      // expect(root.innerHTML).toEqual(initialMarkup);
+      expect(root.innerHTML).toEqual('He: <helium>X<i data-bind="text: 123">123</i></helium>')
     })
 
     it('interprets the params of custom elements', function () {
-      var called = false
+      let called = false
       components.register('argon', {
         viewModel: function (/* params */) {
           this.delta = 'G2k'
@@ -73,68 +58,58 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      var ce = document.createElement('argon')
-      ce.setAttribute('params',
-                'alpha: 1, beta: [2], charlie: {x: 3}, delta: delta'
-            )
-      applyBindings({
-        delta: 'QxE'
-      }, ce)
-      expect(ce.innerHTML).toEqual(
-                '<b>sXZ <u data-bind="text: delta">G2k</u></b>')
+      const ce = document.createElement('argon')
+      ce.setAttribute('params', 'alpha: 1, beta: [2], charlie: {x: 3}, delta: delta')
+      applyBindings({ delta: 'QxE' }, ce)
+      expect(ce.innerHTML).toEqual('<b>sXZ <u data-bind="text: delta">G2k</u></b>')
       expect(called).toEqual(true)
     })
 
     it('does not unwrap observables (#44)', function () {
-            // Per https://plnkr.co/edit/EzpJD3yXd01aqPbuOq1X
-      function AppViewModel (value) {
+      // Per https://plnkr.co/edit/EzpJD3yXd01aqPbuOq1X
+      function AppViewModel(value) {
         this.appvalue = observable(value)
       }
 
-      function ParentViewModel (params) {
+      function ParentViewModel(params) {
         this.parentvalue = params.value
       }
 
-      function ChildViewModel (params) {
+      function ChildViewModel(params) {
         expect(isObservable(params.value)).toEqual(true)
         this.cvalue = params.value
       }
 
-      var ps = document.createElement('script')
+      const ps = document.createElement('script')
       ps.setAttribute('id', 'parent-44')
       ps.setAttribute('type', 'text/html')
-      ps.innerHTML = '<div>Parent: <span data-bind="text: parentvalue"></span></div>' +
-                '<child params="value: parentvalue"></child>'
+      ps.innerHTML =
+        '<div>Parent: <span data-bind="text: parentvalue"></span></div>' + '<child params="value: parentvalue"></child>'
       document.body.appendChild(ps)
 
-      var cs = document.createElement('script')
+      const cs = document.createElement('script')
       cs.setAttribute('id', 'child-44')
       cs.setAttribute('type', 'text/html')
       cs.innerHTML = ''
       document.body.appendChild(cs)
 
-      var div = document.createElement('div')
-      div.innerHTML = '<div data-bind="text: appvalue"></div>' +
-                '<parent params="value: appvalue"></parent>'
+      const div = document.createElement('div')
+      div.innerHTML = '<div data-bind="text: appvalue"></div>' + '<parent params="value: appvalue"></parent>'
 
-      var viewModel = new AppViewModel('hello')
+      const viewModel = new AppViewModel('hello')
       components.register('parent', {
-        template: {
-          element: 'parent-44'
-        },
+        template: { element: 'parent-44' },
         viewModel: ParentViewModel,
         synchronous: true,
         ignoreCustomElementWarning: true
       })
       components.register('child', {
-        template: {
-          element: 'child-44'
-        },
+        template: { element: 'child-44' },
         viewModel: ChildViewModel,
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      var options = {
+      const options = {
         attribute: 'data-bind',
         globals: window,
         bindings: bindingHandlers,
@@ -146,27 +121,23 @@ describe('Components: Provider', function () {
     })
 
     it('uses empty params={$raw:{}} if the params attr is whitespace', function () {
-            // var called = false;
+      // var called = false;
       components.register('lithium', {
         viewModel: function (params) {
-          expect(params).toEqual({
-            $raw: {}
-          })
+          expect(params).toEqual({ $raw: {} })
         },
         template: 'hello',
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      var ce = document.createElement('lithium')
+      const ce = document.createElement('lithium')
       ce.setAttribute('params', '   ')
-      applyBindings({
-        delta: 'QxE'
-      }, ce)
-            // No error raised.
+      applyBindings({ delta: 'QxE' }, ce)
+      // No error raised.
     })
 
     it('parses `text: "alpha"` on a custom element', function () {
-            // re brianmhunt/knockout-secure-binding#38
+      // re brianmhunt/knockout-secure-binding#38
       components.register('neon', {
         viewModel: function (params) {
           expect(params.text).toEqual('Knights of Ne.')
@@ -175,14 +146,14 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      var ne = document.createElement('neon')
+      const ne = document.createElement('neon')
       ne.setAttribute('params', 'text: "Knights of Ne."')
       applyBindings({}, ne)
-            // No error raised.
+      // No error raised.
     })
   })
 
-    /* describe("nodeParamsToObject", function() {
+  /* describe("nodeParamsToObject", function() {
         // var parser = null;
         beforeEach(function() {
 

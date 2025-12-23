@@ -1,31 +1,27 @@
-import {
-    applyBindings
-} from '@tko/bind'
+import { applyBindings } from '@tko/bind'
 
-import {
-    DataBindProvider
-} from '@tko/provider.databind'
+import { DataBindProvider } from '@tko/provider.databind'
 
-import {
-    options
-} from '@tko/utils'
+import { options } from '@tko/utils'
 
-import {bindings as coreBindings} from '../dist'
+import { bindings as coreBindings } from '../dist'
 
 import '@tko/utils/helpers/jasmine-13-helper'
 
 describe('Binding: HTML', function () {
-  let testNode : HTMLElement
-  beforeEach(function() { testNode = jasmine.prepareTestNode() })
+  let testNode: HTMLElement
+  beforeEach(function () {
+    testNode = jasmine.prepareTestNode()
+  })
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    const provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
   })
 
   it('Should assign the value to the node without HTML-encoding the value', function () {
-    var model = { textProp: 'My <span>HTML-containing</span> value' }
+    const model = { textProp: 'My <span>HTML-containing</span> value' }
     testNode.innerHTML = "<span data-bind='html:textProp'></span>"
     applyBindings(model, testNode)
     expect((testNode.childNodes[0] as HTMLElement).innerHTML.toLowerCase()).toEqual(model.textProp.toLowerCase())
@@ -45,28 +41,30 @@ describe('Binding: HTML', function () {
   })
 
   it('Should be able to write arbitrary HTML, even if it is not semantically correct', function () {
-        // Represents issue #98 (https://github.com/SteveSanderson/knockout/issues/98)
-        // IE 8 and earlier is excessively strict about the use of .innerHTML - it throws
-        // if you try to write a <P> tag inside an existing <P> tag, for example.
-    var model = { textProp: "<p>hello</p><p>this isn't semantically correct</p>" }
+    // Represents issue #98 (https://github.com/SteveSanderson/knockout/issues/98)
+    // IE 8 and earlier is excessively strict about the use of .innerHTML - it throws
+    // if you try to write a <P> tag inside an existing <P> tag, for example.
+    const model = { textProp: "<p>hello</p><p>this isn't semantically correct</p>" }
     testNode.innerHTML = "<p data-bind='html:textProp'></p>"
     applyBindings(model, testNode)
     expect(testNode.children[0]).toContainHtml(model.textProp)
   })
 
   it('Should be able to write arbitrary HTML, including <tr> elements into tables', function () {
-        // Some HTML elements are awkward, because the browser implicitly adds surrounding
-        // elements, or won't allow those elements to be direct children of others.
-        // The most common examples relate to tables.
-    var model = { textProp: '<tr><td>hello</td></tr>' }
+    // Some HTML elements are awkward, because the browser implicitly adds surrounding
+    // elements, or won't allow those elements to be direct children of others.
+    // The most common examples relate to tables.
+    const model = { textProp: '<tr><td>hello</td></tr>' }
     testNode.innerHTML = "<table data-bind='html:textProp'></table>"
     applyBindings(model, testNode)
 
-        // Accept either of the following outcomes - there may or may not be an implicitly added <tbody>.
-    var tr = testNode.children[0].children[0]
-    if (tr.tagName == 'TBODY') { tr = tr.children[0] }
+    // Accept either of the following outcomes - there may or may not be an implicitly added <tbody>.
+    let tr = testNode.children[0].children[0]
+    if (tr.tagName == 'TBODY') {
+      tr = tr.children[0]
+    }
 
-    var td = tr.children[0]
+    const td = tr.children[0]
 
     expect(tr.tagName).toEqual('TR')
     expect(td.tagName).toEqual('TD')

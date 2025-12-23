@@ -4,48 +4,39 @@
 
  */
 
-import {
-  removeNode, arrayForEach, options, domData
-} from '@tko/utils'
+import { removeNode, arrayForEach, options, domData } from '@tko/utils'
 
-import {
-  observable, observableArray, isObservable
-} from '@tko/observable'
+import { observable, observableArray, isObservable } from '@tko/observable'
 
 import type { ObservableArray } from '@tko/observable'
 
-import {
-  computed
-} from '@tko/computed'
+import { computed } from '@tko/computed'
 
-import {
-  contextFor, dataFor, applyBindings
-} from '@tko/bind'
+import { contextFor, dataFor, applyBindings } from '@tko/bind'
 
 import { DataBindProvider } from '@tko/provider.databind'
 import { VirtualProvider } from '@tko/provider.virtual'
 import { MultiProvider } from '@tko/provider.multi'
 
-import {
-  bindings as coreBindings
-} from '@tko/binding.core'
+import { bindings as coreBindings } from '@tko/binding.core'
 
-import {
-  ForEachBinding
-} from '../dist/foreach'
+import { ForEachBinding } from '../dist/foreach'
 
 import $ from 'jquery'
 
-import { assert } from "chai"
+import { assert } from 'chai'
 
 beforeEach(function () {
-  var provider = new MultiProvider({
-    providers: [new DataBindProvider(), new VirtualProvider()]
-  })
+  const provider = new MultiProvider({ providers: [new DataBindProvider(), new VirtualProvider()] })
   options.bindingProviderInstance = provider
   provider.bindingHandlers.set(coreBindings)
   provider.bindingHandlers.set({ foreach: ForEachBinding })
   // provider.bindingHandlers.set(ifBindings);
+
+  // flooding the test-logs with sanitization is not useful
+  options.sanitizeHtmlTemplate = function (html: string) {
+    return html
+  }
 })
 
 beforeEach(function () {
@@ -54,38 +45,52 @@ beforeEach(function () {
 
 describe('each binding', function () {
   it('works with a static list', function () {
-    var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
-    var list = [1, 2, 3]
+    const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
+    const list = [1, 2, 3]
     applyBindings(list, target[0])
     assert.equal($(target).find('li').length, 3)
   })
 
   it('works with an observable array', function () {
-    var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
-    var list = [1, 2, 3]
+    const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
+    const list = [1, 2, 3]
     applyBindings(observableArray(list), target[0])
     assert.equal($(target).find('li').length, 3)
   })
 
   it('works with a plain observable with an array', function () {
-    var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
-    var list = [1, 2, 3]
+    const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
+    const list = [1, 2, 3]
     applyBindings(observable(list), target[0])
     assert.equal($(target).find('li').length, 3)
   })
 
   it('works with a computed observable', function () {
-    var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
-    var list = [1, 2, 3]
-    applyBindings(computed({read: function () { return list }}), target[0])
+    const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
+    const list = [1, 2, 3]
+    applyBindings(
+      computed({
+        read: function () {
+          return list
+        }
+      }),
+      target[0]
+    )
     assert.equal($(target).find('li').length, 3)
   })
 
   it('processes initial data synchronously', function () {
     ForEachBinding.setSync(false)
-    var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
-    var list = [1, 2, 3]
-    applyBindings(computed({ read: function () { return list } }), target[0])
+    const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
+    const list = [1, 2, 3]
+    applyBindings(
+      computed({
+        read: function () {
+          return list
+        }
+      }),
+      target[0]
+    )
     assert.equal($(target).find('li').length, 3)
   })
 
@@ -93,8 +98,8 @@ describe('each binding', function () {
     ForEachBinding.setSync(false)
     // reset to the default async animateFrame
     // foreac
-    var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
-    var list = observableArray([1, 2, 3])
+    const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
+    const list = observableArray([1, 2, 3])
     applyBindings(list, target[0])
     assert.equal($(target).find('li').length, 3)
 
@@ -105,136 +110,134 @@ describe('each binding', function () {
   })
 
   it('applies bindings to the immediate child', function () {
-    var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
-    var list = ['a', 'b', 'c']
+    const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
+    const list = ['a', 'b', 'c']
     applyBindings(list, target[0])
     assert.equal($(target).find('li').text(), 'abc')
   })
 
   it('applies to inner children', function () {
-    var target = $("<ul data-bind='foreach: $data'><li><em data-bind='text: $data'></em></li></div>")
-    var list = ['a', 'b', 'c']
+    const target = $("<ul data-bind='foreach: $data'><li><em data-bind='text: $data'></em></li></div>")
+    const list = ['a', 'b', 'c']
     applyBindings(list, target[0])
-    assert.equal($(target).html(), '<li><em data-bind="text: $data">a</em></li>' +
-                                   '<li><em data-bind="text: $data">b</em></li>' +
-                                   '<li><em data-bind="text: $data">c</em></li>')
+    assert.equal(
+      $(target).html(),
+      '<li><em data-bind="text: $data">a</em></li>'
+        + '<li><em data-bind="text: $data">b</em></li>'
+        + '<li><em data-bind="text: $data">c</em></li>'
+    )
   })
 
   it('works with virtual elements', function () {
-    var target = $("<div><!-- ko foreach: $data --><em data-bind='text: $data'></em><!-- /ko --></div>")
-    var list = ['A', 'B']
+    const target = $("<div><!-- ko foreach: $data --><em data-bind='text: $data'></em><!-- /ko --></div>")
+    const list = ['A', 'B']
     applyBindings(list, target[0])
-    assert.equal($(target).html(), '<!-- ko foreach: $data -->' +
-                                   '<em data-bind="text: $data">A</em>' +
-                                   '<em data-bind="text: $data">B</em>' +
-                                   '<!-- /ko -->')
+    assert.equal(
+      $(target).html(),
+      '<!-- ko foreach: $data -->'
+        + '<em data-bind="text: $data">A</em>'
+        + '<em data-bind="text: $data">B</em>'
+        + '<!-- /ko -->'
+    )
   })
 
   it('bindings only inner (virtual) element', function () {
-    var target = $("<ul data-bind='foreach: $data'><!-- ko text: $data -->Z<!-- /ko --></ul>")
-    var list = ['E', 'V']
+    const target = $("<ul data-bind='foreach: $data'><!-- ko text: $data -->Z<!-- /ko --></ul>")
+    const list = ['E', 'V']
     applyBindings(list, target[0])
-    assert.equal(target.html(), '<!-- ko text: $data -->E<!-- /ko -->' +
-                                '<!-- ko text: $data -->V<!-- /ko -->')
+    assert.equal(target.html(), '<!-- ko text: $data -->E<!-- /ko -->' + '<!-- ko text: $data -->V<!-- /ko -->')
   })
 
   it('bindings mixed inner virtual elements', function () {
-    var target = $("<ul data-bind='foreach: $data'>Q<!-- ko text: $data -->Z2<!-- /ko -->R</ul>")
-    var list = ['E2', 'V2']
+    const target = $("<ul data-bind='foreach: $data'>Q<!-- ko text: $data -->Z2<!-- /ko -->R</ul>")
+    const list = ['E2', 'V2']
     applyBindings(list, target[0])
-    assert.equal(target.html(), 'Q<!-- ko text: $data -->E2<!-- /ko -->R' +
-                                'Q<!-- ko text: $data -->V2<!-- /ko -->R')
+    assert.equal(target.html(), 'Q<!-- ko text: $data -->E2<!-- /ko -->R' + 'Q<!-- ko text: $data -->V2<!-- /ko -->R')
   })
 
   it('uses the name/id of a <template>', function () {
-    var target = $("<ul data-bind='foreach: {name: \"tID\", data: $data}'>Zee</ul>")
-    var list = ['F1', 'F2']
-    var $template = $("<template id='tID'>X<!-- ko text: $data--><!--/ko--></template>")
-      .appendTo(document.body)
+    const target = $('<ul data-bind=\'foreach: {name: "tID", data: $data}\'>Zee</ul>')
+    const list = ['F1', 'F2']
+    const $template = $("<template id='tID'>X<!-- ko text: $data--><!--/ko--></template>").appendTo(document.body)
     applyBindings(list, target[0])
-    assert.equal(target.html(), 'X<!-- ko text: $data-->F1<!--/ko-->' +
-                                'X<!-- ko text: $data-->F2<!--/ko-->')
+    assert.equal(target.html(), 'X<!-- ko text: $data-->F1<!--/ko-->' + 'X<!-- ko text: $data-->F2<!--/ko-->')
     $template.remove()
   })
 
   it('uses the name/id of a <script>', function () {
-    var target = $("<ul data-bind='foreach: {name: \"tID\", data: $data}'>Zee</ul>")
-    var list = ['G1', 'G2']
-    var $template = $("<script type='text/ko-template' id='tID'></script>")
-      .appendTo(document.body)
+    const target = $('<ul data-bind=\'foreach: {name: "tID", data: $data}\'>Zee</ul>')
+    const list = ['G1', 'G2']
+    const $template = $("<script type='text/ko-template' id='tID'></script>").appendTo(document.body)
     $template.text('Y<!-- ko text: $data--><!--/ko-->')
     applyBindings(list, target[0])
-    assert.equal(target.html(), 'Y<!-- ko text: $data-->G1<!--/ko-->' +
-                                'Y<!-- ko text: $data-->G2<!--/ko-->')
+    assert.equal(target.html(), 'Y<!-- ko text: $data-->G1<!--/ko-->' + 'Y<!-- ko text: $data-->G2<!--/ko-->')
     $template.remove()
   })
 
   it('uses the name/id of a <div>', function () {
-    var target = $("<ul data-bind='foreach: {name: \"tID2\", data: $data}'>Zee</ul>")
-    var list = ['H1', 'H2']
-    var $template = $("<div id='tID2'>Z<!-- ko text: $data--><!--/ko--></div>")
-      .appendTo(document.body)
+    const target = $('<ul data-bind=\'foreach: {name: "tID2", data: $data}\'>Zee</ul>')
+    const list = ['H1', 'H2']
+    const $template = $("<div id='tID2'>Z<!-- ko text: $data--><!--/ko--></div>").appendTo(document.body)
     applyBindings(list, target[0])
-    assert.equal(target.html(), 'Z<!-- ko text: $data-->H1<!--/ko-->' +
-                                'Z<!-- ko text: $data-->H2<!--/ko-->')
+    assert.equal(target.html(), 'Z<!-- ko text: $data-->H1<!--/ko-->' + 'Z<!-- ko text: $data-->H2<!--/ko-->')
     $template.remove()
   })
 })
 
 describe('is empty/conditional', function () {
   it('sets `elseChainSatisfied` to false for an empty array', function () {
-    var div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
-    var obs = new Array()
-    var view = {obs: obs}
+    const div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
+    const obs = new Array()
+    const view = { obs: obs }
     applyBindings(view, div[0])
     assert.equal(domData.get(div[0], 'conditional').elseChainSatisfied(), false)
   })
 
   it('sets `elseChainSatisfied` to false for an undefined obs array', function () {
-    var div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
-    var obs = observableArray()
-    var view = {obs: obs}
+    const div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
+    const obs = observableArray()
+    const view = { obs: obs }
     applyBindings(view, div[0])
     assert.equal(domData.get(div[0], 'conditional').elseChainSatisfied(), false)
   })
 
   it('sets `elseChainSatisfied` to false for an empty obs array', function () {
-    var div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
-    var obs = observableArray([])
-    var view = {obs: obs}
+    const div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
+    const obs = observableArray([])
+    const view = { obs: obs }
     applyBindings(view, div[0])
     assert.equal(domData.get(div[0], 'conditional').elseChainSatisfied(), false)
   })
 
   it('sets `elseChainSatisfied` to true for a non-empty array', function () {
-    var div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
-    var obs = [1, 2, 3]
-    var view = {obs: obs}
+    const div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
+    const obs = [1, 2, 3]
+    const view = { obs: obs }
     applyBindings(view, div[0])
     assert.equal(domData.get(div[0], 'conditional').elseChainSatisfied(), true)
   })
 
   it('sets `elseChainSatisfied` to true for a non-empty obs array', function () {
-    var div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
-    var obs = observableArray([1, 2, 3])
-    var view = {obs: obs}
+    const div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
+    const obs = observableArray([1, 2, 3])
+    const view = { obs: obs }
     applyBindings(view, div[0])
     assert.equal(domData.get(div[0], 'conditional').elseChainSatisfied(), true)
   })
 
   it('sets `elseChainSatisfied` to true after array is filled', function () {
-    var div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
-    var obs: ObservableArray<number> = observableArray([])
-    var view = {obs: obs}
+    const div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
+    const obs: ObservableArray<number> = observableArray<number>([])
+    const view = { obs: obs }
     applyBindings(view, div[0])
     obs([1, 2, 3])
     assert.equal(domData.get(div[0], 'conditional').elseChainSatisfied(), true)
   })
 
   it('sets `elseChainSatisfied` to false after array is emptied', function () {
-    var div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
-    var obs = observableArray([1, 2, 3])
-    var view = {obs: obs}
+    const div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
+    const obs = observableArray([1, 2, 3])
+    const view = { obs: obs }
     applyBindings(view, div[0])
     obs([])
     assert.equal(domData.get(div[0], 'conditional').elseChainSatisfied(), false)
@@ -242,12 +245,12 @@ describe('is empty/conditional', function () {
 })
 
 describe('observable array changes', function () {
-  var div, obs, view
+  let div, obs, view
 
   beforeEach(function () {
     div = $("<div data-bind='foreach: obs'><i data-bind='text: $data'></i></div>")
     obs = observableArray()
-    view = {obs: obs}
+    view = { obs: obs }
   })
 
   it('adds an item to an empty list', function () {
@@ -424,13 +427,18 @@ describe('observable array changes', function () {
   })
 
   it('accepts changes via a computed observable', function () {
-    var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
-    var toggle = observable(true)
-    var list1 = [1, 2, 3]
-    var list2 = [1, 2, 3, 4, 5, 6]
-    applyBindings(computed({
-      read: function () { return toggle() ? list1 : list2 }
-    }), target[0])
+    const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
+    const toggle = observable(true)
+    const list1 = [1, 2, 3]
+    const list2 = [1, 2, 3, 4, 5, 6]
+    applyBindings(
+      computed({
+        read: function () {
+          return toggle() ? list1 : list2
+        }
+      }),
+      target[0]
+    )
     assert.equal(target.text(), '123')
     toggle(false)
     assert.equal(target.text(), '123456')
@@ -440,11 +448,17 @@ describe('observable array changes', function () {
     it('sorting complex data moves 1 DOM node', function () {
       div = $("<div data-bind='foreach: obs'><div data-bind='html: testHtml'></div></div>")
       applyBindings(view, div[0])
-      obs([{ id: 4, testHtml: '<span>A</span>' }, { id: 6, testHtml: '<span>B</span>' }, { id: 1, testHtml: '<span>C</span>' }])
-      var nodes = div.children().toArray()
+      obs([
+        { id: 4, testHtml: '<span>A</span>' },
+        { id: 6, testHtml: '<span>B</span>' },
+        { id: 1, testHtml: '<span>C</span>' }
+      ])
+      const nodes = div.children().toArray()
       assert.equal(div.text(), 'ABC')
-      obs.sort(function (a, b) { return a.id - b.id })
-      var nodes2 = div.children().toArray()
+      obs.sort(function (a, b) {
+        return a.id - b.id
+      })
+      const nodes2 = div.children().toArray()
       assert.strictEqual(nodes[1], nodes2[2])
       assert.strictEqual(nodes[2], nodes2[0])
       assert.strictEqual(nodes[0], nodes2[1])
@@ -454,11 +468,16 @@ describe('observable array changes', function () {
     it('sorting complex data moves all DOM nodes', function () {
       div = $("<div data-bind='foreach: obs'><div data-bind='html: testHtml'></div></div>")
       applyBindings(view, div[0])
-      obs([{ id: 7, testHtml: '<span>A</span>' }, { id: 6, testHtml: '<span>B</span>' }, { id: 1, testHtml: '<span>C</span>' }, { id: 9, testHtml: '<span>D</span>' }])
-      var nodes = div.children().toArray()
+      obs([
+        { id: 7, testHtml: '<span>A</span>' },
+        { id: 6, testHtml: '<span>B</span>' },
+        { id: 1, testHtml: '<span>C</span>' },
+        { id: 9, testHtml: '<span>D</span>' }
+      ])
+      const nodes = div.children().toArray()
       assert.equal(div.text(), 'ABCD')
       obs.reverse()
-      var nodes2 = div.children().toArray()
+      const nodes2 = div.children().toArray()
       assert.strictEqual(nodes[0], nodes2[3])
       assert.strictEqual(nodes[1], nodes2[2])
       assert.strictEqual(nodes[2], nodes2[1])
@@ -467,15 +486,23 @@ describe('observable array changes', function () {
     })
 
     it('sorting complex data recreates DOM nodes if move disabled', function () {
-      var originalShouldDelayDeletion = ForEachBinding.prototype.shouldDelayDeletion
-      ForEachBinding.prototype.shouldDelayDeletion = function (/* data */) { return false }
+      const originalShouldDelayDeletion = ForEachBinding.prototype.shouldDelayDeletion
+      ForEachBinding.prototype.shouldDelayDeletion = function (/* data */) {
+        return false
+      }
       div = $("<div data-bind='foreach: { data: obs }'><div data-bind='html: testHtml'></div></div>")
       applyBindings(view, div[0])
-      obs([{ id: 7, testHtml: '<span>A</span>' }, { id: 6, testHtml: '<span>B</span>' }, { id: 1, testHtml: '<span>C</span>' }])
-      var nodes = div.children().toArray()
+      obs([
+        { id: 7, testHtml: '<span>A</span>' },
+        { id: 6, testHtml: '<span>B</span>' },
+        { id: 1, testHtml: '<span>C</span>' }
+      ])
+      const nodes = div.children().toArray()
       assert.equal(div.text(), 'ABC')
-      obs.sort(function (a, b) { return a.id - b.id })
-      var nodes2 = div.children().toArray()
+      obs.sort(function (a, b) {
+        return a.id - b.id
+      })
+      const nodes2 = div.children().toArray()
       assert.equal(div.text(), 'CBA')
       assert.notStrictEqual(nodes[1], nodes2[2])
       assert.notStrictEqual(nodes[2], nodes2[0])
@@ -484,10 +511,13 @@ describe('observable array changes', function () {
     })
 
     it('Sort large complex array makes correct DOM moves', function () {
-      var itemNumber = 100
-      div = $("<div data-bind='foreach: { data: obs }'><div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div></div></div>")
+      const itemNumber = 100
+      div = $(
+        "<div data-bind='foreach: { data: obs }'><div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div></div></div>"
+      )
       applyBindings(view, div[0])
-      var arr = new Array(), i
+      let arr = new Array(),
+        i
       for (i = 0; i != itemNumber; ++i) {
         arr.push({ id: Math.floor(Math.random() * itemNumber), testHtml: '<span>Item ' + i + '</span>' })
       }
@@ -495,31 +525,45 @@ describe('observable array changes', function () {
       assert.equal(div.children().length, itemNumber)
       div.children().prop('testprop', 10)
       // console.time("with move");
-      obs.sort(function (a, b) { return a.id - b.id })
+      obs.sort(function (a, b) {
+        return a.id - b.id
+      })
       // console.timeEnd("with move");
       for (i = 0; i != itemNumber; ++i) {
         arr[i].num = i
       }
       assert.equal(div.children().length, itemNumber)
-      assert.equal(div.children().filter(function () { return this.testprop == 10 }).length, itemNumber)
+      assert.equal(
+        div.children().filter(function () {
+          return this.testprop == 10
+        }).length,
+        itemNumber
+      )
       div.children().each(function (index) {
         assert.equal(index, dataFor(this).num)
       })
     })
 
     it('Sort large complex array makes correct DOM order without move', function () {
-      var originalShouldDelayDeletion = ForEachBinding.prototype.shouldDelayDeletion
-      ForEachBinding.prototype.shouldDelayDeletion = function (/* data */) { return false }
-      var itemNumber = 100
-      div = $("<div data-bind='foreach: { data: obs }'><div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div></div></div>")
+      const originalShouldDelayDeletion = ForEachBinding.prototype.shouldDelayDeletion
+      ForEachBinding.prototype.shouldDelayDeletion = function (/* data */) {
+        return false
+      }
+      const itemNumber = 100
+      div = $(
+        "<div data-bind='foreach: { data: obs }'><div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div><div data-bind='html: testHtml'></div></div></div>"
+      )
       applyBindings(view, div[0])
-      var arr = new Array(), i
+      let arr = new Array(),
+        i
       for (i = 0; i != itemNumber; ++i) {
         arr.push({ id: Math.floor(Math.random() * itemNumber), testHtml: '<span>Item ' + i + '</span>' })
       }
       obs(arr)
       assert.equal(div.children().length, itemNumber)
-      obs.sort(function (a, b) { return a.id - b.id })
+      obs.sort(function (a, b) {
+        return a.id - b.id
+      })
       for (i = 0; i != itemNumber; ++i) {
         arr[i].num = i
       }
@@ -533,13 +577,13 @@ describe('observable array changes', function () {
     it('processes duplicate data 1', function () {
       div = $("<div data-bind='foreach: obs'><div data-bind='html: testHtml'></div></div>")
       applyBindings(view, div[0])
-      var itemA = { id: 4, testHtml: '<span>A</span>' }
-      var itemB = { id: 6, testHtml: '<span>B</span>' }
+      const itemA = { id: 4, testHtml: '<span>A</span>' }
+      const itemB = { id: 6, testHtml: '<span>B</span>' }
       obs([itemB, itemA, itemA, itemA])
-      var nodes = div.children().toArray()
+      const nodes = div.children().toArray()
       assert.equal(div.text(), 'BAAA')
       obs([itemA, itemB])
-      var nodes2 = div.children().toArray()
+      const nodes2 = div.children().toArray()
       assert.strictEqual(nodes[3], nodes2[0])
       assert.strictEqual(nodes[0], nodes2[1])
       assert.equal(div.text(), 'AB')
@@ -548,90 +592,123 @@ describe('observable array changes', function () {
     it('processes duplicate data 2', function () {
       div = $("<div data-bind='foreach: obs'><div data-bind='html: testHtml'></div></div>")
       applyBindings(view, div[0])
-      var itemA = { id: 4, testHtml: '<span>A</span>' }
-      var itemB = { id: 6, testHtml: '<span>B</span>' }
-      var others = [1, 2, 3, 4].map(function (e) { return { id: e, testHtml: '' } })
+      const itemA = { id: 4, testHtml: '<span>A</span>' }
+      const itemB = { id: 6, testHtml: '<span>B</span>' }
+      const others = [1, 2, 3, 4].map(function (e) {
+        return { id: e, testHtml: '' }
+      })
       obs([itemB, others[0], others[1], others[2], others[3], itemA, itemA])
       // var nodes =
-      div.children().each(function () { this.test = 1 }).toArray()
+      div
+        .children()
+        .each(function () {
+          this.test = 1
+        })
+        .toArray()
       assert.equal(div.text(), 'BAA')
       obs([itemB, itemA, itemA, itemA, itemA, others[0], others[1], others[2], others[3]])
       // var nodes2 =
       div.children().toArray()
       // reuses two 'A' node set
-      assert.equal(div.children().filter(function () { return this.test == 1 }).length, 7)
+      assert.equal(
+        div.children().filter(function () {
+          return this.test == 1
+        }).length,
+        7
+      )
       // ... and creates two new
-      assert.equal(div.children().filter(function () { return this.test === undefined }).length, 2)
+      assert.equal(
+        div.children().filter(function () {
+          return this.test === undefined
+        }).length,
+        2
+      )
       assert.equal(div.text(), 'BAAAA')
     })
 
     it('processes changes from more changesets 1', function () {
-      var originalAnimateFrame = ForEachBinding.animateFrame
-      ForEachBinding.animateFrame = function () { }
+      const originalAnimateFrame = ForEachBinding.animateFrame
+      ForEachBinding.animateFrame = function () {}
       ForEachBinding.setSync(false)
       div = $("<div data-bind='visible: true'></div>")
       applyBindings({}, div[0])
 
-      var itemA = { id: 4, testHtml: '<span>A</span>' }
-      var others = [11, 12, 13, 14].map(function (e) { return { id: e, testHtml: 'C' + e } })
+      const itemA = { id: 4, testHtml: '<span>A</span>' }
+      const others = [11, 12, 13, 14].map(function (e) {
+        return { id: e, testHtml: 'C' + e }
+      })
       obs([itemA, others[0], others[1], others[2], others[3]])
 
       // manual initialization to be able to access processQueue method
-      var ffe = new ForEachBinding({
+      const ffe = new ForEachBinding({
         $element: div[0],
         $context: contextFor(div[0]),
-        allBindings: { get () {} },
-        valueAccessor () {
-          return {
-            data: obs,
-            templateNode: $("<template><div data-bind='html: testHtml'></div></template>")[0]
-          }
+        allBindings: { get() {} },
+        valueAccessor() {
+          return { data: obs, templateNode: $("<template><div data-bind='html: testHtml'></div></template>")[0] }
         }
       })
 
       ffe.processQueue()
       // var nodes =
-      div.children().each(function () { this.test = 1 }).toArray()
+      div
+        .children()
+        .each(function () {
+          this.test = 1
+        })
+        .toArray()
       assert.equal(div.text(), 'AC11C12C13C14')
       obs([others[0], others[1], others[2], others[3], itemA])
       obs([others[1], itemA, others[2], others[3]])
-      obs.sort(function (a, b) { return b.id - a.id })
+      obs.sort(function (a, b) {
+        return b.id - a.id
+      })
       assert.equal(div.text(), 'AC11C12C13C14')
 
       ffe.processQueue()
       assert.equal(div.text(), 'C14C13C12A')
       // moved all five nodes around
-      assert.equal(div.children().filter(function () { return this.test == 1 }).length, 4)
+      assert.equal(
+        div.children().filter(function () {
+          return this.test == 1
+        }).length,
+        4
+      )
       ForEachBinding.animateFrame = originalAnimateFrame
     })
 
     it('processes changes from more changesets 2', function () {
-      var originalAnimateFrame = ForEachBinding.animateFrame
-      ForEachBinding.animateFrame = function () { }
+      const originalAnimateFrame = ForEachBinding.animateFrame
+      ForEachBinding.animateFrame = function () {}
       ForEachBinding.setSync(false)
       div = $("<div data-bind='visible: true'></div>")
       applyBindings({}, div[0])
 
-      var itemA = { id: 4, testHtml: '<span>A</span>' }
-      var itemB = { id: 5, testHtml: '<span>B</span>' }
+      const itemA = { id: 4, testHtml: '<span>A</span>' }
+      const itemB = { id: 5, testHtml: '<span>B</span>' }
       obs([itemA, itemB])
 
       // manual initialization to be able to access processQueue method
-      var ffe = new ForEachBinding({
+      const ffe = new ForEachBinding({
         $element: div[0],
-        valueAccessor () {
+        valueAccessor() {
           return {
             data: obs,
             templateNode: $("<script type='text/html'><div data-bind='html: testHtml'></div></script>")[0]
           }
         },
-        allBindings: { get () {} },
+        allBindings: { get() {} },
         $context: contextFor(div[0])
       })
 
       ffe.processQueue()
       // var nodes =
-      div.children().each(function () { this.test = 1 }).toArray()
+      div
+        .children()
+        .each(function () {
+          this.test = 1
+        })
+        .toArray()
       assert.equal(div.text(), 'AB')
       obs.remove(itemB)
       obs.push(itemB)
@@ -643,21 +720,26 @@ describe('observable array changes', function () {
 
       ffe.processQueue()
       assert.equal(div.text(), 'AB')
-      assert.equal(div.children().filter(function () { return this.test === 1 }).length, 2)
+      assert.equal(
+        div.children().filter(function () {
+          return this.test === 1
+        }).length,
+        2
+      )
       ForEachBinding.animateFrame = originalAnimateFrame
     })
 
     it('cleans data objects', function () {
       div = $("<div data-bind='foreach: obs'><div data-bind='html: testHtml'></div></div>")
       applyBindings(view, div[0])
-      var itemA = { id: 4, testHtml: '<span>A</span>' }
-      var itemB = { id: 6, testHtml: '<span>B</span>' }
-      var itemC = { id: 6, testHtml: '<span>C</span>' }
+      const itemA = { id: 4, testHtml: '<span>A</span>' }
+      const itemB = { id: 6, testHtml: '<span>B</span>' }
+      const itemC = { id: 6, testHtml: '<span>C</span>' }
       obs([itemA, itemB, itemC, itemA])
-      var nodes = div.children().toArray()
+      const nodes = div.children().toArray()
       assert.equal(div.text(), 'ABCA')
       obs([itemC, itemA, itemB])
-      var nodes2 = div.children().toArray()
+      const nodes2 = div.children().toArray()
       assert.equal(itemA[ForEachBinding.PENDING_DELETE_INDEX_SYM], undefined)
       assert.equal(itemB[ForEachBinding.PENDING_DELETE_INDEX_SYM], undefined)
       assert.equal(itemC[ForEachBinding.PENDING_DELETE_INDEX_SYM], undefined)
@@ -668,12 +750,15 @@ describe('observable array changes', function () {
 
   describe('afterAdd', function () {
     it('emits on changes to an observable array', function () {
-      var calls = 0
-      var nodes = 0
-      var arr: ObservableArray = observableArray([])
-      function cb (v) { calls++; nodes += v.nodeOrArrayInserted.length }
-      var target = $("<ul data-bind='foreach: { data: arr, afterAdd: cb }'><li data-bind='text: $data'></li></div>")
-      applyBindings({arr: arr, cb: cb}, target[0])
+      let calls = 0
+      let nodes = 0
+      const arr: ObservableArray = observableArray<any>([])
+      function cb(v) {
+        calls++
+        nodes += v.nodeOrArrayInserted.length
+      }
+      const target = $("<ul data-bind='foreach: { data: arr, afterAdd: cb }'><li data-bind='text: $data'></li></div>")
+      applyBindings({ arr: arr, cb: cb }, target[0])
       assert.equal(calls, 0)
       assert.equal(nodes, 0)
       arr.push('x')
@@ -685,12 +770,15 @@ describe('observable array changes', function () {
     })
 
     it('is called with initial data', function () {
-      var calls = 0
-      var nodes = 0
-      var arr = observableArray(['a', 'b', 'c'])
-      function cb (v) { calls++; nodes += v.nodeOrArrayInserted.length }
-      var target = $("<ul data-bind='foreach: { data: arr, afterAdd: cb }'><li data-bind='text: $data'></li></div>")
-      applyBindings({arr: arr, cb: cb}, target[0])
+      let calls = 0
+      let nodes = 0
+      const arr = observableArray(['a', 'b', 'c'])
+      function cb(v) {
+        calls++
+        nodes += v.nodeOrArrayInserted.length
+      }
+      const target = $("<ul data-bind='foreach: { data: arr, afterAdd: cb }'><li data-bind='text: $data'></li></div>")
+      applyBindings({ arr: arr, cb: cb }, target[0])
       assert.equal(calls, 1)
       assert.equal(nodes, 3)
     })
@@ -698,14 +786,18 @@ describe('observable array changes', function () {
 
   describe('beforeRemove', function () {
     it('emits on remove', function () {
-      var cbi = 0
-      var arr = observableArray(['a1', 'b1', 'c1'])
-      function cb (v) {
-        arrayForEach(v.nodesToRemove, function (n) { removeNode(n) })
+      let cbi = 0
+      const arr = observableArray(['a1', 'b1', 'c1'])
+      function cb(v) {
+        arrayForEach(v.nodesToRemove, function (n) {
+          removeNode(n)
+        })
         cbi++
       }
-      var target = $("<ul data-bind='foreach: { data: arr, beforeRemove: cb }'><li data-bind='text: $data'></li></div>")
-      applyBindings({arr: arr, cb: cb}, target[0])
+      const target = $(
+        "<ul data-bind='foreach: { data: arr, beforeRemove: cb }'><li data-bind='text: $data'></li></div>"
+      )
+      applyBindings({ arr: arr, cb: cb }, target[0])
       assert.equal(cbi, 0)
       assert.equal(target.text(), 'a1b1c1')
       arr.pop()
@@ -717,11 +809,20 @@ describe('observable array changes', function () {
     })
 
     it('removes an element if a `then`-able is passed', function () {
-      var cbi = 0
-      var arr = observableArray(['a2', 'b2', 'c2'])
-      function cb (/* v */) { cbi++; return {then: function (cb) { cb() }} }
-      var target = $("<ul data-bind='foreach: { data: arr, beforeRemove: cb }'><li data-bind='text: $data'></li></div>")
-      applyBindings({arr: arr, cb: cb}, target[0])
+      let cbi = 0
+      const arr = observableArray(['a2', 'b2', 'c2'])
+      function cb(/* v */) {
+        cbi++
+        return {
+          then: function (cb) {
+            cb()
+          }
+        }
+      }
+      const target = $(
+        "<ul data-bind='foreach: { data: arr, beforeRemove: cb }'><li data-bind='text: $data'></li></div>"
+      )
+      applyBindings({ arr: arr, cb: cb }, target[0])
       assert.equal(cbi, 0)
       assert.equal(target.text(), 'a2b2c2')
       arr.pop()
@@ -735,8 +836,8 @@ describe('observable array changes', function () {
 
   describe('$index', function () {
     it('is present on the children', function () {
-      var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
-      var list = ['a', 'b', 'c']
+      const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
+      const list = ['a', 'b', 'c']
       applyBindings(list, target[0])
       assert.equal(contextFor(target.children()[0]).$index(), 0)
       assert.equal(contextFor(target.children()[1]).$index(), 1)
@@ -744,10 +845,8 @@ describe('observable array changes', function () {
     })
 
     it('is present on children of virtual nodes', function () {
-      var target = $('<div><!-- ko foreach: $data -->' +
-        "<b data-bind='text: $data'></b>" +
-        '<!-- /ko --></div>')
-      var list = ['a', 'b', 'c']
+      const target = $('<div><!-- ko foreach: $data -->' + "<b data-bind='text: $data'></b>" + '<!-- /ko --></div>')
+      const list = ['a', 'b', 'c']
       applyBindings(list, target[0])
       assert.equal(contextFor(target.children()[0]).$index(), 0)
       assert.equal(contextFor(target.children()[1]).$index(), 1)
@@ -755,52 +854,50 @@ describe('observable array changes', function () {
     })
 
     it('is present when template starts with a text node', function () {
-      var target = document.createElement('ul')
-      target.innerHTML = "<ul data-bind='foreach: $data'>" +
-          " <li data-bind='text: $index()'></li>" +
-        '</ul>'
-      var list = ['a', 'b', 'c']
+      const target = document.createElement('ul')
+      target.innerHTML = "<ul data-bind='foreach: $data'>" + " <li data-bind='text: $index()'></li>" + '</ul>'
+      const list = ['a', 'b', 'c']
       applyBindings(list, target)
       assert.equal($(target).text(), ' 0 1 2')
     })
 
     it('is present on a list of text & comment nodes', function () {
-      var target = document.createElement('ul')
+      const target = document.createElement('ul')
       target.innerHTML = `<div data-bind='foreach: $data'>
           <!-- ko text: $index --><!-- /ko --><!-- ko text: $data --><!-- /ko -->
         </div>`
-      var list = ['a', 'b', 'c']
+      const list = ['a', 'b', 'c']
       applyBindings(list, target)
       assert.equal($(target).text().replace(/\s+/g, ' '), ' 0a 1b 2c ')
     })
 
     it('updates as part of a calculation', function () {
-      var target = document.createElement('ul')
+      const target = document.createElement('ul')
       target.innerHTML = `<div data-bind='foreach: $data'>
           <!-- ko text: $index() * 10 --><!-- /ko --><!-- ko text: $data --><!-- /ko -->
         </div>`
-      var list = ['a', 'b', 'c']
+      const list = ['a', 'b', 'c']
       applyBindings(list, target)
       assert.equal($(target).text().replace(/\s+/g, ' '), ' 0a 10b 20c ')
     })
 
     it('updates in the middle of a list', function () {
-      var target = document.createElement('ul')
+      const target = document.createElement('ul')
       target.innerHTML = `<div data-bind='foreach: $data'>
           <!-- ko text: $data === 'b' ? $index() * 10 : '-' --><!-- /ko -->
           <!-- ko text: $data --><!-- /ko -->
         </div>`
-      var list = ['a', 'b', 'c']
+      const list = ['a', 'b', 'c']
       applyBindings(list, target)
       assert.equal($(target).text().replace(/\s+/g, ' '), ' - a 10 b - c ')
     })
 
     it('updates when list is modified', function () {
-      var target = document.createElement('ul')
+      const target = document.createElement('ul')
       target.innerHTML = `<div data-bind='foreach: $data'>
           <!-- ko text: $index() * 10 --><!-- /ko --><!-- ko text: $data --><!-- /ko -->
         </div>`
-      var list = observableArray(['a', 'b', 'c'])
+      const list = observableArray(['a', 'b', 'c'])
       applyBindings(list, target)
       list.splice(0, 0, 'z')
       assert.equal($(target).text().replace(/\s+/g, ' '), ' 0z 10a 20b 30c ')
@@ -809,16 +906,16 @@ describe('observable array changes', function () {
     })
 
     it('updates the first list item', function () {
-      var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
-      var list: ObservableArray<string> = observableArray([])
+      const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
+      const list: ObservableArray<string> = observableArray<string>([])
       applyBindings(list, target[0])
       list.push('a')
       assert.equal(contextFor(target.children()[0]).$index(), 0)
     })
 
     it('updates on append', function () {
-      var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
-      var list = observableArray(['a', 'b', 'c'])
+      const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
+      const list = observableArray(['a', 'b', 'c'])
       applyBindings(list, target[0])
       list.push('d')
       assert.equal(contextFor(target.children()[0]).$index(), 0)
@@ -828,8 +925,8 @@ describe('observable array changes', function () {
     })
 
     it('updates on prepend', function () {
-      var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
-      var list = observableArray(['a', 'b', 'c'])
+      const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
+      const list = observableArray(['a', 'b', 'c'])
       applyBindings(list, target[0])
       list.unshift('e')
       assert.equal(contextFor(target.children()[0]).$index(), 0)
@@ -839,8 +936,8 @@ describe('observable array changes', function () {
     })
 
     it('updates on splice', function () {
-      var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
-      var list = observableArray(['a', 'b', 'c'])
+      const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></ul>")
+      const list = observableArray(['a', 'b', 'c'])
       applyBindings(list, target[0])
       // Delete 2 at 1, insert 2
       list.splice(1, 2, 'r', 'q')
@@ -850,15 +947,15 @@ describe('observable array changes', function () {
     })
 
     it('is not initially an observable', function () {
-      var target = $("<ul data-bind='foreach: {data: $data, noIndex: true}'><li data-bind='text: $data'></li></ul>")
-      var list = observableArray(['a'])
+      const target = $("<ul data-bind='foreach: {data: $data, noIndex: true}'><li data-bind='text: $data'></li></ul>")
+      const list = observableArray(['a'])
       applyBindings(list, target[0])
       assert.notOk(isObservable(contextFor(target.children()[0]).$index))
     })
 
     it('is observable after the first call', function () {
-      var target = $("<ul data-bind='foreach: {data: $data, noIndex: true}'><li data-bind='text: $data'></li></ul>")
-      var list = observableArray(['a'])
+      const target = $("<ul data-bind='foreach: {data: $data, noIndex: true}'><li data-bind='text: $data'></li></ul>")
+      const list = observableArray(['a'])
       applyBindings(list, target[0])
       const $index = contextFor(target.children()[0]).$index
       assert.equal($index(), 0)
@@ -866,8 +963,8 @@ describe('observable array changes', function () {
     })
 
     it('is present with `as`', function () {
-      var target = $("<ul data-bind='foreach: {data: $data, as: \"$item\"}'><li data-bind='text: $item'></li></ul>")
-      var list = observableArray(['a', 'b'])
+      const target = $("<ul data-bind='foreach: {data: $data, as: \"$item\"}'><li data-bind='text: $item'></li></ul>")
+      const list = observableArray(['a', 'b'])
       applyBindings(list, target[0])
       assert.equal(contextFor(target.children()[0]).$index(), 0)
       assert.equal(contextFor(target.children()[1]).$index(), 1)
@@ -876,15 +973,15 @@ describe('observable array changes', function () {
 
   describe('`as` parameter', function () {
     it('is used when present', function () {
-      var target = $("<ul data-bind='foreach: { data: $data, as: \"xyz\" }'><li data-bind='text: xyz'></li></ul>")
-      var list = ['a', 'b', 'c']
+      const target = $("<ul data-bind='foreach: { data: $data, as: \"xyz\" }'><li data-bind='text: xyz'></li></ul>")
+      const list = ['a', 'b', 'c']
       applyBindings(list, target[0])
       assert.equal(target.text(), 'abc')
     })
 
     it('each item has the same $data as its parent', function () {
-      var target = $("<ul data-bind='foreach: { data: $data, as: \"xyz\" }'><li data-bind='text: xyz'></li></ul>")
-      var list = ['a', 'b', 'c']
+      const target = $("<ul data-bind='foreach: { data: $data, as: \"xyz\" }'><li data-bind='text: xyz'></li></ul>")
+      const list = ['a', 'b', 'c']
       applyBindings(list, target[0])
       assert.strictEqual(dataFor(target.children()[0]).$data, dataFor(target as any))
       assert.strictEqual(dataFor(target.children()[1]).$data, dataFor(target as any))
@@ -892,8 +989,8 @@ describe('observable array changes', function () {
     })
 
     it('has an $index', function () {
-      var target = $("<ul data-bind='foreach: { data: $data, as: \"xyz\" }'><li data-bind='text: xyz'></li></ul>")
-      var list = ['a', 'b', 'c']
+      const target = $("<ul data-bind='foreach: { data: $data, as: \"xyz\" }'><li data-bind='text: xyz'></li></ul>")
+      const list = ['a', 'b', 'c']
       applyBindings(list, target[0])
       assert.equal(contextFor(target.children()[0]).$index(), 0)
       assert.equal(contextFor(target.children()[1]).$index(), 1)
@@ -901,8 +998,8 @@ describe('observable array changes', function () {
     })
 
     it('reads `as` from peer binding parameters', function () {
-      var target = $("<ul data-bind='foreach: $data, as: \"xyz\"'><li data-bind='text: xyz'></li></ul>")
-      var list = ['a', 'b', 'c']
+      const target = $("<ul data-bind='foreach: $data, as: \"xyz\"'><li data-bind='text: xyz'></li></ul>")
+      const list = ['a', 'b', 'c']
       applyBindings(list, target[0])
       assert.equal(target.text(), 'abc')
     })
@@ -910,12 +1007,9 @@ describe('observable array changes', function () {
 })
 
 describe('focus', function () {
-  var $target
+  let $target
   beforeEach(function () {
-    $target = $("<div data-bind='foreach: $data'>" +
-      '<input />' +
-      '</div>')
-      .appendTo(document.body)
+    $target = $("<div data-bind='foreach: $data'>" + '<input />' + '</div>').appendTo(document.body)
     ForEachBinding.setSync(false)
   })
 
@@ -924,7 +1018,7 @@ describe('focus', function () {
   })
 
   it('does not preserve the target on apply bindings', function (done) {
-    var list = ['a', 'b', 'c']
+    const list = ['a', 'b', 'c']
     $target.find(':input').focus()
     applyBindings(list, $target[0])
     setTimeout(function () {
@@ -934,7 +1028,7 @@ describe('focus', function () {
   })
 
   it('does not preserves primitive targets when re-ordering', function (done) {
-    var list = observableArray(['a', 'b', 'c'])
+    const list = observableArray(['a', 'b', 'c'])
     applyBindings(list, $target[0])
     $target.find(':input').first().focus()
     assert.strictEqual(document.activeElement, $target.find(':input')[0])
@@ -948,8 +1042,8 @@ describe('focus', function () {
   })
 
   it('preserves objects when re-ordering', function (done) {
-    var o0 = {}
-    var list = observableArray([o0, 'b', 'c'])
+    const o0 = {}
+    const list = observableArray([o0, 'b', 'c'])
     applyBindings(list, $target[0])
     $target.find(':input').first().focus()
     assert.strictEqual(document.activeElement, $target.find(':input')[0], 'a')
@@ -963,8 +1057,8 @@ describe('focus', function () {
   })
 
   it('preserves objects when re-ordering multiple identical', function (done) {
-    var o0 = {}
-    var list = observableArray([o0, 'b', 'c'])
+    const o0 = {}
+    const list = observableArray([o0, 'b', 'c'])
     applyBindings(list, $target[0])
     $target.find(':input').first().focus()
     assert.strictEqual(document.activeElement, $target.find(':input')[0], 'a')
@@ -981,8 +1075,8 @@ describe('focus', function () {
   })
 
   it('preserves objects when re-ordering multiple identical, alt', function (done) {
-    var o0 = {}
-    var list = observableArray([o0, 'b', 'c'])
+    const o0 = {}
+    const list = observableArray([o0, 'b', 'c'])
     applyBindings(list, $target[0])
     $target.find(':input').first().focus()
     assert.strictEqual(document.activeElement, $target.find(':input')[0], 'a')
@@ -1000,47 +1094,37 @@ describe('focus', function () {
 
 describe('$list', function () {
   it('exposes a list', function () {
-    var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
-    var list = ['a', 'b', 'c']
+    const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
+    const list = ['a', 'b', 'c']
     applyBindings(list, target[0])
-    assert.strictEqual(
-      contextFor(target.children()[1]).$list, list
-    )
+    assert.strictEqual(contextFor(target.children()[1]).$list, list)
   })
 
   it('exposes an observable array', function () {
-    var target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
-    var list = observableArray(['a', 'b', 'c'])
+    const target = $("<ul data-bind='foreach: $data'><li data-bind='text: $data'></li></div>")
+    const list = observableArray(['a', 'b', 'c'])
     applyBindings(list, target[0])
-    assert.strictEqual(
-      contextFor(target.children()[1]).$list, list
-    )
+    assert.strictEqual(contextFor(target.children()[1]).$list, list)
   })
 
   it('exposes an observable array with `as`', function () {
-    var target = $("<ul data-bind='foreach: $data, as: \"x\"'><li data-bind='text: x'></li></div>")
-    var list = observableArray(['a', 'b', 'c'])
+    const target = $("<ul data-bind='foreach: $data, as: \"x\"'><li data-bind='text: x'></li></div>")
+    const list = observableArray(['a', 'b', 'c'])
     applyBindings(list, target[0])
-    assert.strictEqual(
-      contextFor(target.children()[1]).$list, list
-    )
+    assert.strictEqual(contextFor(target.children()[1]).$list, list)
   })
 
   it('exposes an observable array with `as` + noIndex', function () {
-    var target = $("<ul data-bind='foreach: $data, as: \"x\", noIndex: true'><li data-bind='text: x'></li></div>")
-    var list = observableArray(['a', 'b', 'c'])
+    const target = $("<ul data-bind='foreach: $data, as: \"x\", noIndex: true'><li data-bind='text: x'></li></div>")
+    const list = observableArray(['a', 'b', 'c'])
     applyBindings(list, target[0])
-    assert.strictEqual(
-      contextFor(target.children()[1]).$list, list
-    )
+    assert.strictEqual(contextFor(target.children()[1]).$list, list)
   })
 
   it('exposes an observable array with noIndex', function () {
-    var target = $("<ul data-bind='foreach: $data, noIndex: true'><li data-bind='text: $data'></li></div>")
-    var list = observableArray(['a', 'b', 'c'])
+    const target = $("<ul data-bind='foreach: $data, noIndex: true'><li data-bind='text: $data'></li></div>")
+    const list = observableArray(['a', 'b', 'c'])
     applyBindings(list, target[0])
-    assert.strictEqual(
-      contextFor(target.children()[1]).$list, list
-    )
+    assert.strictEqual(contextFor(target.children()[1]).$list, list)
   })
 })

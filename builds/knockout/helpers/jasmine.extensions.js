@@ -44,7 +44,7 @@ jasmine.Matchers.prototype.toContainHtml = function (expectedHtml, postProcessCl
 };
 
 jasmine.nodeText = function(node) {
-    return node.nodeType == 3 ? node.data : 'textContent' in node ? node.textContent : node.innerText;
+    return node.nodeType === Node.TEXT_NODE ? node.data : 'textContent' in node ? node.textContent : node.innerText;
 }
 
 jasmine.Matchers.prototype.toContainText = function (expectedText, ignoreSpaces) {
@@ -189,3 +189,21 @@ jasmine.FakeTimer.prototype.runFunctionsWithinRange = function(oldMillis, nowMil
       this.runFunctionsWithinRange(oldMillis, nowMillis);
   }
 };
+
+beforeEach(function() {
+    switchJQueryState();
+});
+
+afterEach(function() {
+    expect(disableJQueryUsage).toEqual(ko.options.disableJQueryUsage);
+})
+
+const KARMA_STRING = '__karma__'
+var disableJQueryUsage = true;
+function switchJQueryState() {
+    if (window[KARMA_STRING] && window[KARMA_STRING].config.args.includes('--noJQuery')) {
+        ko.options.disableJQueryUsage = disableJQueryUsage = true;
+    } else {
+        ko.options.disableJQueryUsage = disableJQueryUsage = false;
+    }
+}

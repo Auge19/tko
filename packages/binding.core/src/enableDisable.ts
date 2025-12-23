@@ -1,21 +1,20 @@
+import { unwrap } from '@tko/observable'
 
-import {
-    unwrap
-} from '@tko/observable'
-
-export var enable = {
+export const enable = {
   update: function (element, valueAccessor) {
-    var value = unwrap(valueAccessor())
+    const value = unwrap(valueAccessor())
     if (value && element.disabled) {
       element.removeAttribute('disabled')
-    } else if ((!value) && (!element.disabled)) {
+    } else if (!value && !element.disabled) {
       element.disabled = true
     }
   }
 }
 
-export var disable = {
+export const disable = {
   update: function (element, valueAccessor) {
-    enable.update(element, function () { return !unwrap(valueAccessor()) })
+    enable.update(element, function () {
+      return !unwrap(valueAccessor())
+    })
   }
 }

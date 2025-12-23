@@ -1,28 +1,16 @@
-import {
-    domData, cleanNode, options, virtualElements
-} from '@tko/utils'
+import { domData, cleanNode, options, virtualElements } from '@tko/utils'
 
-import {
-    observable as koObservable
-} from '@tko/observable'
+import { observable as koObservable } from '@tko/observable'
 
 import type { Observable } from '@tko/observable'
 
-import {
-  MultiProvider
-} from '@tko/provider.multi'
+import { MultiProvider } from '@tko/provider.multi'
 
-import {
-  VirtualProvider
-} from '@tko/provider.virtual'
+import { VirtualProvider } from '@tko/provider.virtual'
 
-import {
-  DataBindProvider
-} from '@tko/provider.databind'
+import { DataBindProvider } from '@tko/provider.databind'
 
-import {
-    applyBindings, BindingHandler, contextFor
-} from '../dist'
+import { applyBindings, BindingHandler, contextFor } from '../dist'
 
 import { bindings as coreBindings } from '@tko/binding.core'
 import { bindings as templateBindings } from '@tko/binding.template'
@@ -33,42 +21,42 @@ import '@tko/utils/helpers/jasmine-13-helper'
 describe('BindingHandler behaviors', function () {
   let bindingHandlers
 
-  let testNode : HTMLElement
-  beforeEach(function() { testNode = jasmine.prepareTestNode() })
+  let testNode: HTMLElement
+  beforeEach(function () {
+    testNode = jasmine.prepareTestNode()
+  })
 
   beforeEach(function () {
-        // Set up the default binding handlers.
-    var provider = new MultiProvider({providers: [
-      new VirtualProvider(),
-      new DataBindProvider()
-    ]})
+    // Set up the default binding handlers.
+    const provider = new MultiProvider({ providers: [new VirtualProvider(), new DataBindProvider()] })
     options.bindingProviderInstance = provider
     bindingHandlers = provider.bindingHandlers
     bindingHandlers.set(coreBindings)
     bindingHandlers.set(templateBindings)
     bindingHandlers.set(ifBindings)
-    options.onError = function (e) { throw e }
+    options.onError = function (e) {
+      throw e
+    }
   })
 
   describe('BindingHandler class', function () {
     it("has a .computed() property with the node's lifecycle", function () {
-      var instance
-      var xCalls = 0,
+      let instance
+      let xCalls = 0,
         yCalls = 0
       bindingHandlers.fnHandler = class extends BindingHandler {
+        v: Observable
+        x: Observable
+        y: Observable
+        computed
 
-        v : Observable
-        x : Observable
-        y : Observable        
-        computed;
-
-        constructor (...args) {
+        constructor(...args) {
           super(...args)
-          var v = this.v = koObservable(0)
+          const v = (this.v = koObservable(0))
           instance = this
           this.x = this.computed(() => {
             xCalls++
-            v()  // Add a dependency.
+            v() // Add a dependency.
             expect(this).toEqual(instance)
             return 'x'
           })
@@ -96,22 +84,22 @@ describe('BindingHandler behaviors', function () {
 
       cleanNode(testNode)
       instance.v(2)
-            // Re-computations have stopped.
+      // Re-computations have stopped.
       expect(xCalls).toEqual(2)
       expect(yCalls).toEqual(2)
     })
 
     it("has a .subscribe property with the node's lifecycle", function () {
-      var obs = koObservable(),
+      let obs = koObservable(),
         handlerInstance
       bindingHandlers.fnHandler = class extends BindingHandler {
-        subscribe;
-        constructor (...args) {
+        subscribe
+        constructor(...args) {
           super(...args)
           handlerInstance = this
           this.subscribe(obs, this.cb)
         }
-        cb () {
+        cb() {
           expect(this).toEqual(handlerInstance)
         }
       }
@@ -132,14 +120,13 @@ describe('BindingHandler behaviors', function () {
 
   describe('Function binding handlers', function () {
     it('constructs the element with appropriate params', function () {
-      var obj = { 'canary': 42 },
-        viewModel = {param: obj}
+      const obj = { canary: 42 },
+        viewModel = { param: obj }
       bindingHandlers.fnHandler = function (element, valueAccessor, allBindings, $data, $context) {
         expect(valueAccessor()).toEqual(obj)
         expect(element).toEqual(testNode.children[0])
         expect($data).toEqual(viewModel)
-        expect($context).toEqual(
-                    contextFor(testNode.children[0]))
+        expect($context).toEqual(contextFor(testNode.children[0]))
         expect(allBindings()['bx']).toEqual(43)
         expect(allBindings.get('bx')).toEqual(43)
       }
@@ -148,7 +135,7 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('calls the `fn.dispose` when cleaned up', function () {
-      var viewModel = { x: koObservable(true) },
+      let viewModel = { x: koObservable(true) },
         instance = null,
         disposeCalled = 0
       bindingHandlers.fnHandler = function () {
@@ -166,7 +153,7 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('does not error without a `dispose` property', function () {
-      var viewModel = { x: koObservable(true) }
+      const viewModel = { x: koObservable(true) }
       bindingHandlers.fnHandler = function () {}
       testNode.innerHTML = '<b data-bind="if: x"><i data-bind="fnHandler"></i></b>'
       applyBindings(viewModel, testNode)
@@ -174,8 +161,10 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('virtual elements via fn::allowVirtualElements', function () {
-      var called = 0
-      bindingHandlers.fnHandler = function () { called++ }
+      let called = 0
+      bindingHandlers.fnHandler = function () {
+        called++
+      }
       bindingHandlers.fnHandler.allowVirtualElements = true
       testNode.innerHTML = '<b><!-- ko fnHandler --><!-- /ko --></b>'
       applyBindings({}, testNode)
@@ -183,8 +172,10 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('virtual elements via fn.allowVirtualElements', function () {
-      var called = 0
-      bindingHandlers.fnHandler = function () { called++ }
+      let called = 0
+      bindingHandlers.fnHandler = function () {
+        called++
+      }
       bindingHandlers.fnHandler.allowVirtualElements = true
       testNode.innerHTML = '<b><!-- ko fnHandler --><!-- /ko --></b>'
       applyBindings({}, testNode)
@@ -192,13 +183,15 @@ describe('BindingHandler behaviors', function () {
     })
 
     it('errors when allowVirtualElements is not set', function () {
-      var called = 0
-      bindingHandlers.fnHandler = function () { called++ }
+      let called = 0
+      bindingHandlers.fnHandler = function () {
+        called++
+      }
       testNode.innerHTML = '<b><!-- ko fnHandler --><!-- /ko --></b>'
 
       expect(function () {
         applyBindings({}, testNode)
-      }).toThrowContaining('The binding \'fnHandler\' cannot be used with virtual elements')
+      }).toThrowContaining("The binding 'fnHandler' cannot be used with virtual elements")
       expect(called).toEqual(0)
     })
   })

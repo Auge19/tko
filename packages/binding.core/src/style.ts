@@ -1,15 +1,10 @@
+import { objectForEach, options } from '@tko/utils'
 
-import {
-    objectForEach, options
-} from '@tko/utils'
+import { unwrap } from '@tko/observable'
 
-import {
-    unwrap
-} from '@tko/observable'
-
-export var style = {
+export const style = {
   update: function (element, valueAccessor) {
-    var value = unwrap(valueAccessor() || {})
+    const value = unwrap(valueAccessor() || {})
     objectForEach(value, function (styleName, styleValue) {
       styleValue = unwrap(styleValue)
 
@@ -19,7 +14,7 @@ export var style = {
       }
 
       if (options.jQuery) {
-        options.jQuery(element).css(styleName, styleValue)
+        jQuery(element).css(styleName, styleValue)
       } else {
         styleName = styleName.replace(/-(\w)/g, (all, letter) => letter.toUpperCase())
         const previousStyle = element.style[styleName]

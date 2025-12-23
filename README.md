@@ -3,7 +3,7 @@
 
 [![npm version](https://badge.fury.io/js/@tko%2Fbuild.reference.svg)](https://badge.fury.io/js/@tko%2Fbuild.reference)
 [![Join the chat at https://gitter.im/knockout/tko](https://badges.gitter.im/knockout/tko.svg)](https://gitter.im/knockout/tko?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) via Prettier
+[![Code Style: Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io/)
 
 [![Check 'Main' (build+tsc)](https://github.com/knockout/tko/actions/workflows/run-tsc.yml/badge.svg)](https://github.com/knockout/tko/actions/workflows/run-tsc.yml)
 [![Coverage Status](https://coveralls.io/repos/knockout/tko/badge.svg?branch=master&service=github)](https://coveralls.io/github/knockout/tko?branch=master)
@@ -102,9 +102,16 @@ TKO aims to become a base for future versions of Knockout.  The objectives inclu
 
 ## JQUERY and TKO
 
-Optionally TKO can use JQuery for CSS-Manipulation and HTML-Templates (only if HTML5-Template-Tag no supported), if is available. All tests are based on JQuery 3.7. 
+Optionally TKO can use JQuery for CSS-Manipulation and HTML-Templates (only if HTML5-Template-Tag no supported). All tests are based on JQuery 3.7. 
 In the future we will probably remove the usage of JQuery in TKO, as many features have already been migrated to native APIs. Compatibility with JQuery in an application will remain.
-You can set useOnlyNativeEvents to false, so JQuery is also use for event-registration. Note: Some tests fails in this case ('change'-event doesn't fire).
+You can set useOnlyNativeEvents to false, so JQuery is also use for event-registration. Note: Some tests fails in this case ('change'-event doesn't fire). You can set useTemplateTag to false, so disable using HTML5-Template-Tags.
+
+## Sanitizing HTML-Templates
+
+TKO supports HTML sanitization through configurable options. To sanitize HTML templates, you can override `options.sanitizeHtmlTemplate` with a library like [DOMPurify](https://github.com/cure53/DOMPurify) or [validator.js](https://github.com/validatorjs/validator.js).
+
+Additionally, implement a well-configured [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) to provide an extra layer of protection against XSS attacks.
+
 
 ## Overview of the development stack
 
@@ -118,7 +125,7 @@ You can set useOnlyNativeEvents to false, so JQuery is also use for event-regist
 - Test-Runner -> Karma
 - Test-Environment -> electron and headless-chrome
 - Linting -> Eslint
-- Formating -> Prettier (configured like StandardJS)
+- Formatting -> Prettier (configured like StandardJS)
 - TDD/BDD-Frameworks -> 
     - Jasmine 1.3
     - Mocha + Chai
@@ -152,6 +159,12 @@ There's an [issue for that](https://github.com/knockout/tko/issues/1).
 ## License
 
 MIT license - [http://www.opensource.org/licenses/mit-license.php.](http://www.opensource.org/licenses/mit-license.php)
+
+## Credits
+- Knockout Type Definitions by: [Maxime LUCE](https://github.com/SomaticIT), [Michael Best](https://github.com/mbest)  
+    - https://github.com/knockout/knockout/blob/master/build/types/knockout.d.ts#L404
+- Team-Project: https://github.com/knockout
+- http://knockoutjs.com / [Steve Sanderson](https://github.com/SteveSanderson), [Michael Best](https://github.com/mbest)
 
 ## Shout Outs
 

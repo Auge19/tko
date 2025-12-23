@@ -33,6 +33,9 @@ ci:
 	$(LERNA) exec --stream --concurrency=1 -- $(MAKE) test-ci
 
 format:
+	$(NPX) prettier . --check
+
+format-fix:
 	$(NPX) prettier . --write
 
 tsc:
@@ -41,8 +44,11 @@ tsc:
 eslint:
 	$(NPX) eslint .
 
+eslint-fix:
+	$(NPX) eslint . --fix
+	
 dts:
-	$(NPX) tsc --noEmit false
+	$(NPX) tsc --build tsconfig.dts.json
 
 docker-build:
 	$(DOCKER) build . --tag tko

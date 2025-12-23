@@ -1,8 +1,4 @@
-
-import {
-    subscribable as Subscribable,
-    extenders
-} from '../dist'
+import { subscribable as Subscribable, extenders } from '../dist'
 
 describe('Extenders', function () {
   it('Should be able to extend any subscribable', function () {
@@ -10,7 +6,7 @@ describe('Extenders', function () {
       target.dummyProperty = value
     }
 
-    var subscribable = new Subscribable()
+    const subscribable = new Subscribable()
     expect(subscribable.dummyProperty).toEqual(undefined)
 
     subscribable.extend({ setDummyProperty: 123 })
@@ -21,8 +17,8 @@ describe('Extenders', function () {
     extenders.wrapInParentObject = function (target /*, value */) {
       return { inner: target, extend: target.extend }
     }
-    var underlyingSubscribable = new Subscribable()
-    var result = underlyingSubscribable.extend({ wrapInParentObject: true }).extend({ wrapInParentObject: true })
+    const underlyingSubscribable = new Subscribable()
+    const result = underlyingSubscribable.extend({ wrapInParentObject: true }).extend({ wrapInParentObject: true })
     expect(result.inner.inner).toEqual(underlyingSubscribable)
   })
 })

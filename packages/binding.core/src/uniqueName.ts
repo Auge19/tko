@@ -1,12 +1,9 @@
+import { setElementName } from '@tko/utils'
 
-import {
-    setElementName
-} from '@tko/utils'
-
-export var uniqueName = {
+export const uniqueName = {
   init: function (element, valueAccessor) {
     if (valueAccessor()) {
-      var name = 'ko_unique_' + (++uniqueName.currentIndex)
+      const name = 'ko_unique_' + ++uniqueName.currentIndex
       setElementName(element, name)
     }
   },

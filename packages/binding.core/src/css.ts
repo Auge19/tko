@@ -1,16 +1,11 @@
+import { createSymbolOrString, toggleDomNodeCssClass, objectForEach, stringTrim } from '@tko/utils'
 
-import {
-    createSymbolOrString, toggleDomNodeCssClass, objectForEach, stringTrim
-} from '@tko/utils'
+import { unwrap } from '@tko/observable'
 
-import {
-    unwrap
-} from '@tko/observable'
-
-export var css = {
+export const css = {
   aliases: ['class'],
   update: function (element, valueAccessor) {
-    var value = unwrap(valueAccessor())
+    let value = unwrap(valueAccessor())
     if (value !== null && typeof value === 'object') {
       objectForEach(value, function (className, shouldHaveClass) {
         shouldHaveClass = unwrap(shouldHaveClass)

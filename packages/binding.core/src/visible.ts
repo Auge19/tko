@@ -1,11 +1,9 @@
-import {
-    unwrap
-} from '@tko/observable'
+import { unwrap } from '@tko/observable'
 
-export var visible = {
+export const visible = {
   update: function (element, valueAccessor) {
-    var value = unwrap(valueAccessor())
-    var isCurrentlyVisible = !(element.style.display === 'none')
+    const value = unwrap(valueAccessor())
+    const isCurrentlyVisible = !(element.style.display === 'none')
     if (value && !isCurrentlyVisible) {
       element.style.display = ''
     } else if (!value && isCurrentlyVisible) {
@@ -14,7 +12,7 @@ export var visible = {
   }
 }
 
-export var hidden = {
+export const hidden = {
   update: function (element, valueAccessor) {
     visible.update.call(this, element, () => !unwrap(valueAccessor()))
   }

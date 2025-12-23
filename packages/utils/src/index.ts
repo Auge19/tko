@@ -14,7 +14,6 @@ export * from './string'
 export * from './symbol'
 export * from './css'
 export { default as options } from './options'
-export type { KnockoutStatic } from './options'
 
 // DOM;
 export * from './dom/event'
@@ -31,4 +30,4 @@ import * as tasks from './tasks'
 import * as virtualElements from './dom/virtualElements'
 import * as domData from './dom/data'
 
-export {tasks, virtualElements, domData, memoization}
+export { tasks, virtualElements, domData, memoization }

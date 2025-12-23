@@ -10,34 +10,22 @@
 */
 /* eslint semi: 0 */
 
-import { assert } from "chai"
-import * as sinon from "sinon"
+import { assert } from 'chai'
+import * as sinon from 'sinon'
 
-import {
-  options
-} from '@tko/utils'
+import { options } from '@tko/utils'
 
-import {
-  observable
-} from '@tko/observable'
+import { observable } from '@tko/observable'
 
-import {
-  applyBindings,
-  bindingContext
-} from '@tko/bind'
+import { applyBindings, bindingContext } from '@tko/bind'
 
-import {
-  Parser
-} from '@tko/utils.parser'
+import { Parser } from '@tko/utils.parser'
 
-import {
-  DataBindProvider
-} from '../dist'
+import { DataBindProvider } from '../dist'
 
-import * as coreBindings from '@tko/binding.core';
+import * as coreBindings from '@tko/binding.core'
 
 describe('Data-Bind Behaviors', function () {
-
   let instance: DataBindProvider
 
   beforeEach(function () {
@@ -46,105 +34,91 @@ describe('Data-Bind Behaviors', function () {
 
   describe('nodeHasBindings', function () {
     it('identifies elements with data-bind', function () {
-      var div = document.createElement('div')
+      const div = document.createElement('div')
       div.setAttribute('data-bind', 'x')
       assert.ok(instance.nodeHasBindings(div))
     })
   })
 
   describe('getBindingAccessors with string arg', function () {
-    var div;
+    let div
 
     beforeEach(function () {
       instance = options.bindingProviderInstance = new DataBindProvider()
-      div = document.createElement('div');
-      instance.bindingHandlers.alpha = {
-        init: sinon.spy(),
-        update: sinon.spy()
-      }
-    });
+      div = document.createElement('div')
+      instance.bindingHandlers.alpha = { init: sinon.spy(), update: sinon.spy() }
+    })
 
     it('reads multiple bindings', function () {
       div.setAttribute('data-bind', 'a: 123, b: "456"')
-      var bindings = instance.getBindingAccessors(div);
+      const bindings = instance.getBindingAccessors(div)
       assert.equal(Object.keys(bindings).length, 2, 'len')
       assert.equal(bindings['a'](), 123, 'a')
       assert.equal(bindings['b'](), '456', 'b')
-    });
+    })
 
     it('escapes strings', function () {
       div.setAttribute('data-bind', 'a: "a\\"b", b: \'c\\\'d\'')
-      var bindings = instance.getBindingAccessors(div);
+      const bindings = instance.getBindingAccessors(div)
       assert.equal(Object.keys(bindings).length, 2, 'len')
       assert.equal(bindings['a'](), 'a"b', 'a')
       assert.equal(bindings['b'](), "c\'d", 'b')
     })
 
     it('returns a name/valueAccessor pair', function () {
-      div.setAttribute('data-bind', 'alpha: "122.9"');
-      var bindings = instance.getBindingAccessors(div);
+      div.setAttribute('data-bind', 'alpha: "122.9"')
+      const bindings = instance.getBindingAccessors(div)
       assert.equal(Object.keys(bindings).length, 1, 'len')
       assert.isFunction(bindings['alpha'], 'is accessor')
       assert.equal(bindings['alpha'](), '122.9', '122.9')
-    });
+    })
 
     it('becomes the valueAccessor', function () {
-      div.setAttribute('data-bind', 'alpha: "122.9"');
-      var i_spy = instance.bindingHandlers.alpha.init,
+      div.setAttribute('data-bind', 'alpha: "122.9"')
+      let i_spy = instance.bindingHandlers.alpha.init,
         u_spy = instance.bindingHandlers.alpha.update,
-        args;
-      applyBindings({
-        vm: true
-      }, div);
-      assert.equal(i_spy.callCount, 1, 'i_spy cc');
-      assert.equal(u_spy.callCount, 1, 'u_spy cc');
-      args = i_spy.getCall(0).args;
+        args
+      applyBindings({ vm: true }, div)
+      assert.equal(i_spy.callCount, 1, 'i_spy cc')
+      assert.equal(u_spy.callCount, 1, 'u_spy cc')
+      args = i_spy.getCall(0).args
 
       assert.equal(args[0], div, 'u_spy div == node')
       assert.equal(args[1](), '122.9', 'valueAccessor')
       // args[2] == allBindings
-      assert.deepEqual(args[3], {
-        vm: true
-      }, 'view model')
+      assert.deepEqual(args[3], { vm: true }, 'view model')
     })
   })
 
   describe('getBindingAccessors with function arg', function () {
-    var div;
+    let div
 
     beforeEach(function () {
       instance = options.bindingProviderInstance = new DataBindProvider()
-      div = document.createElement('div');
-      div.setAttribute('data-bind', 'alpha: x');
-      instance.bindingHandlers.alpha = {
-        init: sinon.spy(),
-        update: sinon.spy()
-      }
-    });
+      div = document.createElement('div')
+      div.setAttribute('data-bind', 'alpha: x')
+      instance.bindingHandlers.alpha = { init: sinon.spy(), update: sinon.spy() }
+    })
 
     it('returns a name/valueAccessor pair', function () {
-      var bindings = instance.getBindingAccessors(div);
+      const bindings = instance.getBindingAccessors(div)
       assert.equal(Object.keys(bindings).length, 1)
       assert.isFunction(bindings['alpha'])
-    });
+    })
 
     it('becomes the valueAccessor', function () {
-      var i_spy = instance.bindingHandlers.alpha.init,
+      let i_spy = instance.bindingHandlers.alpha.init,
         u_spy = instance.bindingHandlers.alpha.update,
-        args;
-      applyBindings({
-        x: 0xDEADBEEF
-      }, div);
-      assert.equal(i_spy.callCount, 1, 'i_spy cc');
-      assert.equal(u_spy.callCount, 1, 'u_spy cc');
-      args = i_spy.getCall(0).args;
+        args
+      applyBindings({ x: 0xdeadbeef }, div)
+      assert.equal(i_spy.callCount, 1, 'i_spy cc')
+      assert.equal(u_spy.callCount, 1, 'u_spy cc')
+      args = i_spy.getCall(0).args
 
       assert.equal(args[0], div, 'u_spy div == node')
-      assert.equal(args[1](), 0xDEADBEEF, 'valueAccessor')
+      assert.equal(args[1](), 0xdeadbeef, 'valueAccessor')
       // args[2] == allBindings
-      assert.deepEqual(args[3], {
-        x: 0xDEADBEEF
-      }, 'view model')
+      assert.deepEqual(args[3], { x: 0xdeadbeef }, 'view model')
     })
   })
 
@@ -155,42 +129,36 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('binds Text with data-bind', function () {
-      var div = document.createElement('div');
+      const div = document.createElement('div')
       div.setAttribute('data-bind', 'text: obs')
-      applyBindings({
-        obs: observable('a towel')
-      }, div)
+      applyBindings({ obs: observable('a towel') }, div)
       assert.equal(div.textContent || div.innerText, 'a towel')
     })
 
     it('sets attributes to constants', function () {
-      var div = document.createElement('div'),
-        context = {
-          aTitle: 'petunia plant'
-        };
+      const div = document.createElement('div'),
+        context = { aTitle: 'petunia plant' }
       div.setAttribute('data-bind', 'attr: { title: aTitle }')
       applyBindings(context, div)
       assert.equal(div.getAttribute('title'), context.aTitle)
     })
 
     it('sets attributes to observables in objects', function () {
-      var div = document.createElement('div'),
-        context = {
-          aTitle: observable('petunia plant')
-        };
+      const div = document.createElement('div'),
+        context = { aTitle: observable('petunia plant') }
       div.setAttribute('data-bind', 'attr: { title: aTitle }')
       applyBindings(context, div)
       assert.equal(div.getAttribute('title'), context.aTitle())
     })
 
     it('registers a click event', function () {
-      var div = document.createElement('div'),
+      let div = document.createElement('div'),
         called = false,
         context = {
           cb: function () {
-            called = true;
+            called = true
           }
-        };
+        }
       div.setAttribute('data-bind', 'click: cb')
       applyBindings(context, div)
       assert.equal(called, false, 'not called')
@@ -199,10 +167,8 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('sets an input `value` binding ', function () {
-      var input = document.createElement('input'),
-        context = {
-          vobs: observable('273-9164')
-        };
+      const input = document.createElement('input'),
+        context = { vobs: observable('273-9164') }
       input.setAttribute('data-bind', 'value: vobs')
       applyBindings(context, input)
       assert.equal(input.value, '273-9164')
@@ -211,11 +177,9 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('reads an input `value` binding', function () {
-      var input = document.createElement('input'),
+      const input = document.createElement('input'),
         evt = new CustomEvent('change'),
-        context = {
-          vobs: observable()
-        };
+        context = { vobs: observable() }
       input.setAttribute('data-bind', 'value: vobs')
       applyBindings(context, input)
       input.value = '273-9164'
@@ -226,16 +190,11 @@ describe('Data-Bind Behaviors', function () {
     it('reads an input `value` binding for a defineProperty', function () {
       // see https://github.com/brianmhunt/knockout-secure-binding/issues/23
       // and http://stackoverflow.com/questions/21580173
-      var input = document.createElement('input'),
+      const input = document.createElement('input'),
         evt = new CustomEvent('change'),
         obs = observable(),
-        context: any = {};
-      Object.defineProperty(context, 'pobs', {
-        configurable: true,
-        enumerable: true,
-        get: obs,
-        set: obs
-      });
+        context: any = {}
+      Object.defineProperty(context, 'pobs', { configurable: true, enumerable: true, get: obs, set: obs })
       input.setAttribute('data-bind', 'value: pobs')
       applyBindings(context, input)
       input.value = '273-9164'
@@ -244,16 +203,11 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('writes an input `value` binding for a defineProperty', function () {
-      var input = document.createElement('input'),
+      const input = document.createElement('input'),
         // evt = new CustomEvent("change"),
         obs = observable(),
-        context: any = {};
-      Object.defineProperty(context, 'pobs', {
-        configurable: true,
-        enumerable: true,
-        get: obs,
-        set: obs
-      });
+        context: any = {}
+      Object.defineProperty(context, 'pobs', { configurable: true, enumerable: true, get: obs, set: obs })
       input.setAttribute('data-bind', 'value: pobs')
       context.pobs = '273-9164'
       applyBindings(context, input)
@@ -265,20 +219,11 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('writes an input object defineProperty', function () {
-      var input = document.createElement('input'),
+      const input = document.createElement('input'),
         // evt = new CustomEvent("change"),
         obs = observable(),
-        context = {
-          obj: {
-            sobs: ''
-          }
-        };
-      Object.defineProperty(context.obj, 'sobs', {
-        configurable: true,
-        enumerable: true,
-        get: obs,
-        set: obs
-      });
+        context = { obj: { sobs: '' } }
+      Object.defineProperty(context.obj, 'sobs', { configurable: true, enumerable: true, get: obs, set: obs })
       // apply the binding with a value
       input.setAttribute('data-bind', 'value: obj.sobs')
       context.obj.sobs = '273-9164'
@@ -295,26 +240,16 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('writes nested defineProperties', function () {
-      var input = document.createElement('input'),
+      const input = document.createElement('input'),
         // evt = new CustomEvent("change"),
         obs = observable(),
         context: any = {},
         obj = {},
-        oo = observable(obj); // es5 wraps obj in an observable
+        oo = observable(obj) // es5 wraps obj in an observable
 
-      Object.defineProperty(context, 'obj', {
-        configurable: true,
-        enumerable: true,
-        get: oo,
-        set: oo
-      })
+      Object.defineProperty(context, 'obj', { configurable: true, enumerable: true, get: oo, set: oo })
 
-      Object.defineProperty(context.obj, 'ddobs', {
-        configurable: true,
-        enumerable: true,
-        get: obs,
-        set: obs
-      })
+      Object.defineProperty(context.obj, 'ddobs', { configurable: true, enumerable: true, get: obs, set: obs })
 
       input.setAttribute('data-bind', 'value: obj.ddobs')
       context.obj.ddobs = '555-2368' // who ya gonna call?
@@ -328,25 +263,15 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('reads a nested defineProperty', function () {
-      var input = document.createElement('input'),
+      const input = document.createElement('input'),
         evt = new CustomEvent('change'),
         obs = observable(),
         oo = observable({}),
-        context: any = {};
+        context: any = {}
 
-      Object.defineProperty(context, 'obj', {
-        configurable: true,
-        enumerable: true,
-        get: oo,
-        set: oo
-      })
+      Object.defineProperty(context, 'obj', { configurable: true, enumerable: true, get: oo, set: oo })
 
-      Object.defineProperty(oo(), 'drobs', {
-        configurable: true,
-        enumerable: true,
-        get: obs,
-        set: obs
-      })
+      Object.defineProperty(oo(), 'drobs', { configurable: true, enumerable: true, get: obs, set: obs })
 
       input.setAttribute('data-bind', 'value: obj.drobs')
       applyBindings(context, input)
@@ -356,40 +281,20 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('reads a multi-nested defineProperty', function () {
-      var input = document.createElement('input'),
+      const input = document.createElement('input'),
         evt = new CustomEvent('change'),
         o0 = observable({}),
         o1 = observable({}),
         o2 = observable({}),
         context: any = {}
 
-      Object.defineProperty(context, 'o0', {
-        configurable: true,
-        enumerable: true,
-        get: o0,
-        set: o0
-      })
+      Object.defineProperty(context, 'o0', { configurable: true, enumerable: true, get: o0, set: o0 })
 
-      Object.defineProperty(o0(), 'o1', {
-        configurable: true,
-        enumerable: true,
-        get: o1,
-        set: o1
-      })
+      Object.defineProperty(o0(), 'o1', { configurable: true, enumerable: true, get: o1, set: o1 })
 
-      Object.defineProperty(o1(), 'o2', {
-        configurable: true,
-        enumerable: true,
-        get: o1,
-        set: o1
-      })
+      Object.defineProperty(o1(), 'o2', { configurable: true, enumerable: true, get: o1, set: o1 })
 
-      Object.defineProperty(o2(), 'oN', {
-        configurable: true,
-        enumerable: true,
-        get: o1,
-        set: o1
-      })
+      Object.defineProperty(o2(), 'oN', { configurable: true, enumerable: true, get: o1, set: o1 })
 
       input.setAttribute('data-bind', 'value: o0.o1.o2.oN')
       applyBindings(context, input)
@@ -406,35 +311,29 @@ describe('Data-Bind Behaviors', function () {
     }
 
     it('accesses the context', function () {
-      var binding = 'a: x',
-        context = {
-          x: 'y'
-        },
+      const binding = 'a: x',
+        context = { x: 'y' },
         bindings = makeBindings(binding, context)
-      assert.equal(bindings.a(), 'y');
+      assert.equal(bindings.a(), 'y')
     })
 
     it('accesses the globals', function () {
-      var binding = 'a: z',
-        globals = {
-          z: 'ZZ'
-        },
+      const binding = 'a: z',
+        globals = { z: 'ZZ' },
         bindings = makeBindings(binding, {}, globals)
       assert.equal(bindings.a(), globals.z)
     })
 
     it('accesses $data.value and value', function () {
-      var binding = 'x: $data.value, y: value',
-        context = {
-          value: 42
-        },
+      const binding = 'x: $data.value, y: value',
+        context = { value: 42 },
         bindings = makeBindings(binding, context)
       assert.equal(bindings.x(), 42)
       assert.equal(bindings.y(), 42)
     })
 
     it('ignores spaces', function () {
-      var binding = 'x: $data  .  value, y: $data\n\t\r . \t\r\nvalue',
+      const binding = 'x: $data  .  value, y: $data\n\t\r . \t\r\nvalue',
         context = { value: 42 },
         bindings = makeBindings(binding, context)
       assert.equal(bindings.x(), 42)
@@ -442,20 +341,14 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('looks up nested elements in objects', function () {
-      var binding = 'x: { y: { z: a.b.c } }',
-        context = {
-          'a': {
-            b: {
-              c: 11
-            }
-          }
-        },
+      const binding = 'x: { y: { z: a.b.c } }',
+        context = { a: { b: { c: 11 } } },
         bindings = makeBindings(binding, context)
       assert.equal(bindings.x().y.z, 11)
     })
 
     it('can be denied access to `window` globals', function () {
-      var binding = 'x: window, y: global, z: document',
+      const binding = 'x: window, y: global, z: document',
         context = {},
         bindings = makeBindings(binding, context)
       assert.throws(bindings.x, 'not found')
@@ -464,10 +357,8 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('only returns explicitly from $context', function () {
-      var binding = 'x: $context.$data.value, y: $context.value, z: value',
-        context = {
-          value: 42
-        },
+      const binding = 'x: $context.$data.value, y: $context.value, z: value',
+        context = { value: 42 },
         bindings = makeBindings(binding, context)
       assert.equal(bindings.x(), 42)
       assert.equal(bindings.y(), undefined)
@@ -475,7 +366,7 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('recognizes $element', function () {
-      var binding = 'x: $element.id',
+      const binding = 'x: $element.id',
         node = { id: 42 },
         bindings = makeBindings(binding, {}, {}, node)
       assert.equal(bindings.x(), node.id)
@@ -490,30 +381,21 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('accesses $context before globals', function () {
-      var binding = 'a: z',
-        context = {
-          z: 42
-        },
-        globals = {
-          z: 84
-        },
+      const binding = 'a: z',
+        context = { z: 42 },
+        globals = { z: 84 },
         bindings = makeBindings(binding, context, globals)
       assert.equal(bindings.a(), 42)
     })
 
     it('accesses properties created with defineProperty', function () {
       // style of e.g. knockout-es5
-      var binding = 'a: z',
+      const binding = 'a: z',
         context: any = {},
         bindings = makeBindings(binding, context),
-        obs = observable();
+        obs = observable()
 
-      Object.defineProperty(context, 'z', {
-        configurable: true,
-        enumerable: true,
-        get: obs,
-        set: obs
-      });
+      Object.defineProperty(context, 'z', { configurable: true, enumerable: true, get: obs, set: obs })
 
       assert.equal(bindings.a(), undefined)
       context.z = '142'
@@ -521,13 +403,9 @@ describe('Data-Bind Behaviors', function () {
     })
 
     it('does not bleed globals', function () {
-      var binding = 'a: z',
-        globals_1 = {
-          z: 168
-        },
-        globals_2 = {
-          z: undefined
-        },
+      const binding = 'a: z',
+        globals_1 = { z: 168 },
+        globals_2 = { z: undefined },
         context = {},
         bindings_1 = makeBindings(binding, context, globals_1),
         bindings_2 = makeBindings(binding, context, globals_2)

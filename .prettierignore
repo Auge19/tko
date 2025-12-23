@@ -4,7 +4,6 @@ docs
 coverage
 .vscode
 .devcontainer
-docs
 node_modules
 tools
 tko.io
@@ -12,3 +11,6 @@ tko.io
 package.json
 package-lock.json
 .github/**
+*.json
+*.md
+*.config.js
