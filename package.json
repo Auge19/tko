@@ -7,7 +7,7 @@
     "url": "https://github.com/knockout/tko.git"
   },
   "scripts": {
-    "test": "make && make test-headless"
+    "test": "make sweep && make && make test-headless"
   },
   "bugs": "https://github.com/knockout/tko/issues",
   "licenses": [
