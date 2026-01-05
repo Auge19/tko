@@ -28,7 +28,9 @@ import {
 
 import {bindings as coreBindings} from '@tko/binding.core';
 
-;
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
 
 describe('Binding dependencies', function () {
   let bindingHandlers

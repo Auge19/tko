@@ -4,6 +4,10 @@ import {
     otherNodeCleanerFunctions, cleanjQueryData
 } from '../src'
 
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
+
 describe('DOM node disposal', function () {
   let jQuery = options.jQuery
   let testNode : HTMLElement

@@ -9,6 +9,10 @@ import {
 
 import components from '../src'
 
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
+
 describe('Components: Loader registry', function () {
   var testAsyncDelay = 20,
     testComponentName = 'test-component',

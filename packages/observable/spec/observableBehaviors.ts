@@ -9,6 +9,10 @@ import {
     unwrap
 } from '../src'
 
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
+
 describe('Observable', function () {
   it('Should be subscribable', function () {
     var instance = observable()

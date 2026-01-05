@@ -20,8 +20,11 @@ import components from '../src'
 const {ComponentABC} = components
 
 import {
-    useMockForTasks
+    useMockForTasks,
+    initJasmine
 } from '@tko/utils.spec'
+
+initJasmine()
 
 describe('ComponentABC', function () {
   let testComponentName = 'test-component',

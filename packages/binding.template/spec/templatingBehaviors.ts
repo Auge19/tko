@@ -34,6 +34,10 @@ import {
 } from '@tko/utils.spec'
 import { Provider } from '@tko/provider'
 
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
+
 describe('Templating', function () {
   let bindingHandlers
 

@@ -32,7 +32,9 @@ import {
     TextMustacheProvider
 } from '../src';
 
-;
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
 
 describe('Interpolation Markup preprocessor', function () {
   function testPreprocess (node) {

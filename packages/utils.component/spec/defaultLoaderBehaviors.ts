@@ -4,6 +4,10 @@ import {
 
 import components from '../src'
 
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
+
 describe('Components: Default loader', function () {
   var waitsFor = window.waitsFor
   var testComponentName = 'test-component'

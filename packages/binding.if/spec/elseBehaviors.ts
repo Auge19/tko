@@ -23,7 +23,9 @@ import {
     bindings as coreBindings
 } from '@tko/binding.core';
 
-;
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
 
 describe('else inside an if binding', function () {
   let testNode : HTMLElement

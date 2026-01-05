@@ -42,9 +42,11 @@ import {
 import components from '@tko/utils.component'
 
 import {
-    useMockForTasks
+    useMockForTasks,
+    initJasmine
 } from '@tko/utils.spec'
 
+initJasmine()
 
 describe('Components: Component binding', function () {
   let testComponentName = 'test-component',

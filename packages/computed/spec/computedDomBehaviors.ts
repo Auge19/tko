@@ -10,7 +10,9 @@ import {
     computed as Computed
 } from '../src'
 
+import { initJasmine } from '@tko/utils.spec'
 
+initJasmine()
 
 describe('Dependent Observable DOM', function () {
   let testNode : HTMLElement

@@ -4,6 +4,10 @@ import { arrayMap } from '@tko/utils'
 
 import { setDomNodeChildrenFromArrayMapping } from '../src/arrayToDomNodeChildren'
 
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
+
 function copyDomNodeChildren (domNode: HTMLElement) {
   const copy: ChildNode[] = []
   for (var i = 0; i < domNode.childNodes.length; i++) {

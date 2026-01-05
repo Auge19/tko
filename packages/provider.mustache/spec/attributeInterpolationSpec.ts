@@ -27,6 +27,10 @@ import {
 ;
 import { AttributeMustacheProvider } from '../src';
 
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
+
 function ctxStub (obj = {}) { return { lookup (v) { return obj[v] } } }
 
 describe('Attribute Interpolation Markup Provider', function () {

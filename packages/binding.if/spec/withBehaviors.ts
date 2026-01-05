@@ -19,7 +19,9 @@ import {bindings as withBindings} from '../src'
 import {bindings as coreBindings} from '@tko/binding.core'
 import {bindings as templateBindings} from '@tko/binding.template'
 
+import { initJasmine } from '@tko/utils.spec'
 
+initJasmine()
 
 describe('Binding: With', function () {
   let testNode : HTMLElement

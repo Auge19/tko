@@ -40,8 +40,11 @@ import {
 import {ComponentProvider} from '../src'
 
 import {
-    useMockForTasks
+    useMockForTasks,
+    initJasmine
 } from '@tko/utils.spec'
+
+initJasmine()
 
 describe('Components: Custom elements', function () {
   let bindingHandlers

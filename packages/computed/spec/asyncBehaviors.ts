@@ -17,7 +17,8 @@ import {
 } from '@tko/observable'
 
 import {
-    useMockForTasks
+    useMockForTasks,
+    initJasmine
 } from '@tko/utils.spec'
 
 import {
@@ -25,6 +26,8 @@ import {
     pureComputed as koPureComputed,
     when
 } from '../src'
+
+initJasmine()
 
 describe('Throttled observables', function () {
   beforeEach(function () { waits(1) }) // Workaround for spurious timing-related failures on IE8 (issue #736)

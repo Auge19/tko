@@ -24,6 +24,9 @@ import {
     bindings as coreBindings
 } from '@tko/binding.core'
 
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
 
 
 describe('Native template engine', function () {
