@@ -4,7 +4,9 @@ import { observable as Observable } from '@tko/observable'
 
 import { computed as Computed } from '../dist'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
 
 describe('Dependent Observable DOM', function () {
   let testNode: HTMLElement

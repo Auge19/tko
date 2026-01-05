@@ -12,8 +12,12 @@ import { MultiProvider } from '@tko/provider.multi'
 
 import { DataBindProvider } from '@tko/provider.databind'
 
-import '@tko/utils/helpers/jasmine-13-helper'
-import { AttributeMustacheProvider } from '../src'
+;
+import { AttributeMustacheProvider } from '../src';
+
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
 
 function ctxStub(obj = {}) {
   return {

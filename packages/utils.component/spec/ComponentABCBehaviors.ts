@@ -15,7 +15,12 @@ import { bindings as componentBindings } from '@tko/binding.component'
 import components from '../dist'
 const { ComponentABC } = components
 
-import { useMockForTasks } from '@tko/utils/helpers/jasmine-13-helper'
+import {
+    useMockForTasks,
+    initJasmine
+} from '@tko/utils.spec'
+
+initJasmine()
 
 describe('ComponentABC', function () {
   let testComponentName = 'test-component',

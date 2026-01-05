@@ -4,6 +4,10 @@ import { computed } from '@tko/computed'
 
 import components from '../dist'
 
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
+
 describe('Components: Loader registry', function () {
   const testAsyncDelay = 20,
     testComponentName = 'test-component',

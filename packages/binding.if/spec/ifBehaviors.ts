@@ -18,7 +18,9 @@ import {
 
 import { bindings as coreBindings } from '@tko/binding.core'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
 
 describe('Binding: If', function () {
   let testNode: HTMLElement

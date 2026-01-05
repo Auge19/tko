@@ -11,6 +11,10 @@ import {
 
 import '../helpers/jasmine-13-helper'
 
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
+
 describe('DOM node disposal', function () {
   let testNode: HTMLElement
   beforeEach(function () {

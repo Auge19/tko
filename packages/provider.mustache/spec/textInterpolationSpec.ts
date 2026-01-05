@@ -18,7 +18,9 @@ import { bindings as ifBindings } from '@tko/binding.if'
 
 import { TextMustacheProvider } from '../src'
 
-import '@tko/utils/helpers/jasmine-13-helper'
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
 
 describe('Interpolation Markup preprocessor', function () {
   function testPreprocess(node): any {

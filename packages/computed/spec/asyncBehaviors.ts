@@ -14,9 +14,18 @@ import {
   subscribable as koSubscribable
 } from '@tko/observable'
 
-import { computed as koComputed, pureComputed as koPureComputed, when } from '../dist'
+import {
+    useMockForTasks,
+    initJasmine
+} from '@tko/utils.spec'
 
-import { useMockForTasks } from '@tko/utils/helpers/jasmine-13-helper'
+import {
+    computed as koComputed,
+    pureComputed as koPureComputed,
+    when
+} from '../src'
+
+initJasmine()
 
 describe('Throttled observables', function () {
   beforeEach(function () {

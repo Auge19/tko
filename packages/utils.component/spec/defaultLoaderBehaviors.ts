@@ -4,6 +4,10 @@ import components from '../dist'
 
 import '@tko/utils/helpers/jasmine-13-helper'
 
+import { initJasmine } from '@tko/utils.spec'
+
+initJasmine()
+
 describe('Components: Default loader', function () {
   const waitsFor = window.waitsFor
   const testComponentName = 'test-component'
