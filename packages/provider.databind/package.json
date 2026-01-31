@@ -1,5 +1,5 @@
 {
-  "version": "4.0.0-rc4.0",
+  "version": "4.0.0-rc4.1",
   "name": "@tko/provider.databind",
   "description": "Link HTML attributes based on a `data-bind` HTML attribute",
   "module": "dist/provider.databind.js",
@@ -9,8 +9,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@tko/bind": "^4.0.0-rc4.0",
-    "@tko/provider.bindingstring": "^4.0.0-rc4.0"
+    "@tko/bind": "^4.0.0-rc4.1",
+    "@tko/provider.bindingstring": "^4.0.0-rc4.1"
   },
   "karma": {
     "frameworks": [

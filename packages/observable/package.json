@@ -1,5 +1,5 @@
 {
-  "version": "4.0.0-rc4.0",
+  "version": "4.0.0-rc4.1",
   "name": "@tko/observable",
   "description": "TKO subscribables and observables",
   "repository": {
@@ -31,7 +31,7 @@
   },
   "homepage": "https://tko.io",
   "dependencies": {
-    "@tko/utils": "^4.0.0-rc4.0"
+    "@tko/utils": "^4.0.0-rc4.1"
   },
   "karma": {
     "frameworks": [
