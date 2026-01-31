@@ -2,14 +2,39 @@
  * Config for karma.
  */
 const fs = require('fs')
+const { Buffer } = require('buffer')
+const { createInstrumenter } = require('istanbul-lib-instrument')
 
 const {argv} = process
 const {SAUCE_USERNAME, SAUCE_ACCESS_KEY} = process.env
+const coverage = argv.includes('--coverage')
 
 const pkg = JSON.parse(fs.readFileSync('package.json'))
 
+const coveragePlugin = {
+  name: 'code-coverage',
+  setup(build) {
+    if(!coverage)
+      return
+
+    const coverageInstrumenter = createInstrumenter({ esModules: true })
+
+    build.onEnd((result) => {
+      const js = result.outputFiles.find(f => f.path.match(/\.js$/))
+      const sourceMap = result.outputFiles.find(f => f.path.match(/\.js\.map$/))
+      const sourceMapObject = JSON.parse(sourceMap.text)
+      sourceMapObject.sourceRoot = '/'
+
+      const instrumented = coverageInstrumenter.instrumentSync(js.text, null, sourceMapObject)
+      js.contents = Buffer.from(instrumented)
+    })
+  }
+}
+
+const basePath = process.cwd()
+
 const CommonConfig = {
-  basePath: process.cwd(),
+  basePath: basePath,
   frameworks: pkg.karma.frameworks,
   files: pkg.karma.files || [
     { pattern: 'spec/**/*.js', watched: false },
@@ -22,13 +47,29 @@ const CommonConfig = {
   esbuild: {
     // See: https://esbuild.github.io/api/
     format: 'iife',
-    sourcemap: "inline",
+    sourcemap: coverage ? "external" : "inline",
     bundle: false,
+    plugins: [coveragePlugin],
     define: {
       BUILD_VERSION: '"test"',
-    } 
+    }
   }
 }
+
+const coverageConfig = {
+  reporters: ['progress', 'coverage'],
+  // configure the reporter
+  coverageReporter: {
+      // specify a central output directory
+      dir: '../../coverage-temp/',
+      reporters: [        
+        { type: 'json', subdir: '.', file: basePath.substring(basePath.lastIndexOf('/')+1) + '_report.json' }
+      ]
+  }
+}
+
+if(coverage)
+  Object.assign(CommonConfig, coverageConfig)
 
 
 /**
@@ -120,8 +161,8 @@ function sauceConfig (config) {
   })
 }
 
-function localConfig(config, useChrome) {
-  config.set({
+function localConfig(config, browser) {
+  const baseconfig = {
     ...CommonConfig,
     electronOpts: {
       frame: false,
@@ -136,28 +177,53 @@ function localConfig(config, useChrome) {
     },
     //browserDisconnectTimeout: 100000,
     //browserNoActivityTimeout: 100000,
-    browsers: useChrome ? 
-    ['testRunner'] : ['Electron'],
-	  customLaunchers: {
-      testRunner: {
-        base: "ChromeHeadless",
-        flags: ["--no-sandbox", 
-          "--remote-debugging-address=0.0.0.0",
-          "--remote-debugging-port=9222"]
-      }      
-    },
+    browsers: ['Electron'],
     debug: argv.includes('--debug'),
     debugger: argv.includes('--debug'),
     //logLevel: "DEBUG",
     singleRun: argv.includes('--once')
-  })
+  }
+
+  if(browser.useChrome) {
+    const chrome = {
+      browsers: ['testRunnerChrome'],
+      customLaunchers: {
+        testRunnerChrome: {
+          base: "ChromeHeadless",
+          flags: ["--no-sandbox", 
+            "--remote-debugging-address=0.0.0.0",
+            "--remote-debugging-port=9222"]
+        }      
+      }
+    }
+    Object.assign(baseconfig, chrome)
+  } else if (browser.useFirefox) {
+    const ff = {
+      browsers: ['testRunnerFireFox'],
+      customLaunchers: {
+        testRunnerFireFox: {
+          base: "Firefox",
+          flags: ["-headless"],
+          prefs: {
+            'network.proxy.type': 0
+          }
+        }        
+      }
+    }
+    Object.assign(baseconfig, ff)
+  }
+
+  config.set(baseconfig)
 }
 
 module.exports = (config) => {
   if (argv.includes('--sauce')) {
     sauceConfig(config)
   } else {
-    const useChrome = argv.includes('--headless-chrome')
-    localConfig(config, useChrome)
+    const browser = {
+      useChrome: argv.includes('--headless-chrome'),
+      useFirefox: argv.includes('--headless-firefox')
+    }
+    localConfig(config, browser)
   }
 }

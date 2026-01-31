@@ -26,8 +26,18 @@ test:
 test-headless:
 	$(LERNA) exec --stream -- $(MAKE) test-headless
 
+# Instrumentalization via CLI: $(LERNA) exec --stream -- $(NPX) instrument dist --in-place
+# We have done it with a Esbuild-Plugin in the karma.conf.js-file
+# To manually merge coverage files: $(NPX) nyc merge coverage ../../coverage-temp/coverage-final.json
+test-coverage:
+	$(LERNA) exec --stream -- $(MAKE) test-coverage   
+	$(NPX) nyc report --reporter=html --reporter=text --reporter=cobertura --report-dir=coverage --temp-dir=coverage-temp --exclude="**/browser.min.js" --exclude="**/spec/*" > COVERAGE.md
+
 test-headless-jquery:
 	$(LERNA) exec --stream -- $(MAKE) test-headless-jquery
+
+test-headless-ff:
+	$(LERNA) exec --stream -- $(MAKE) test-headless-ff
 
 ci:
 	$(LERNA) exec --stream --concurrency=1 -- $(MAKE) test-ci
@@ -95,6 +105,8 @@ install: package-lock.json
 sweep:
 	rm -rf packages/*/dist/*
 	rm -rf builds/*/dist/*
+	rm -rf coverage/
+	rm -rf coverage-temp/
 	
 clean: sweep
 	rm -rf node_modules/
