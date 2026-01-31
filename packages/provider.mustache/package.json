@@ -1,5 +1,5 @@
 {
-  "version": "4.0.0-rc2.0",
+  "version": "4.0.0-rc4.0",
   "name": "@tko/provider.mustache",
   "description": "Interpolate text/node attributes {{ }}",
   "module": "dist/provider.mustache.js",
@@ -23,9 +23,9 @@
   },
   "homepage": "https://tko.io",
   "dependencies": {
-    "@tko/observable": "^4.0.0-rc2.0",
-    "@tko/provider": "^4.0.0-rc2.0",
-    "@tko/utils.parser": "^4.0.0-rc2.0"
+    "@tko/observable": "^4.0.0-rc4.0",
+    "@tko/provider": "^4.0.0-rc4.0",
+    "@tko/utils.parser": "^4.0.0-rc4.0"
   },
   "karma": {
     "frameworks": [
