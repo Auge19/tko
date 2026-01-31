@@ -9,8 +9,7 @@
   ],
   "dependencies": {
     "@tko/observable": "^4.0.0-rc2.0",
-    "@tko/utils": "^4.0.0-rc2.0",
-    "tslib": "^2.2.0"
+    "@tko/utils": "^4.0.0-rc2.0"
   },
   "repository": {
     "type": "git",
