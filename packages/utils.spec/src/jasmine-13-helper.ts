@@ -1,5 +1,4 @@
 /// <reference types="jasmine" />
-/// <reference types="jquery" />
 
 import jQuery from "jquery";
 window.jQuery = jQuery;
@@ -71,8 +70,12 @@ export function initJasmine() {
 
     jasmine.ieVersion = ieVersion;
 
-    jasmine.setNodeText = function (node, text: string) {
-        'textContent' in node ? node.textContent = text : node.innerText = text;
+    jasmine.setNodeText = function(node, text:string) {
+        if('textContent' in node) {
+            node.textContent = text 
+        } else { 
+            node.innerText = text
+        }
     };
 
 
