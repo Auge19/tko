@@ -38,7 +38,7 @@ export class Options {
   allowVirtualElements: boolean = true
 
   // Global variables that can be accessed from bindings.
-  bindingGlobals: Object & CustomBindingGlobalProperties = Object.create(null)
+  bindingGlobals: object & CustomBindingGlobalProperties = Object.create(null)
 
     // An instance of the binding provider.
   bindingProviderInstance: any // TODO

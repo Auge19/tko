@@ -58,6 +58,7 @@ export interface ComputedFunctions<T = any, TTarget = any> extends Subscribable<
 }
 
 // used in computed, but empty interface is pointless. Check if it's needed
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface PureComputed<T = any> extends Computed<T> { }
 
 export type ComputedReadFunction<T = any, TTarget = any> = Subscribable<T> | Observable<T> | Computed<T> | ((this: TTarget) => T);
