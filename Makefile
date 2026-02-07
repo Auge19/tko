@@ -26,6 +26,13 @@ test:
 test-headless:
 	$(LERNA) exec --stream -- $(MAKE) test-headless
 
+# Instrumentalization via CLI: $(LERNA) exec --stream -- $(NPX) instrument dist --in-place
+# We have done it with a Esbuild-Plugin in the karma.conf.js-file
+# To manually merge coverage files: $(NPX) nyc merge coverage ../../coverage-temp/coverage-final.json
+test-coverage:
+	$(LERNA) exec --stream -- $(MAKE) test-coverage   
+	$(NPX) nyc report --reporter=html --reporter=text --reporter=cobertura --report-dir=coverage --temp-dir=coverage-temp --exclude="**/browser.min.js" --exclude="**/spec/*" > COVERAGE.md
+
 test-headless-jquery:
 	$(LERNA) exec --stream -- $(MAKE) test-headless-jquery
 
@@ -44,6 +51,9 @@ format-fix:
 tsc:
 	$(NPX) tsc
 
+knip:
+	$(NPX) knip --no-config-hints
+
 eslint:
 	$(NPX) eslint .
 
@@ -56,6 +66,9 @@ dts:
 docker-build:
 	$(DOCKER) build . --tag tko
 
+lerna-check:
+	$(LERNA) exec --stream -- true
+
 # Run the `repackage` target in every directory.  Essentially
 # homogenizes the `package.json`.
 repackage: tools/repackage.mjs
@@ -64,6 +77,16 @@ repackage: tools/repackage.mjs
 # Run to update the versions of all the package.json files, before publishing.
 bump:
 	$(LERNA) version
+
+release-knockout:
+	@echo "Parameters:"
+	@echo "  version = $(PARAM1)"
+	@if [ -z "$(PARAM1)" ]; then \
+		echo "FEHLER: PARAM1 ist nicht gesetzt!"; \
+		exit 1; \
+	fi
+	/builds/knockout/$(NPM) version prerelease --preid $(PARAM1) --no-git-tag-version
+	/builds/knockout/$(NPM) publish 
 
 # from-git "identify packages tagged by lerna version and publish them to npm."
 # from-package "packages where the latest version is not present in the registry"
@@ -88,6 +111,8 @@ install: package-lock.json
 sweep:
 	rm -rf packages/*/dist/*
 	rm -rf builds/*/dist/*
+	rm -rf coverage/
+	rm -rf coverage-temp/
 	
 clean: sweep
 	rm -rf node_modules/

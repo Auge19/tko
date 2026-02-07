@@ -1,7 +1,7 @@
 
 # TKO (“Technical Knockout”)
 
-[![npm version](https://badge.fury.io/js/@tko%2Fbuild.reference.svg)](https://badge.fury.io/js/@tko%2Fbuild.reference)
+[![npm version](https://badge.fury.io/js/build.tko.knockout.svg)](https://badge.fury.io/js/build.tko.knockout.svg)
 [![Join the chat at https://gitter.im/knockout/tko](https://badges.gitter.im/knockout/tko.svg)](https://gitter.im/knockout/tko?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Code Style: Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io/)
 
@@ -15,20 +15,19 @@ TKO, or Technical Knockout, is a JavaScript web framework for data binding and t
 
 TKO aims to provide developers with a more robust, modular, and maintainable codebase in [Typescript](https://www.typescriptlang.org/), making it easier to build rich, responsive, and maintainable web applications.
 
-
-
 ## Getting Started
 
 To install use one of the usual package managers e.g.
 
-- $ `yarn add @tko/build.reference`
-- $ `npm install @tko/build.reference`
-- $ `pnpm install @tko/build.reference`
+- $ `yarn add @tko/build.tko.knockout`
+- $ `npm install @tko/build.tko.knockout`
+- $ `pnpm install @tko/build.tko.knockout`
 
+The Knockout build has some backwards compatibility that is not in the reference build.  See the build differences, here: https://tko.io/3to4
 
 Over CDN
 
-- Reference Build: https://cdn.jsdelivr.net/npm/@tko/build.reference/dist/build.reference.min.js
+- Reference Build: https://cdn.jsdelivr.net/npm/build.tko.knockout/dist/browser.min.js
 
 For more details, see
 
@@ -37,13 +36,11 @@ For more details, see
  * Online examples at [http://knockoutjs.com/examples/](http://knockoutjs.com/examples/)
  * Stackoverflow https://stackoverflow.com/questions/tagged/knockout.js
 
-## Knockout Build
+## TKO Reference Build (out-of-date)
 
-The Knockout build has some backwards compatibility that is not in the reference build.  See the build differences, here: https://tko.io/3to4
+The reference build is available as `@tko/build.reference`, and over CDN:
 
-It's available as `@tko/build.knockout`, and over CDN:
-
-- Knockout Build https://cdn.jsdelivr.net/npm/@tko/build.knockout/dist/build.knockout.min.js
+- Reference Build: https://cdn.jsdelivr.net/npm/@tko/build.reference/dist/build.reference.min.js
 
 ### Using the Monorepo
 
@@ -55,6 +52,7 @@ It's available as `@tko/build.knockout`, and over CDN:
 | $ `make test` | Run all tests with electron. See below. |
 | $ `make test-headless` | Run all tests with chromium. See below. |
 | $ `lerna publish` | Bump versions and publish to npm registry |
+| $ `make test-coverage` | Run all tests and create a code coverage report |
 
 Checkout the `Makefile` for more commands that can be executed with `make {command}`.
 
@@ -77,10 +75,6 @@ Other options:
 
 - `make ci` — use Sauce Labs to test a variety of platforms; requires an account at Sauce Labs and `SAUCE_USERNAME` and `SAUCE_ACCESS_KEY` to be set in the environment.
 
-#### `visual.html` (possibly outdated)
-
-Note that running `karma` will create a `visual.html` file that shows the proportional size of imports into each package.
-
 ## Objectives
 
 TKO aims to become a base for future versions of Knockout.  The objectives include:
@@ -99,6 +93,11 @@ TKO aims to become a base for future versions of Knockout.  The objectives inclu
 - Type-safe with Typescript
 - CSP compliant
 - JSX/TSX support
+
+## Zero-dependency and small sized - with all plugins, bundled only ~125KB
+
+Created with https://esbuild.github.io/analyze/
+![Bundled only 125KB](assets/esbuild_analyzer.png)
 
 ## JQUERY and TKO
 

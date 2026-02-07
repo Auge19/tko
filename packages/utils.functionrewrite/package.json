@@ -1,5 +1,5 @@
 {
-  "version": "4.0.0-beta1.3",
+  "version": "4.0.0-rc4.1",
   "name": "@tko/utils.functionrewrite",
   "description": "Rewrite `function {}` as lambdas (=>)",
   "module": "dist/utils.functionrewrite.js",
@@ -8,9 +8,6 @@
     "helpers/"
   ],
   "license": "MIT",
-  "dependencies": {
-    "tslib": "^2.2.0"
-  },
   "karma": {
     "frameworks": [
       "mocha",

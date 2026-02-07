@@ -17,11 +17,12 @@ ESBUILD := npx esbuild
 .SUFFIXES: .ts .js
 
 default::
-	$(MAKE) esm commonjs mjs
+	$(MAKE) esm commonjs mjs tko
 
 browser: dist/browser.min.js dist/browser.js
 commonjs: dist/index.cjs
 esm: dist/index.js
+tko: dist/tko.js
 mjs: dist/index.mjs
 
 *.ts:
@@ -72,6 +73,34 @@ dist/index.cjs: $(src) package.json
 		--outfile=$@ \
 		./index.ts
 
+# Build a ESM bundle, targetting ES6.
+dist/tko.js: $(src) package.json
+	@echo "[make] Compiling ${package} => $@"
+	$(ESBUILD) \
+		--platform=neutral \
+		--format=esm \
+		--log-level=$(log-level) \
+		--banner:js="$(banner) ESM" \
+		--define:BUILD_VERSION='"${version}"' \
+		--bundle \
+		--sourcemap=external \
+		--outfile=$@ \
+		./src/index.ts
+
+dist/tko.min.js: $(src) package.json
+	@echo "[make] Compiling ${package} => $@"
+	$(ESBUILD) \
+		--platform=neutral \
+		--format=esm \
+		--log-level=$(log-level) \
+		--banner:js="$(banner) ESM" \
+		--define:BUILD_VERSION='"${version}"' \
+		--bundle \
+		--minify \
+		--sourcemap=external \
+		--outfile=$@ \
+		./src/index.ts
+
 dist/browser.min.js: $(src) package.json
 	@echo "[make] Compiling minified ${package} => $@"
 	$(ESBUILD) \
@@ -81,12 +110,13 @@ dist/browser.min.js: $(src) package.json
 		--global-name=$(iife-global-name) \
 		--log-level=$(log-level) \
 		--banner:js="$(banner) IIFE" \
-		--footer:js="(typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : global).$(iife-global-name) = $(iife-global-name).default" \
+		--footer:js="(typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : global).$(iife-global-name) = $(iife-global-name).default;" \
 		--define:BUILD_VERSION='"${version}"' \
 		--bundle \
 		--minify \
 		--sourcemap=external \
 		--outfile=$@ \
+		--metafile=meta/browser_min_meta.json \
 		./src/index.ts
 
 dist/browser.js: $(src) package.json
@@ -98,11 +128,12 @@ dist/browser.js: $(src) package.json
 		--global-name=$(iife-global-name) \
 		--log-level=$(log-level) \
 		--banner:js="$(banner) IIFE" \
-		--footer:js="(typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : global).$(iife-global-name) = $(iife-global-name).default" \
+		--footer:js="(typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : global).$(iife-global-name) = $(iife-global-name).default;" \
 		--define:BUILD_VERSION='"${version}"' \
 		--bundle \
 		--sourcemap=external \
 		--outfile=$@ \
+		--metafile=meta/browser_meta.json \
 		./src/index.js
 
 repackage: $(tools_dir)/repackage.mjs ../../lerna.json
@@ -116,6 +147,9 @@ test: esm
 
 test-headless: esm
 	$(KARMA) start $(tools_dir)/karma.conf --once --headless-chrome --noJQuery
+
+test-coverage: esm
+	$(KARMA) start $(tools_dir)/karma.conf --once --headless-chrome --noJQuery --coverage
 
 test-headless-ff: esm
 	$(KARMA) start $(tools_dir)/karma.conf --once --headless-firefox --noJQuery

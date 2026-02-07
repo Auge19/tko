@@ -1,5 +1,5 @@
 {
-  "version": "4.0.0-beta1.6",
+  "version": "4.0.0-rc4.1",
   "name": "@tko/provider.component",
   "description": "Bind custom web components e.g. <custom-binding>",
   "module": "dist/provider.component.js",
@@ -9,13 +9,12 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@tko/computed": "^4.0.0-beta1.3",
-    "@tko/observable": "^4.0.0-beta1.3",
-    "@tko/provider": "^4.0.0-beta1.3",
-    "@tko/utils": "^4.0.0-beta1.3",
-    "@tko/utils.component": "^4.0.0-beta1.3",
-    "@tko/utils.parser": "^4.0.0-beta1.6",
-    "tslib": "^2.2.0"
+    "@tko/computed": "^4.0.0-rc4.1",
+    "@tko/observable": "^4.0.0-rc4.1",
+    "@tko/provider": "^4.0.0-rc4.1",
+    "@tko/utils": "^4.0.0-rc4.1",
+    "@tko/utils.component": "^4.0.0-rc4.1",
+    "@tko/utils.parser": "^4.0.0-rc4.1"
   },
   "karma": {
     "frameworks": [
