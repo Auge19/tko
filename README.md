@@ -3,7 +3,7 @@
 
 [![npm version](https://badge.fury.io/js/@tko%2Fbuild.reference.svg)](https://badge.fury.io/js/@tko%2Fbuild.reference)
 [![Join the chat at https://gitter.im/knockout/tko](https://badges.gitter.im/knockout/tko.svg)](https://gitter.im/knockout/tko?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) via Prettier
 
 [![Check 'Main' (build+tsc)](https://github.com/knockout/tko/actions/workflows/run-tsc.yml/badge.svg)](https://github.com/knockout/tko/actions/workflows/run-tsc.yml)
 [![Coverage Status](https://coveralls.io/repos/knockout/tko/badge.svg?branch=master&service=github)](https://coveralls.io/github/knockout/tko?branch=master)
@@ -100,6 +100,12 @@ TKO aims to become a base for future versions of Knockout.  The objectives inclu
 - CSP compliant
 - JSX/TSX support
 
+## JQUERY and TKO
+
+Optionally TKO can use JQuery for CSS-Manipulation and HTML-Templates (only if HTML5-Template-Tag no supported). All tests are based on JQuery 3.7. 
+In the future we will probably remove the usage of JQuery in TKO, as many features have already been migrated to native APIs. Compatibility with JQuery in an application will remain.
+You can set useOnlyNativeEvents to false, so JQuery is also use for event-registration. Note: Some tests fails in this case ('change'-event doesn't fire). You can set useTemplateTag to false, so disable using HTML5-Template-Tags.
+
 ## Overview of the development stack
 
 - **make** -> Build tasks
@@ -111,6 +117,8 @@ TKO aims to become a base for future versions of Knockout.  The objectives inclu
 
 - Test-Runner -> Karma
 - Test-Environment -> electron and headless-chrome
+- Linting -> Eslint
+- Formating -> Prettier (configured like StandardJS)
 - TDD/BDD-Frameworks -> 
     - Jasmine 1.3
     - Mocha + Chai

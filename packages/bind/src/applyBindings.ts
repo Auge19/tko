@@ -412,10 +412,6 @@ type MaybeBindingContextOrObservable<T> = BindingContext<T> | Observable<T> | T
 
 export function applyBindings<T = any>(viewModelOrBindingContext?: MaybeBindingContextOrObservable<T>, rootNode?: Node, extendContextCallback?: BindingContextExtendCallback<T>): Promise<unknown> {
   const asyncBindingsApplied = new Set()
-  // If jQuery is loaded after Knockout, we won't initially have access to it. So save it here.
-  if (options.jQuery === undefined && (globalThis as any).jQuery) {
-    options.jQuery = (globalThis as any).jQuery
-  }
 
   // rootNode is optional
   if (!rootNode) {

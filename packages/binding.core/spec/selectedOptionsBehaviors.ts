@@ -34,7 +34,6 @@ describe('Binding: Selected Options', function () {
     var provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
-    this.addMatchers(matchers)
   })
 
   it('Should only be applicable to SELECT nodes', function () {

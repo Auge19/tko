@@ -29,12 +29,14 @@ declare global {
         var Clock: Clock
         function getEnv(): any;
 
-        var FakeTimer: any
-        var undefined: undefined
-        var browserSupportsProtoAssignment: any
-        var ieVersion: any
+        const Matchers: Matchers
+        const Spec: any;
+        const FakeTimer: any
+        const undefined: undefined
 
-        var Matchers: Matchers<any>
+        let browserSupportsProtoAssignment: any
+        let ieVersion: any
+        let updateInterval: number        <any>
 
         interface Matchers<T> {
             toContainText(expected: string, ignoreSpaces: boolean): boolean
@@ -61,6 +63,6 @@ declare global {
     }
 
     interface SymbolConstructor {
-        observable?: Symbol;
+        observable?: symbol;
     } 
 }
