@@ -1,7 +1,7 @@
 
 # TKO (“Technical Knockout”)
 
-[![npm version](https://badge.fury.io/js/@tko%2Fbuild.reference.svg)](https://badge.fury.io/js/@tko%2Fbuild.reference)
+[![npm version](https://badge.fury.io/js/build.tko.knockout.svg)](https://badge.fury.io/js/build.tko.knockout.svg)
 [![Join the chat at https://gitter.im/knockout/tko](https://badges.gitter.im/knockout/tko.svg)](https://gitter.im/knockout/tko?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Code Style: Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io/)
 
@@ -15,20 +15,19 @@ TKO, or Technical Knockout, is a JavaScript web framework for data binding and t
 
 TKO aims to provide developers with a more robust, modular, and maintainable codebase in [Typescript](https://www.typescriptlang.org/), making it easier to build rich, responsive, and maintainable web applications.
 
-
-
 ## Getting Started
 
 To install use one of the usual package managers e.g.
 
-- $ `yarn add @tko/build.reference`
-- $ `npm install @tko/build.reference`
-- $ `pnpm install @tko/build.reference`
+- $ `yarn add @tko/build.tko.knockout`
+- $ `npm install @tko/build.tko.knockout`
+- $ `pnpm install @tko/build.tko.knockout`
 
+The Knockout build has some backwards compatibility that is not in the reference build.  See the build differences, here: https://tko.io/3to4
 
 Over CDN
 
-- Reference Build: https://cdn.jsdelivr.net/npm/@tko/build.reference/dist/build.reference.min.js
+- Reference Build: https://cdn.jsdelivr.net/npm/build.tko.knockout/dist/browser.min.js
 
 For more details, see
 
@@ -37,13 +36,11 @@ For more details, see
  * Online examples at [http://knockoutjs.com/examples/](http://knockoutjs.com/examples/)
  * Stackoverflow https://stackoverflow.com/questions/tagged/knockout.js
 
-## Knockout Build
+## TKO Reference Build (out-of-date)
 
-The Knockout build has some backwards compatibility that is not in the reference build.  See the build differences, here: https://tko.io/3to4
+The reference build is available as `@tko/build.reference`, and over CDN:
 
-It's available as `@tko/build.knockout`, and over CDN:
-
-- Knockout Build https://cdn.jsdelivr.net/npm/@tko/build.knockout/dist/build.knockout.min.js
+- Reference Build: https://cdn.jsdelivr.net/npm/@tko/build.reference/dist/build.reference.min.js
 
 ### Using the Monorepo
 
