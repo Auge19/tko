@@ -1,18 +1,21 @@
+import { observable } from '@tko/observable'
 
-import {
-  observable
-} from '@tko/observable'
-
-import {
-  when
-} from '../src'
+import { when } from '../src'
 
 describe('when', function () {
   it('Runs callback when predicate function becomes true, but only once', function () {
     var x = observable(3),
       called = 0
 
-    when(function () { return x() === 4 }, function () { called++ }, undefined)
+    when(
+      function () {
+        return x() === 4
+      },
+      function () {
+        called++
+      },
+      undefined
+    )
 
     x(5)
     expect(called).toBe(0)
@@ -32,7 +35,15 @@ describe('when', function () {
     var x = observable(4),
       called = 0
 
-    when(function () { return x() === 4 }, function () { called++ }, undefined)
+    when(
+      function () {
+        return x() === 4
+      },
+      function () {
+        called++
+      },
+      undefined
+    )
 
     expect(called).toBe(1)
     expect(x.getSubscriptionsCount()).toBe(0)
@@ -47,7 +58,13 @@ describe('when', function () {
     var x = observable(false),
       called = 0
 
-    when(x, function () { called++ }, undefined)
+    when(
+      x,
+      function () {
+        called++
+      },
+      undefined
+    )
 
     expect(called).toBe(0)
     expect(x.getSubscriptionsCount()).toBe(1)
@@ -61,7 +78,13 @@ describe('when', function () {
     var x = observable(false),
       called = 0
 
-    var handle = when(x, function () { called++ }, undefined)
+    var handle = when(
+      x,
+      function () {
+        called++
+      },
+      undefined
+    )
 
     expect(called).toBe(0)
     expect(x.getSubscriptionsCount()).toBe(1)
@@ -77,11 +100,15 @@ describe('when', function () {
     var x = observable(false),
       called = 0
 
-    when(x, function () {
-      called++
-      x(false)
-      x(true)
-    }, undefined)
+    when(
+      x,
+      function () {
+        called++
+        x(false)
+        x(true)
+      },
+      undefined
+    )
 
     expect(called).toBe(0)
     expect(x.getSubscriptionsCount()).toBe(1)
@@ -90,10 +117,12 @@ describe('when', function () {
     expect(called).toBe(1)
   })
 
-  it('Should be able to specify a \'this\' pointer for the callback', function () {
+  it("Should be able to specify a 'this' pointer for the callback", function () {
     var model = {
       someProperty: 123,
-      myCallback: function () { expect(this.someProperty).toEqual(123) }
+      myCallback: function () {
+        expect(this.someProperty).toEqual(123)
+      }
     }
     when(observable(true), model.myCallback, model)
   })

@@ -2,26 +2,21 @@
 // Observable extenders
 // ---
 //
-import {
-    options, objectForEach,
-    throttle as throttleFn, debounce as debounceFn    
-} from '@tko/utils'
+import { options, objectForEach, throttle as throttleFn, debounce as debounceFn } from '@tko/utils'
 
 import type { CompareArraysOptions } from '@tko/utils'
 import type { ObservableArray } from '@tko/observable'
 
 import { deferUpdates } from './defer'
 
-var primitiveTypes = {
-  'undefined': 1, 'boolean': 1, 'number': 1, 'string': 1
+var primitiveTypes = { undefined: 1, boolean: 1, number: 1, string: 1 }
+
+export function valuesArePrimitiveAndEqual(a, b) {
+  var oldValueIsPrimitive = a === null || (typeof a) in primitiveTypes
+  return oldValueIsPrimitive ? a === b : false
 }
 
-export function valuesArePrimitiveAndEqual (a, b) {
-  var oldValueIsPrimitive = (a === null) || (typeof (a) in primitiveTypes)
-  return oldValueIsPrimitive ? (a === b) : false
-}
-
-export function applyExtenders (requestedExtenders?) {
+export function applyExtenders(requestedExtenders?) {
   var target = this
   if (requestedExtenders) {
     objectForEach(requestedExtenders, function (key, value) {
@@ -42,14 +37,17 @@ export function applyExtenders (requestedExtenders?) {
 
 // Change when notifications are published.
 export function notify(target: any, notifyWhen: string) {
-  target.equalityComparer = notifyWhen == 'always'
-        ? null  // null equalityComparer means to always notify
-        : valuesArePrimitiveAndEqual
+  target.equalityComparer =
+    notifyWhen == 'always'
+      ? null // null equalityComparer means to always notify
+      : valuesArePrimitiveAndEqual
 }
 
 export function deferred(target: any, option: boolean) {
   if (option !== true) {
-    throw new Error('The \'deferred\' extender only accepts the value \'true\', because it is not supported to turn deferral off once enabled.')
+    throw new Error(
+      "The 'deferred' extender only accepts the value 'true', because it is not supported to turn deferral off once enabled."
+    )
   }
   deferUpdates(target)
 }
@@ -74,17 +72,13 @@ export function rateLimit(target: any, options: string | any) {
   })
 }
 
-export interface BaseExtendersType{
-  notify(target: any, notifyWhen: string): void,
-  deferred(target: any, option: boolean): void,
-  rateLimit(target: any, options: string | any): void,
-  trackArrayChanges?(target: ObservableArray, options?: CompareArraysOptions) : void,
-  throttle?(target: any, timout: number): void,
+export interface BaseExtendersType {
+  notify(target: any, notifyWhen: string): void
+  deferred(target: any, option: boolean): void
+  rateLimit(target: any, options: string | any): void
+  trackArrayChanges?(target: ObservableArray, options?: CompareArraysOptions): void
+  throttle?(target: any, timout: number): void
   [key: PropertyKey]: ((target: any, ...args: any[]) => any) | undefined
 }
 
-export var extenders: BaseExtendersType = {
-  notify: notify,
-  deferred: deferred,
-  rateLimit: rateLimit
-}
+export var extenders: BaseExtendersType = { notify: notify, deferred: deferred, rateLimit: rateLimit }

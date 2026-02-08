@@ -1,12 +1,9 @@
-import {
-  DataBindProvider
-} from '@tko/provider.databind'
+import { DataBindProvider } from '@tko/provider.databind'
 
 import { expect } from 'chai'
 
 describe('Binding preprocessing', function () {
-  var bindingHandlers,
-    preProcessBindings
+  var bindingHandlers, preProcessBindings
 
   beforeEach(function () {
     var provider = new DataBindProvider()

@@ -2,16 +2,12 @@
 // Test Mapping Behavior
 //
 
-import {
-  toJS, toJSON, isObservable, observable, observableArray,
-  Observable,
-  ObservableArray
-} from '../src'
+import { toJS, toJSON, isObservable, observable, observableArray, Observable, ObservableArray } from '../src'
 
 describe('Mapping helpers', function () {
   it('toJS should require a parameter', function () {
     expect(function () {
-      (toJS as any)()
+      ;(toJS as any)()
     }).toThrow()
   })
 
@@ -26,25 +22,13 @@ describe('Mapping helpers', function () {
   })
 
   it('toJS should recursively unwrap observables whose values are themselves observable', function () {
-    var weirdlyNestedObservable = observable(
-      observable(
-        observable(
-          observable('Hello')
-        )
-      )
-    )
+    var weirdlyNestedObservable = observable(observable(observable(observable('Hello'))))
     var result = toJS(weirdlyNestedObservable)
     expect(result).toEqual('Hello')
   })
 
   it('toJS should unwrap observable properties, including nested ones', function () {
-    var data = {
-      a: observable(123),
-      b: {
-        b1: observable(456),
-        b2: [789, observable('X')]
-      }
-    }
+    var data = { a: observable(123), b: { b1: observable(456), b2: [789, observable('X')] } }
     var result = toJS(data)
     expect(result.a).toEqual(123)
     expect(result.b.b1).toEqual(456)
@@ -53,7 +37,7 @@ describe('Mapping helpers', function () {
   })
 
   it('toJS should unwrap observable arrays and things inside them', function () {
-    const someObj = { someProp: observable('Hey') };
+    const someObj = { someProp: observable('Hey') }
     var data = observableArray(['a', 1, someObj])
     var result = toJS(data)
     expect(result.length).toEqual(3)
@@ -101,10 +85,7 @@ describe('Mapping helpers', function () {
   })
 
   it('toJS should serialize functions', function () {
-    var obj = {
-      include: observable('test'),
-      exclude: function () { }
-    }
+    var obj = { include: observable('test'), exclude: function () {} }
 
     var result = toJS(obj)
     expect(result.include).toEqual('test')
@@ -125,12 +106,16 @@ describe('Mapping helpers', function () {
   })
 
   it('toJSON should respect .toJSON functions on objects', function () {
-    var data: { a: any, b: Observable<any> } = {
+    var data: { a: any; b: Observable<any> } = {
       a: { one: 'one', two: 'two' },
       b: observable({ one: 'one', two: 'two' })
     }
-    data.a.toJSON = function () { return 'a-mapped' }
-    data.b().toJSON = function () { return 'b-mapped' }
+    data.a.toJSON = function () {
+      return 'a-mapped'
+    }
+    data.b().toJSON = function () {
+      return 'b-mapped'
+    }
     var result = toJSON(data)
 
     // Check via parsing so the specs are independent of browser-specific JSON string formatting
@@ -140,13 +125,14 @@ describe('Mapping helpers', function () {
   })
 
   it('toJSON should respect .toJSON functions on arrays', function () {
-    var data: { a: any, b: ObservableArray<any> } = {
-      a: [1, 2],
-      b: observableArray([3, 4])
+    var data: { a: any; b: ObservableArray<any> } = { a: [1, 2], b: observableArray([3, 4]) }
+    data.a.toJSON = function () {
+      return 'a-mapped'
     }
-    data.a.toJSON = function () { return 'a-mapped' }
     const b = data.b()
-      ; (b as any).toJSON = function () { return 'b-mapped' }
+    ;(b as any).toJSON = function () {
+      return 'b-mapped'
+    }
     var result = toJSON(data)
 
     // Check via parsing so the specs are independent of browser-specific JSON string formatting

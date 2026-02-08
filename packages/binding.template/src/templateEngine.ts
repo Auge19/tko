@@ -28,54 +28,77 @@
 import { options } from '@tko/utils'
 import { DomElement, AnonymousTemplate } from './templateSources'
 import type { TemplateSource } from './templateSources'
-import type { BindingContext } from '@tko/bind';
+import type { BindingContext } from '@tko/bind'
 
 export interface TemplateOptions<T = any> {
-  afterRender?: (elements: Node[], dataItem: T) => void;
-  templateEngine?: TemplateEngine;
-}   
+  afterRender?: (elements: Node[], dataItem: T) => void
+  templateEngine?: TemplateEngine
+}
 
 export interface TemplateEngine {
- allowTemplateRewriting: boolean;
+  allowTemplateRewriting: boolean
 
- renderTemplateSource(templateSource: TemplateSource, bindingContext: BindingContext<any>, options: TemplateOptions<any>, templateDocument?: Document): Node[];
- createJavaScriptEvaluatorBlock(script: string): string;
+  renderTemplateSource(
+    templateSource: TemplateSource,
+    bindingContext: BindingContext<any>,
+    options: TemplateOptions<any>,
+    templateDocument?: Document
+  ): Node[]
+  createJavaScriptEvaluatorBlock(script: string): string
 
- makeTemplateSource(template: string | Node, templateDocument?: Document): TemplateSource | undefined;
+  makeTemplateSource(template: string | Node, templateDocument?: Document): TemplateSource | undefined
 
- renderTemplate(template: string | Node, bindingContext: BindingContext<any>, options: TemplateOptions<any>, templateDocument?: Document): Node[];
+  renderTemplate(
+    template: string | Node,
+    bindingContext: BindingContext<any>,
+    options: TemplateOptions<any>,
+    templateDocument?: Document
+  ): Node[]
 
-//  isTemplateRewritten(template: string | Node, templateDocument?: Document): boolean;
+  //  isTemplateRewritten(template: string | Node, templateDocument?: Document): boolean;
 
-//  rewriteTemplate(template: string | Node, rewriterCallback: (val: string) => string, templateDocument?: Document): void;
+  //  rewriteTemplate(template: string | Node, rewriterCallback: (val: string) => string, templateDocument?: Document): void;
 }
 
 export abstract class TemplateEngineBase implements TemplateEngine {
-  allowTemplateRewriting: boolean;
+  allowTemplateRewriting: boolean
   // abstract isTemplateRewritten(template: string | Node, templateDocument?: Document): boolean;
   // abstract rewriteTemplate(template: string | Node, rewriterCallback: (val: string) => string, templateDocument?: Document): void;
-  abstract renderTemplateSource(templateSource: TemplateSource, bindingContext: BindingContext<any>, options, templateDocument?: Document): Node[];
+  abstract renderTemplateSource(
+    templateSource: TemplateSource,
+    bindingContext: BindingContext<any>,
+    options,
+    templateDocument?: Document
+  ): Node[]
   createJavaScriptEvaluatorBlock(script: string): string {
-    if (!this.allowTemplateRewriting)
-      return '';
-    options.onError('Override createJavaScriptEvaluatorBlock');
-    throw 'Override createJavaScriptEvaluatorBlock';
+    if (!this.allowTemplateRewriting) return ''
+    options.onError('Override createJavaScriptEvaluatorBlock')
+    throw 'Override createJavaScriptEvaluatorBlock'
   }
 
   makeTemplateSource(template: string | Node, templateDocument?: Document): TemplateSource | undefined {
-      // Named template
+    // Named template
     if (typeof template === 'string') {
       templateDocument = templateDocument || document
       var elem = templateDocument.getElementById(template)
-      if (!elem) { options.onError(new Error('Cannot find template with ID ' + template)) }
+      if (!elem) {
+        options.onError(new Error('Cannot find template with ID ' + template))
+      }
       return new DomElement(elem)
-    } else if ((template.nodeType == 1) || (template.nodeType == 8)) {
-          // Anonymous template
+    } else if (template.nodeType == 1 || template.nodeType == 8) {
+      // Anonymous template
       return new AnonymousTemplate(template)
-    } else { options.onError(new Error('Unknown template type: ' + template)) }
+    } else {
+      options.onError(new Error('Unknown template type: ' + template))
+    }
   }
 
-  renderTemplate(template: string | Node, bindingContext: BindingContext<any>, options: TemplateOptions<any>, templateDocument?: Document): Node[] {
+  renderTemplate(
+    template: string | Node,
+    bindingContext: BindingContext<any>,
+    options: TemplateOptions<any>,
+    templateDocument?: Document
+  ): Node[] {
     var templateSource = this.makeTemplateSource(template, templateDocument)
     if (templateSource == null) {
       return []

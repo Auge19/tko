@@ -3,38 +3,38 @@ import { registerEventHandler, virtualElements } from '../src'
 import options from '../src/options'
 import type { KnockoutInstance } from '@tko/builder'
 
-var ko : KnockoutInstance = globalThis.ko || {}
+var ko: KnockoutInstance = globalThis.ko || {}
 ko.utils = utils as any
 ko.options = options
 
 describe('startCommentRegex', function () {
-
   it('only ie8 has a text property at comment nodes', function () {
-    const reg : RegExp = virtualElements.startCommentRegex
+    const reg: RegExp = virtualElements.startCommentRegex
     expect(reg.source).not.toContain('<!..')
   })
-
 })
 
 describe('setTextContent', function () {
-  var element : HTMLElement
+  var element: HTMLElement
 
   beforeEach(function () {
     element = document.createElement('DIV')
   })
 
-    // NOTE: will test innerHTML because <IE8 doesn't have textContent
+  // NOTE: will test innerHTML because <IE8 doesn't have textContent
   it('defaults to empty string', function () {
     ko.utils.setTextContent(element)
     expect(element.innerHTML).toEqual('')
-  }) 
+  })
 
   it('sets text from plain values or observables', function () {
     ko.utils.setTextContent(element, 'test')
     expect(element.innerHTML).toEqual('test')
 
-        // We use a function as a proxy for an obsevrable
-    ko.utils.setTextContent(element, function () { return 'change' })
+    // We use a function as a proxy for an obsevrable
+    ko.utils.setTextContent(element, function () {
+      return 'change'
+    })
     expect(element.innerHTML).toEqual('change')
   })
 
@@ -47,14 +47,15 @@ describe('setTextContent', function () {
 })
 
 describe('registerEventHandler', function () {
-  let testNode : HTMLElement
-  beforeEach(function() { testNode = jasmine.prepareTestNode() })
+  let testNode: HTMLElement
+  beforeEach(function () {
+    testNode = jasmine.prepareTestNode()
+  })
   //TODO it looks like jquery3.7+ and trigger doesn't works with tko, useOnlyNativeEvents should be always true if jquery is used.
   xit('if jQuery is referenced, should use jQuery eventing with useOnlyNativeEvents option set to false', function () {
     const jQuery = options.jQuery
-    
-    if(!options.jQuery)
-      console.log('------- JQUERY is disabled -------')
+
+    if (!options.jQuery) console.log('------- JQUERY is disabled -------')
 
     if (typeof jQuery === 'undefined') {
       return // Nothing to test. Run the specs with jQuery referenced for this to do anything.
@@ -68,27 +69,26 @@ describe('registerEventHandler', function () {
 
     testNode.appendChild(element)
 
-        // Set the option to true.
+    // Set the option to true.
     ko.options.useOnlyNativeEvents = false
 
-        // Verify jQuery is used in event binding.
+    // Verify jQuery is used in event binding.
     registerEventHandler(element, 'click', function (eventArgs: JQuery.ClickEvent) {
       eventFired = true
       jQueryModified = !!eventArgs.originalEvent
     })
 
-        // Trigger the event natively (jQuery intercepts and creates new event object, which we can test)
+    // Trigger the event natively (jQuery intercepts and creates new event object, which we can test)
     element.click()
     expect(eventFired && jQueryModified).toBe(true)
 
-        // Also trigger an event through ko.utils.triggerEvent to show that it creates a jQuery event directly
+    // Also trigger an event through ko.utils.triggerEvent to show that it creates a jQuery event directly
     eventFired = jQueryModified = false
     ko.utils.triggerEvent(element, 'click')
     expect(eventFired && !jQueryModified).toBe(true)
   })
 
   it('if jQuery is referenced, useOnlyNativeEvents option set to true', function () {
-
     const jQuery = options.jQuery
 
     if (!jQuery) {
@@ -99,7 +99,6 @@ describe('registerEventHandler', function () {
     expect(ko.options.useOnlyNativeEvents).toBe(true)
   })
 
-
   it('should not use jQuery eventing with useOnlyNativeEvents option set to true', function () {
     this.restoreAfter(ko.options, 'useOnlyNativeEvents')
 
@@ -109,7 +108,7 @@ describe('registerEventHandler', function () {
 
     testNode.appendChild(element)
 
-        // Set the option to true.
+    // Set the option to true.
     ko.options.useOnlyNativeEvents = true
 
     // Verify jQuery is not used in event binding.
@@ -118,11 +117,11 @@ describe('registerEventHandler', function () {
       jQueryModified = !!eventArgs.originalEvent
     })
 
-        // Trigger the event natively
+    // Trigger the event natively
     element.click()
     expect(eventFired && !jQueryModified).toBe(true)
 
-        // Also trigger an event through ko.utils.triggerEvent to show that it triggers a native event
+    // Also trigger an event through ko.utils.triggerEvent to show that it triggers a native event
     eventFired = jQueryModified = false
     ko.utils.triggerEvent(element, 'click')
     expect(eventFired && !jQueryModified).toBe(true)
@@ -130,8 +129,10 @@ describe('registerEventHandler', function () {
 })
 
 describe('cloneNodes', function () {
-  let testNode : HTMLElement
-  beforeEach(function() { testNode = jasmine.prepareTestNode() })
+  let testNode: HTMLElement
+  beforeEach(function () {
+    testNode = jasmine.prepareTestNode()
+  })
 
   it('should return clones', function () {
     var newNodes = ko.utils.cloneNodes([testNode])
@@ -153,8 +154,10 @@ describe('cloneNodes', function () {
 })
 
 describe('selectExtensions', () => {
-  let testNode : HTMLElement
-  beforeEach(function() { testNode = jasmine.prepareTestNode() })
+  let testNode: HTMLElement
+  beforeEach(function () {
+    testNode = jasmine.prepareTestNode()
+  })
 
   it('should use loose equality for select value', () => {
     const select = document.createElement('select')

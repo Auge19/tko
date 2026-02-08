@@ -1,7 +1,5 @@
 /* eslint no-cond-assign: 0 */
-import {
-  arrayRemoveItem, objectForEach, options
-} from '@tko/utils'
+import { arrayRemoveItem, objectForEach, options } from '@tko/utils'
 
 import Subscription from './Subscription'
 import { SUBSCRIBABLE_SYM } from './subscribableSymbol'
@@ -16,56 +14,59 @@ export { isSubscribable } from './subscribableSymbol'
 export const LATEST_VALUE = Symbol('Knockout latest value')
 
 if (!(Symbol as any).observable) {
-  (Symbol as any).observable = Symbol.for('@tko/Symbol.observable')
+  ;(Symbol as any).observable = Symbol.for('@tko/Symbol.observable')
 }
 
-export type SubscriptionCallback<T = any, TTarget = void> = (this: TTarget, val: T) => void;
-export type MaybeSubscribable<T = any> = T | Subscribable<T>;
+export type SubscriptionCallback<T = any, TTarget = void> = (this: TTarget, val: T) => void
+export type MaybeSubscribable<T = any> = T | Subscribable<T>
 
-// Some types remain here because refactoring leads to invasive changes. 
+// Some types remain here because refactoring leads to invasive changes.
 // Change prototype-chains of the TKO base classes to js/ts classes can be later steps.
 export interface SubscribableFunctions<T = any> {
-  [symbol: symbol]: boolean;
-  init(instance: any): void;
+  [symbol: symbol]: boolean
+  init(instance: any): void
 
-  notifySubscribers(valueToWrite?: T, event?: string): void;
+  notifySubscribers(valueToWrite?: T, event?: string): void
 
-  subscribe<TTarget = void>(callback: SubscriptionCallback<T, TTarget> | any, callbackTarget?: TTarget, event?: string): Subscription;
-  extend(requestedExtenders: any): this;
-  extend<S extends Subscribable<T>>(requestedExtenders: any): S;
+  subscribe<TTarget = void>(
+    callback: SubscriptionCallback<T, TTarget> | any,
+    callbackTarget?: TTarget,
+    event?: string
+  ): Subscription
+  extend(requestedExtenders: any): this
+  extend<S extends Subscribable<T>>(requestedExtenders: any): S
 
-  getSubscriptionsCount(event?: string): number;
-  getVersion(): number;
-  hasChanged(versionToCheck: number): boolean;
-  updateVersion(): void;
-  hasSubscriptionsForEvent(event: string): boolean;
-  isDifferent<T>(oldValue?: T, newValue?: T): boolean;
-  once(cb: Function): void;
-  when(test, returnValue?);
-  yet(test: Function | any, args: any[]): void;
-  next(): Promise<unknown>;
-  toString(): string;
+  getSubscriptionsCount(event?: string): number
+  getVersion(): number
+  hasChanged(versionToCheck: number): boolean
+  updateVersion(): void
+  hasSubscriptionsForEvent(event: string): boolean
+  isDifferent<T>(oldValue?: T, newValue?: T): boolean
+  once(cb: Function): void
+  when(test, returnValue?)
+  yet(test: Function | any, args: any[]): void
+  next(): Promise<unknown>
+  toString(): string
 
   // From pureComputedOverrides in computed.ts
-  beforeSubscriptionAdd?: (event: string) => void;
-  afterSubscriptionRemove?: (event: string) => void;
+  beforeSubscriptionAdd?: (event: string) => void
+  afterSubscriptionRemove?: (event: string) => void
 
-  limit(func: Function): void;
-  [key: string]: unknown;
+  limit(func: Function): void
+  [key: string]: unknown
 }
 
-
 export interface Subscribable<T = any> extends SubscribableFunctions<T> {
-  _subscriptions: any;
-  _versionNumber: number;
-  _id: number;
+  _subscriptions: any
+  _versionNumber: number
+  _id: number
 }
 
 // This interface is for the JS-Factory-Method 'subscribable' to returns a typed Subscribable
 export interface subscribable {
-  new <T = any>(): Subscribable<T>;
-  fn: SubscribableFunctions;
-};
+  new <T = any>(): Subscribable<T>
+  fn: SubscribableFunctions
+}
 
 // https://stackoverflow.com/questions/75658736/is-there-any-way-to-create-object-using-function-in-typescript-like-javascript
 // TODO need help for refactoring to typescript-class without breaking the api
@@ -93,21 +94,21 @@ function limitNotifySubscribers(value, event?: string) {
 
 var ko_subscribable_fn: SubscribableFunctions = {
   [SUBSCRIBABLE_SYM]: true,
-  [(Symbol as any).observable]() { return this },
+  [(Symbol as any).observable]() {
+    return this
+  },
 
   init(instance) {
     instance._subscriptions = { change: [] }
     instance._versionNumber = 1
   },
 
-  subscribe(callback, callbackTarget, event) : Subscription {
+  subscribe(callback, callbackTarget, event): Subscription {
     // TC39 proposed standard Observable { next: () => ... }
     const isTC39Callback = typeof callback === 'object' && (callback as any).next
 
     event = event || defaultEvent
-    const observer = isTC39Callback ? callback : {
-      next: callbackTarget ? callback.bind(callbackTarget) : callback
-    }
+    const observer = isTC39Callback ? callback : { next: callbackTarget ? callback.bind(callbackTarget) : callback }
 
     const subscriptionInstance = new Subscription(this, observer, () => {
       arrayRemoveItem(this._subscriptions[event], subscriptionInstance)
@@ -141,12 +142,11 @@ var ko_subscribable_fn: SubscribableFunctions = {
       this.updateVersion()
     }
     if (this.hasSubscriptionsForEvent(event)) {
-      const subs = event === defaultEvent && this._changeSubscriptions
-        || [...this._subscriptions[event]]
+      const subs = (event === defaultEvent && this._changeSubscriptions) || [...this._subscriptions[event]]
 
       try {
         dependencyDetection.begin() // Begin suppressing dependency detection (by setting the top frame to undefined)
-        for (let i = 0, subscriptionInstance; subscriptionInstance = subs[i]; ++i) {
+        for (let i = 0, subscriptionInstance; (subscriptionInstance = subs[i]); ++i) {
           // In case a subscription was disposed during the arrayForEach cycle, check
           // for isDisposed on each subscription before invoking its callback
           if (!subscriptionInstance._isDisposed) {
@@ -159,11 +159,11 @@ var ko_subscribable_fn: SubscribableFunctions = {
     }
   },
 
-  getVersion() : number {
+  getVersion(): number {
     return this._versionNumber
   },
 
-  hasChanged(versionToCheck) : boolean {
+  hasChanged(versionToCheck): boolean {
     return this.getVersion() !== versionToCheck
   },
 
@@ -171,13 +171,13 @@ var ko_subscribable_fn: SubscribableFunctions = {
     ++this._versionNumber
   },
 
-  hasSubscriptionsForEvent(event) : boolean {
+  hasSubscriptionsForEvent(event): boolean {
     return this._subscriptions[event] && this._subscriptions[event].length
   },
 
-  getSubscriptionsCount(event? : string) : number {
+  getSubscriptionsCount(event?: string): number {
     if (event) {
-      return this._subscriptions[event] && this._subscriptions[event].length || 0
+      return (this._subscriptions[event] && this._subscriptions[event].length) || 0
     } else {
       var total = 0
       objectForEach(this._subscriptions, function (eventName, subscriptions) {
@@ -189,13 +189,12 @@ var ko_subscribable_fn: SubscribableFunctions = {
     }
   },
 
-  isDifferent(oldValue, newValue) : boolean {
-    return !this.equalityComparer ||
-      !this.equalityComparer(oldValue, newValue)
+  isDifferent(oldValue, newValue): boolean {
+    return !this.equalityComparer || !this.equalityComparer(oldValue, newValue)
   },
 
   once(cb) {
-    const subs = this.subscribe((nv) => {
+    const subs = this.subscribe(nv => {
       subs.dispose()
       cb(nv)
     })
@@ -224,69 +223,75 @@ var ko_subscribable_fn: SubscribableFunctions = {
     return this.when(negated, ...args)
   },
 
-  next() { return new Promise(resolve => this.once(resolve)) },
+  next() {
+    return new Promise(resolve => this.once(resolve))
+  },
 
-  toString() : string { return '[object Object]' },
+  toString(): string {
+    return '[object Object]'
+  },
 
   extend: applyExtenders,
 
   limit(limitFunction: Function): void {
     var self = this
-  var selfIsObservable = isObservable(self)
-  var beforeChange = 'beforeChange'
-  var ignoreBeforeChange: boolean, notifyNextChange: boolean, previousValue: any, pendingValue: any, didUpdate: boolean
+    var selfIsObservable = isObservable(self)
+    var beforeChange = 'beforeChange'
+    var ignoreBeforeChange: boolean,
+      notifyNextChange: boolean,
+      previousValue: any,
+      pendingValue: any,
+      didUpdate: boolean
 
-  if (!self._origNotifySubscribers) {
-    // Moved out of "limit" to avoid the extra closure
-    self._origNotifySubscribers = self.notifySubscribers
-    self.notifySubscribers = limitNotifySubscribers
-  }
-
-  var finish = limitFunction(function () {
-    self._notificationIsPending = false
-
-    // If an observable provided a reference to itself, access it to get the latest value.
-    // This allows computed observables to delay calculating their value until needed.
-    if (selfIsObservable && pendingValue === self) {
-      pendingValue = self._evalIfChanged ? self._evalIfChanged() : self()
+    if (!self._origNotifySubscribers) {
+      // Moved out of "limit" to avoid the extra closure
+      self._origNotifySubscribers = self.notifySubscribers
+      self.notifySubscribers = limitNotifySubscribers
     }
-    const shouldNotify = notifyNextChange || (
-      didUpdate && self.isDifferent(previousValue, pendingValue)
-    )
-    self._notifyNextChange = didUpdate = ignoreBeforeChange = false
-    if (shouldNotify) {
-      self._origNotifySubscribers(previousValue = pendingValue)
-    }
-  })
 
-  Object.assign(self, {
-    _limitChange(value: any, isDirty: boolean) {
-      if (!isDirty || !self._notificationIsPending) {
-        didUpdate = !isDirty
+    var finish = limitFunction(function () {
+      self._notificationIsPending = false
+
+      // If an observable provided a reference to itself, access it to get the latest value.
+      // This allows computed observables to delay calculating their value until needed.
+      if (selfIsObservable && pendingValue === self) {
+        pendingValue = self._evalIfChanged ? self._evalIfChanged() : self()
       }
-      self._changeSubscriptions = [...self._subscriptions[defaultEvent]]
-      self._notificationIsPending = ignoreBeforeChange = true
-      pendingValue = value
-      finish()
-    },
-
-    _limitBeforeChange(value: any) {
-      if (!ignoreBeforeChange) {
-        previousValue = value
-        self._origNotifySubscribers(value, beforeChange)
+      const shouldNotify = notifyNextChange || (didUpdate && self.isDifferent(previousValue, pendingValue))
+      self._notifyNextChange = didUpdate = ignoreBeforeChange = false
+      if (shouldNotify) {
+        self._origNotifySubscribers((previousValue = pendingValue))
       }
-    },
+    })
 
-    _notifyNextChangeIfValueIsDifferent() {
-      if (self.isDifferent(previousValue, self.peek(true /* evaluate */))) {
-        notifyNextChange = true
+    Object.assign(self, {
+      _limitChange(value: any, isDirty: boolean) {
+        if (!isDirty || !self._notificationIsPending) {
+          didUpdate = !isDirty
+        }
+        self._changeSubscriptions = [...self._subscriptions[defaultEvent]]
+        self._notificationIsPending = ignoreBeforeChange = true
+        pendingValue = value
+        finish()
+      },
+
+      _limitBeforeChange(value: any) {
+        if (!ignoreBeforeChange) {
+          previousValue = value
+          self._origNotifySubscribers(value, beforeChange)
+        }
+      },
+
+      _notifyNextChangeIfValueIsDifferent() {
+        if (self.isDifferent(previousValue, self.peek(true /* evaluate */))) {
+          notifyNextChange = true
+        }
+      },
+
+      _recordUpdate() {
+        didUpdate = true
       }
-    },
-
-    _recordUpdate() {
-      didUpdate = true
-    }
-  })
+    })
   }
 }
 

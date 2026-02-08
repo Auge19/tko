@@ -1,6 +1,4 @@
-import {
-    unwrap
-} from '@tko/observable'
+import { unwrap } from '@tko/observable'
 
 export var visible = {
   update: function (element, valueAccessor) {

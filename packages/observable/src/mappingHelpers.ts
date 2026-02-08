@@ -10,27 +10,46 @@ var maxNestedObservableDepth: number = 10 // Escape the (unlikely) pathological 
 
 export function toJS<T = any>(rootObject: T): T {
   if (arguments.length == 0) {
-    throw new Error('When calling ko.toJS, pass the object you want to convert.');
+    throw new Error('When calling ko.toJS, pass the object you want to convert.')
   }
 
   // We just unwrap everything at every level in the object graph
   return mapJsObjectGraph(rootObject, function (valueToMap: any) {
     // Loop because an observable's value might in turn be another observable wrapper
-    for (var i = 0; isObservable(valueToMap) && (i < maxNestedObservableDepth); i++) { valueToMap = valueToMap() }
+    for (var i = 0; isObservable(valueToMap) && i < maxNestedObservableDepth; i++) {
+      valueToMap = valueToMap()
+    }
     return valueToMap
   })
 }
 
-export function toJSON<T = any>(rootObject: T, replacer?: (key: string, value: any) => any, space?: string | number): string {     // replacer and space are optional
+export function toJSON<T = any>(
+  rootObject: T,
+  replacer?: (key: string, value: any) => any,
+  space?: string | number
+): string {
+  // replacer and space are optional
   var plainJavaScriptObject = toJS(rootObject)
   return JSON.stringify(plainJavaScriptObject, replacer, space)
 }
 
-function mapJsObjectGraph<T = any>(rootObject: T, mapInputCallback: (value: any) => any, visitedObjects = new Map()): any {
+function mapJsObjectGraph<T = any>(
+  rootObject: T,
+  mapInputCallback: (value: any) => any,
+  visitedObjects = new Map()
+): any {
   rootObject = mapInputCallback(rootObject)
-  var canHaveProperties = (typeof rootObject === 'object') && (rootObject !== null) && (rootObject !== undefined) && (!(rootObject instanceof RegExp)) && (!(rootObject instanceof Date)) && (!(rootObject instanceof String)) && (!(rootObject instanceof Number)) && (!(rootObject instanceof Boolean))
+  var canHaveProperties =
+    typeof rootObject === 'object'
+    && rootObject !== null
+    && rootObject !== undefined
+    && !(rootObject instanceof RegExp)
+    && !(rootObject instanceof Date)
+    && !(rootObject instanceof String)
+    && !(rootObject instanceof Number)
+    && !(rootObject instanceof Boolean)
   if (!canHaveProperties) {
-    return rootObject;
+    return rootObject
   }
 
   var outputProperties: any = rootObject instanceof Array ? [] : {}
@@ -49,9 +68,10 @@ function mapJsObjectGraph<T = any>(rootObject: T, mapInputCallback: (value: any)
       case 'object':
       case 'undefined':
         var previouslyMappedValue = visitedObjects.get(propertyValue)
-        outputProperties[indexer] = (previouslyMappedValue !== undefined)
-          ? previouslyMappedValue
-          : mapJsObjectGraph(propertyValue, mapInputCallback, visitedObjects)
+        outputProperties[indexer] =
+          previouslyMappedValue !== undefined
+            ? previouslyMappedValue
+            : mapJsObjectGraph(propertyValue, mapInputCallback, visitedObjects)
         break
     }
   })

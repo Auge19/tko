@@ -6,13 +6,6 @@ import { Builder } from '../src'
 describe('Builder', () => {
   it('creates a ko instance', () => {
     // We're just testing that the builder constructs, here.
-    const builder = new Builder({
-      filters: {},
-      provider: new VirtualProvider(),
-      bindings: [
-        ifBindings,
-      ],
-      options: {},
-    })
+    const builder = new Builder({ filters: {}, provider: new VirtualProvider(), bindings: [ifBindings], options: {} })
   })
 })

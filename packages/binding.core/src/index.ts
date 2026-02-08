@@ -1,4 +1,3 @@
-
 import { attr } from './attr'
 import { checked, checkedValue } from './checked'
 import { click } from './click'
@@ -21,31 +20,31 @@ import { visible, hidden } from './visible'
 import { using } from './using'
 
 type Bindings = {
-  attr: typeof attr,
-  checked: typeof checked,
-  checkedValue: typeof checkedValue,
-  click: typeof click,
-  css: typeof css,
-  'class': typeof css,
-  descendantsComplete: typeof descendantsComplete,
-  enable: typeof enable,
-  'event': typeof eventHandler,
-  disable: typeof disable,
-  hasfocus: typeof hasfocus,
-  hasFocus: typeof hasfocus,
-  hidden: typeof hidden,
-  html: typeof html,
-  'let': typeof $let,
-  on: typeof onHandler,
-  options: typeof options,
-  selectedOptions: typeof selectedOptions,
-  style: typeof style,
-  submit: typeof submit,
-  text: typeof text,
-  textInput: typeof textInput,
-  uniqueName: typeof uniqueName,
-  using: typeof using,
-  value: typeof value,
+  attr: typeof attr
+  checked: typeof checked
+  checkedValue: typeof checkedValue
+  click: typeof click
+  css: typeof css
+  class: typeof css
+  descendantsComplete: typeof descendantsComplete
+  enable: typeof enable
+  event: typeof eventHandler
+  disable: typeof disable
+  hasfocus: typeof hasfocus
+  hasFocus: typeof hasfocus
+  hidden: typeof hidden
+  html: typeof html
+  let: typeof $let
+  on: typeof onHandler
+  options: typeof options
+  selectedOptions: typeof selectedOptions
+  style: typeof style
+  submit: typeof submit
+  text: typeof text
+  textInput: typeof textInput
+  uniqueName: typeof uniqueName
+  using: typeof using
+  value: typeof value
   visible: typeof visible
 }
 
@@ -55,16 +54,16 @@ export const bindings: Bindings = {
   checkedValue,
   click,
   css,
-  'class': css,
+  class: css,
   descendantsComplete,
   enable,
-  'event': eventHandler,
+  event: eventHandler,
   disable,
   hasfocus,
   hasFocus: hasfocus,
   hidden,
   html,
-  'let': $let,
+  let: $let,
   on: onHandler,
   options,
   selectedOptions,

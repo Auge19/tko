@@ -1,30 +1,22 @@
-import {
-    applyBindings
-} from '@tko/bind'
+import { applyBindings } from '@tko/bind'
 
-import {
-    triggerEvent
-} from '@tko/utils'
+import { triggerEvent } from '@tko/utils'
 
-import {
-    DataBindProvider
-} from '@tko/provider.databind'
+import { DataBindProvider } from '@tko/provider.databind'
 
-import {
-    options
-} from '@tko/utils'
+import { options } from '@tko/utils'
 
-import {bindings as coreBindings} from '../src'
+import { bindings as coreBindings } from '../src'
 
-import {
-    initJasmine
-} from '@tko/utils.spec'
+import { initJasmine } from '@tko/utils.spec'
 
-initJasmine();
+initJasmine()
 
 describe('Binding: Submit', function () {
-  let testNode : HTMLElement
-  beforeEach(function() { testNode = jasmine.prepareTestNode() })
+  let testNode: HTMLElement
+  beforeEach(function () {
+    testNode = jasmine.prepareTestNode()
+  })
 
   beforeEach(function () {
     var provider = new DataBindProvider()
@@ -32,9 +24,15 @@ describe('Binding: Submit', function () {
     provider.bindingHandlers.set(coreBindings)
   })
 
-  it('Should invoke the supplied function on submit and prevent default action, using model as \'this\' param and the form node as a param to the handler', function () {
+  it("Should invoke the supplied function on submit and prevent default action, using model as 'this' param and the form node as a param to the handler", function () {
     var firstParamStored
-    var model = { wasCalled: false, doCall: function (firstParam) { this.wasCalled = true; firstParamStored = firstParam } }
+    var model = {
+      wasCalled: false,
+      doCall: function (firstParam) {
+        this.wasCalled = true
+        firstParamStored = firstParam
+      }
+    }
     testNode.innerHTML = "<form data-bind='submit:doCall' />"
     var formNode = testNode.childNodes[0]
     applyBindings(model, testNode)

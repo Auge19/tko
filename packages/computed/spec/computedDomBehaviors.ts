@@ -1,25 +1,21 @@
-import {
-    domData
-} from '@tko/utils'
+import { domData } from '@tko/utils'
 
-import {
-    observable as Observable
-} from '@tko/observable'
+import { observable as Observable } from '@tko/observable'
 
-import {
-    computed as Computed
-} from '../src'
+import { computed as Computed } from '../src'
 
 import { initJasmine } from '@tko/utils.spec'
 
 initJasmine()
 
 describe('Dependent Observable DOM', function () {
-  let testNode : HTMLElement
-  beforeEach(function() { testNode = jasmine.prepareTestNode() })
+  let testNode: HTMLElement
+  beforeEach(function () {
+    testNode = jasmine.prepareTestNode()
+  })
 
   it('Should register DOM node disposal callback only if active after the initial evaluation', function () {
-        // Set up an active one
+    // Set up an active one
     var nodeForActive = document.createElement('DIV'),
       observable = Observable('initial'),
       activeDependentObservable = Computed({
@@ -39,20 +35,20 @@ describe('Dependent Observable DOM', function () {
     expect(activeDependentObservable.isActive()).toEqual(true)
     expect(inactiveDependentObservable.isActive()).toEqual(false)
 
-        // Infer existence of disposal callbacks from presence/absence of DOM data. This is really just an implementation detail,
-        // and so it's unusual to rely on it in a spec. However, the presence/absence of the callback isn't exposed in any other way,
-        // and if the implementation ever changes, this spec should automatically fail because we're checking for both the positive
-        // and negative cases.
+    // Infer existence of disposal callbacks from presence/absence of DOM data. This is really just an implementation detail,
+    // and so it's unusual to rely on it in a spec. However, the presence/absence of the callback isn't exposed in any other way,
+    // and if the implementation ever changes, this spec should automatically fail because we're checking for both the positive
+    // and negative cases.
     expect(domData.clear(nodeForActive)).toEqual(true) // There was a callback
     expect(domData.clear(nodeForInactive)).toEqual(false) // There was no callback
   })
 
   it('Should dispose when DOM node is removed from the document and computed is re-evaluated', function () {
-        // Create node and add it to the document
+    // Create node and add it to the document
     var node = document.createElement('DIV')
     testNode.appendChild(node)
 
-        // Create a computed that is disposed when the node is removed
+    // Create a computed that is disposed when the node is removed
     var observable = Observable('initial'),
       computed = Computed({
         read: function () {
@@ -61,17 +57,17 @@ describe('Dependent Observable DOM', function () {
         disposeWhenNodeIsRemoved: node
       })
 
-        // Update computed and check that it's still active
+    // Update computed and check that it's still active
     observable('second')
     expect(computed.isActive()).toEqual(true)
 
-        // Remove the node, update the computed, and check that it was disposed
+    // Remove the node, update the computed, and check that it was disposed
     testNode.removeChild(node)
     observable('third')
     expect(computed.isActive()).toEqual(false)
   })
 
-  it('Should dispose when DOM node is removed from the document, but not before it\'s added', function () {
+  it("Should dispose when DOM node is removed from the document, but not before it's added", function () {
     var node = document.createElement('DIV'),
       observable = Observable('initial'),
       computed = Computed({
@@ -81,16 +77,16 @@ describe('Dependent Observable DOM', function () {
         disposeWhenNodeIsRemoved: node
       })
 
-        // Update computed and check that it's still active
+    // Update computed and check that it's still active
     observable('second')
     expect(computed.isActive()).toEqual(true)
 
-        // Add the node, update the computed, and check that it is still active
+    // Add the node, update the computed, and check that it is still active
     testNode.appendChild(node)
     observable('third')
     expect(computed.isActive()).toEqual(true)
 
-        // Remove the node, update the computed, and check that it was disposed
+    // Remove the node, update the computed, and check that it was disposed
     testNode.removeChild(node)
     observable('fourth')
     expect(computed.isActive()).toEqual(false)

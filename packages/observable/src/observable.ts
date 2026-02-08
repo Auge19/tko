@@ -2,9 +2,7 @@
 //  Observable values
 //  ---
 //
-import {
-  options, overwriteLengthPropertyIfSupported
-} from '@tko/utils'
+import { options, overwriteLengthPropertyIfSupported } from '@tko/utils'
 
 import * as dependencyDetection from './dependencyDetection'
 import { deferUpdates } from './defer'
@@ -15,7 +13,7 @@ import type { Subscribable, MaybeSubscribable } from './subscribable'
 /**
  * Represents a value that can be either a plain value or an observable.
  */
-export type MaybeObservable<T = any> = T | Observable<T>;
+export type MaybeObservable<T = any> = T | Observable<T>
 
 /**
  * Defines the functions available on an observable.
@@ -27,37 +25,37 @@ export interface ObservableFunctions<T = any> extends Subscribable<T> {
    * @param b The second value.
    * @returns True if the values are equal, otherwise false.
    */
-  equalityComparer(a: T, b: T): boolean;
+  equalityComparer(a: T, b: T): boolean
 
   /**
    * Returns the current value of the observable without creating a dependency.
    * @returns The current value.
    */
-  peek(): T;
+  peek(): T
 
   /**
    * Notifies subscribers that the value has changed.
    */
-  valueHasMutated(): void;
+  valueHasMutated(): void
 
   /**
    * Notifies subscribers that the value is about to change.
    */
-  valueWillMutate(): void;
+  valueWillMutate(): void
 
   /**
    * Modifies the value of the observable using a function.
    * @param fn The function to modify the value.
    * @param peek Whether to use the current value without creating a dependency.
    */
-  modify(fn: (v: T) => T, peek? : boolean)
+  modify(fn: (v: T) => T, peek?: boolean)
 
   /**
    * Some observables may not always be writeable, notably computeds.
    */
   isWriteable: boolean
 
-  [key: string]: unknown;
+  [key: string]: unknown
 }
 
 /**
@@ -73,14 +71,14 @@ export interface Observable<T = any> extends ObservableFunctions<T> {
    * Gets the current value of the observable.
    * @returns The current value.
    */
-  (): T;
+  (): T
 
   /**
    * Sets the value of the observable.
    * @param value The new value.
    * @returns The observable.
    */
-  (value: T): any;
+  (value: T): any
 }
 
 /**
@@ -88,16 +86,16 @@ export interface Observable<T = any> extends ObservableFunctions<T> {
  * @param initialValue The initial value of the observable.
  * @returns The observable object.
  */
-export function observable<T=any>(initialValue?: T): Observable {
+export function observable<T = any>(initialValue?: T): Observable {
   function Observable() {
     if (arguments.length > 0) {
       // Write
       // Ignore writes if the value hasn't changed
       // inherits from interface SubscribableFunctions
       if ((Observable as any).isDifferent(Observable[LATEST_VALUE], arguments[0])) {
-        (Observable as any).valueWillMutate();
-        Observable[LATEST_VALUE] = arguments[0];
-        (Observable as any).valueHasMutated();
+        ;(Observable as any).valueWillMutate()
+        Observable[LATEST_VALUE] = arguments[0]
+        ;(Observable as any).valueHasMutated()
       }
       return this // Permits chained assignments
     } else {
@@ -140,7 +138,9 @@ observable.fn = {
    * Returns the current value of the observable without creating a dependency.
    * @returns The current value.
    */
-  peek() { return this[LATEST_VALUE] },
+  peek() {
+    return this[LATEST_VALUE]
+  },
 
   /**
    * Notifies subscribers that the value has changed.
@@ -163,13 +163,13 @@ observable.fn = {
    * @param peek Whether to use the current value without creating a dependency.
    * @returns The modified observable.
    */
-  modify<T=any>(fn: (v: T) => T, peek = true) {
+  modify<T = any>(fn: (v: T) => T, peek = true) {
     this(fn(peek ? this.peek() : this()))
   },
 
   // Some observables may not always be writeable, notably computeds.
   isWriteable: true
-} as ObservableFunctions;
+} as ObservableFunctions
 
 /**
  * Limits the notifications to subscribers.
@@ -210,12 +210,10 @@ subscribable.fn.limit = function limit(limitFunction) {
     if (selfIsObservable && pendingValue === self) {
       pendingValue = self._evalIfChanged ? self._evalIfChanged() : self()
     }
-    const shouldNotify = notifyNextChange || (
-      didUpdate && self.isDifferent(previousValue, pendingValue)
-    )
+    const shouldNotify = notifyNextChange || (didUpdate && self.isDifferent(previousValue, pendingValue))
     self._notifyNextChange = didUpdate = ignoreBeforeChange = false
     if (shouldNotify) {
-      self._origNotifySubscribers(previousValue = pendingValue)
+      self._origNotifySubscribers((previousValue = pendingValue))
     }
   })
 
@@ -251,7 +249,7 @@ subscribable.fn.limit = function limit(limitFunction) {
 
 Object.setPrototypeOf(observable.fn, subscribable.fn)
 
-var protoProperty = observable.protoProperty = options.protoProperty
+var protoProperty = (observable.protoProperty = options.protoProperty)
 observable.fn[protoProperty] = observable
 
 // Subclasses can add themselves to observableProperties so that
@@ -276,8 +274,8 @@ export function isObservable<T = any>(instance: any): instance is Observable<T> 
  * @param value The value to unwrap.
  * @returns The unwrapped value.
  */
-export function unwrap<T=any> (value: MaybeObservable<T>): T {
-  return isObservable<T>(value) ? value() : value as T
+export function unwrap<T = any>(value: MaybeObservable<T>): T {
+  return isObservable<T>(value) ? value() : (value as T)
 }
 
 /**
@@ -286,7 +284,7 @@ export function unwrap<T=any> (value: MaybeObservable<T>): T {
  * @returns The peeked value.
  */
 export function peek<T = any>(value: MaybeSubscribable<T>): T {
-  return isObservable<T>(value) ? value.peek() : value as T
+  return isObservable<T>(value) ? value.peek() : (value as T)
 }
 
 /**

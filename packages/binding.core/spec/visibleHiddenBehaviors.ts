@@ -1,30 +1,22 @@
-import {
-    applyBindings
-} from '@tko/bind'
+import { applyBindings } from '@tko/bind'
 
-import {
-    observable
-} from '@tko/observable'
+import { observable } from '@tko/observable'
 
 import { DataBindProvider } from '@tko/provider.databind'
 
-import {
-    options
-} from '@tko/utils'
+import { options } from '@tko/utils'
 
-import {
-    bindings as coreBindings
-} from '../src'
+import { bindings as coreBindings } from '../src'
 
-import {
-    initJasmine
-} from '@tko/utils.spec'
+import { initJasmine } from '@tko/utils.spec'
 
-initJasmine();
+initJasmine()
 
 describe('Binding: Visible', function () {
-  let testNode : HTMLElement
-  beforeEach(function() { testNode = jasmine.prepareTestNode() })
+  let testNode: HTMLElement
+  beforeEach(function () {
+    testNode = jasmine.prepareTestNode()
+  })
 
   beforeEach(function () {
     var provider = new DataBindProvider()
@@ -35,11 +27,9 @@ describe('Binding: Visible', function () {
   it('Visible means the node only when the value is true', function () {
     var myObservable = observable(false)
     testNode.innerHTML = "<input data-bind='visible:myModelProperty()' />"
-    applyBindings({
-      myModelProperty: myObservable
-    }, testNode)
+    applyBindings({ myModelProperty: myObservable }, testNode)
 
-    var node = (testNode.childNodes[0] as HTMLElement)
+    var node = testNode.childNodes[0] as HTMLElement
     expect(node.style.display).toEqual('none')
     myObservable(true)
     expect(node.style.display).toEqual('')
@@ -48,21 +38,17 @@ describe('Binding: Visible', function () {
   it('Visible should unwrap observables implicitly', function () {
     var myObservable = observable(false)
     testNode.innerHTML = "<input data-bind='visible:myModelProperty' />"
-    applyBindings({
-      myModelProperty: myObservable
-    }, testNode)
-    var node = (testNode.childNodes[0] as HTMLElement)
+    applyBindings({ myModelProperty: myObservable }, testNode)
+    var node = testNode.childNodes[0] as HTMLElement
     expect(node.style.display).toEqual('none')
   })
 
   it('Hidden means the node is only visible when the value is false', function () {
     var myObservable = observable(false)
     testNode.innerHTML = "<input data-bind='hidden:myModelProperty()' />"
-    applyBindings({
-      myModelProperty: myObservable
-    }, testNode)
+    applyBindings({ myModelProperty: myObservable }, testNode)
 
-    var node = (testNode.childNodes[0] as HTMLElement)
+    var node = testNode.childNodes[0] as HTMLElement
     expect(node.style.display).toEqual('')
     myObservable(true)
     expect(node.style.display).toEqual('none')
@@ -71,11 +57,9 @@ describe('Binding: Visible', function () {
   it('Hidden should unwrap observables implicitly', function () {
     var myObservable = observable(true)
     testNode.innerHTML = "<input data-bind='hidden:myModelProperty' />"
-    applyBindings({
-      myModelProperty: myObservable
-    }, testNode)
+    applyBindings({ myModelProperty: myObservable }, testNode)
 
-    var node = (testNode.childNodes[0] as HTMLElement)
+    var node = testNode.childNodes[0] as HTMLElement
     expect(node.style.display).toEqual('none')
   })
 })

@@ -1,29 +1,23 @@
-import {
-    triggerEvent
-} from '@tko/utils'
+import { triggerEvent } from '@tko/utils'
 
-import {
-    applyBindings
-} from '@tko/bind'
+import { applyBindings } from '@tko/bind'
 
 import { DataBindProvider } from '@tko/provider.databind'
 
-import {
-    options
-} from '@tko/utils'
+import { options } from '@tko/utils'
 
 import { bindings as coreBindings } from '../src'
 
-import {
-    initJasmine
-} from '@tko/utils.spec'
+import { initJasmine } from '@tko/utils.spec'
 
-initJasmine();
+initJasmine()
 
 describe('Binding: Click', function () {
-    // This is just a special case of the "event" binding, so not necessary to respecify all its behaviors
-  let testNode : HTMLElement
-  beforeEach(function() { testNode = jasmine.prepareTestNode() })
+  // This is just a special case of the "event" binding, so not necessary to respecify all its behaviors
+  let testNode: HTMLElement
+  beforeEach(function () {
+    testNode = jasmine.prepareTestNode()
+  })
 
   beforeEach(function () {
     var provider = new DataBindProvider()
@@ -31,7 +25,7 @@ describe('Binding: Click', function () {
     provider.bindingHandlers.set(coreBindings)
   })
 
-  it('Should invoke the supplied function on click, using model as \'this\' param and first arg, and event as second arg', function () {
+  it("Should invoke the supplied function on click, using model as 'this' param and first arg, and event as second arg", function () {
     var model = {
       wasCalled: false,
       doCall: function (arg1, arg2) {

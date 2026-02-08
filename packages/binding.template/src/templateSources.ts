@@ -22,9 +22,7 @@
 // Once you've implemented a templateSource, make your template engine use it by subclassing whatever template engine you were
 // using and overriding "makeTemplateSource" to return an instance of your custom template source.
 
-import {
-  tagNameLower as tagNameLowerFn, setHtml, domData, parseHtmlForTemplateNodes
-} from '@tko/utils'
+import { tagNameLower as tagNameLowerFn, setHtml, domData, parseHtmlForTemplateNodes } from '@tko/utils'
 
 // ---- ko.templateSources.domElement -----
 
@@ -34,22 +32,19 @@ var templateScript = 1,
   templateTemplate = 3,
   templateElement = 4
 
-type templateType = typeof templateScript | typeof templateTextArea | typeof templateTemplate | typeof templateElement;
+type templateType = typeof templateScript | typeof templateTextArea | typeof templateTemplate | typeof templateElement
 
 export interface TemplateSource {
   //constructor(element: Node);
 
-  text(): string;
-  text(valueToWrite: string): void;
+  text(): string
+  text(valueToWrite: string): void
 
-  data(key: string): any;
-  data<T>(key: string): T;
-  data<T>(key: string, valueToWrite: T): void;
+  data(key: string): any
+  data<T>(key: string): T
+  data<T>(key: string, valueToWrite: T): void
 
-  nodes: {
-    (): Node;
-    (valueToWrite: Node): void;
-  };
+  nodes: { (): Node; (valueToWrite: Node): void }
 }
 
 var dataDomDataPrefix = domData.nextKey() + '_'
@@ -61,38 +56,46 @@ function setTemplateDomData(element, data) {
   domData.set(element, templatesDomDataKey, data)
 }
 export class DomElement implements TemplateSource {
-  protected domElement?: any;
-  private templateType: templateType;
+  protected domElement?: any
+  private templateType: templateType
 
   constructor(element?) {
     this.domElement = element
 
-    if (!element) { return }
+    if (!element) {
+      return
+    }
     var tagNameLower = tagNameLowerFn(element)
     this.templateType =
-      tagNameLower === 'script' ? templateScript
-        : tagNameLower === 'textarea' ? templateTextArea
-          // For browsers with proper <template> element support, where the .content property gives a document fragment
-          : tagNameLower == 'template' && element.content && element.content.nodeType === 11 ? templateTemplate
+      tagNameLower === 'script'
+        ? templateScript
+        : tagNameLower === 'textarea'
+          ? templateTextArea
+          : // For browsers with proper <template> element support, where the .content property gives a document fragment
+            tagNameLower == 'template' && element.content && element.content.nodeType === 11
+            ? templateTemplate
             : templateElement
   }
 
-  text(): string;
-  text(valueToWrite: string): void;
+  text(): string
+  text(valueToWrite: string): void
   text(valueToWrite?: unknown): string | void {
-    var elemContentsProperty = this.templateType === templateScript ? 'text'
-      : this.templateType === templateTextArea ? 'value'
-        : 'innerHTML'
+    var elemContentsProperty =
+      this.templateType === templateScript ? 'text' : this.templateType === templateTextArea ? 'value' : 'innerHTML'
 
     if (arguments.length == 0) {
       return this.domElement[elemContentsProperty]
     } else {
-      if (elemContentsProperty === 'innerHTML') { setHtml(this.domElement, valueToWrite! as any) } else { this.domElement[elemContentsProperty] = valueToWrite }
+      if (elemContentsProperty === 'innerHTML') {
+        setHtml(this.domElement, valueToWrite! as any)
+      } else {
+        this.domElement[elemContentsProperty] = valueToWrite
+      }
     }
   }
-  data(key: string);
-  data<T>(key: string): T;
-  data<T>(key: string, valueToWrite: T): void;
+  data(key: string)
+  data<T>(key: string): T
+  data<T>(key: string, valueToWrite: T): void
   data(key: unknown, valueToWrite?: unknown): any {
     if (arguments.length === 1) {
       return domData.get(this.domElement, dataDomDataPrefix + key)
@@ -100,15 +103,17 @@ export class DomElement implements TemplateSource {
       domData.set(this.domElement, dataDomDataPrefix + key, valueToWrite)
     }
   }
-  nodes: { (): Node; (valueToWrite: Node): void; } = function (valueToWrite?: Node) {
+  nodes: { (): Node; (valueToWrite: Node): void } = function (valueToWrite?: Node) {
     var element = this.domElement
     if (arguments.length == 0) {
       const templateData = getTemplateDomData(element)
-      let nodes = templateData.containerData || (
-        this.templateType === templateTemplate ? element.content :
-          this.templateType === templateElement ? element :
-            undefined
-      )
+      let nodes =
+        templateData.containerData
+        || (this.templateType === templateTemplate
+          ? element.content
+          : this.templateType === templateElement
+            ? element
+            : undefined)
       if (!nodes || templateData.alwaysCheckText) {
         // If the template is associated with an element that stores the template as text,
         // parse and cache the nodes whenever there's new text content available. This allows
@@ -116,7 +121,7 @@ export class DomElement implements TemplateSource {
         const text = this['text']()
         if (text) {
           nodes = parseHtmlForTemplateNodes(text, element.ownerDocument)
-          this['text']('')   // clear the text from the node
+          this['text']('') // clear the text from the node
           setTemplateDomData(element, { containerData: nodes, alwaysCheckText: true })
         }
       }
@@ -125,7 +130,7 @@ export class DomElement implements TemplateSource {
     } else {
       setTemplateDomData(element, { containerData: valueToWrite })
     }
-  };
+  }
 }
 
 // ---- ko.templateSources.anonymousTemplate -----
@@ -133,12 +138,14 @@ export class DomElement implements TemplateSource {
 // For compatibility, you can also read "text"; it will be serialized from the nodes on demand.
 // Writing to "text" is still supported, but then the template data will not be available as DOM nodes.
 export class AnonymousTemplate extends DomElement {
-  override text(): string;
-  override text(valueToWrite: string): void;
+  override text(): string
+  override text(valueToWrite: string): void
   override text(valueToWrite?: unknown): string | void {
     if (arguments.length == 0) {
       var templateData = getTemplateDomData(this.domElement)
-      if (templateData.textData === undefined && templateData.containerData) { templateData.textData = templateData.containerData.innerHTML }
+      if (templateData.textData === undefined && templateData.containerData) {
+        templateData.textData = templateData.containerData.innerHTML
+      }
       return templateData.textData
     } else {
       setTemplateDomData(this.domElement, { textData: valueToWrite })

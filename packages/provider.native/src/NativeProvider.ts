@@ -1,13 +1,8 @@
+import { isObservable } from '@tko/observable'
 
-import {
-  isObservable
-} from '@tko/observable'
+import { Provider } from '@tko/provider'
 
-import {
-  Provider
-} from '@tko/provider'
-
-import type { BindingContext } from '@tko/bind';
+import type { BindingContext } from '@tko/bind'
 
 export const NATIVE_BINDINGS = Symbol('Knockout native bindings')
 
@@ -18,41 +13,47 @@ export const NATIVE_BINDINGS = Symbol('Knockout native bindings')
  * Used by the jsxToNode function.
  */
 export default class NativeProvider extends Provider {
-  get FOR_NODE_TYPES () { return [ 1, 3 ] }
-  get preemptive () { return true }
+  get FOR_NODE_TYPES() {
+    return [1, 3]
+  }
+  get preemptive() {
+    return true
+  }
 
-  nodeHasBindings (node: Node, context?: BindingContext) : boolean | undefined {
-    if (!node[NATIVE_BINDINGS]) { return false }
-    return Object.keys(node[NATIVE_BINDINGS] || {})
-      .some(key => key.startsWith('ko-'))
+  nodeHasBindings(node: Node, context?: BindingContext): boolean | undefined {
+    if (!node[NATIVE_BINDINGS]) {
+      return false
+    }
+    return Object.keys(node[NATIVE_BINDINGS] || {}).some(key => key.startsWith('ko-'))
   }
 
   /**
    * There can be only one preprocessor; when there are native bindings,
    * prevent re-entrance (and likely XSS) from the `{{ }}` provider.
    */
-  preprocessNode (node : Node) {
+  preprocessNode(node: Node) {
     return node[NATIVE_BINDINGS] ? node : null
   }
 
-  onlyBindings ([name]) {
+  onlyBindings([name]) {
     return name.startsWith('ko-')
   }
 
-  valueAsAccessor ([name, value]) {
+  valueAsAccessor([name, value]) {
     const bindingName = name.replace(/^ko-/, '')
     const valueFn = isObservable(value) ? value : () => value
-    return {[bindingName]: valueFn}
+    return { [bindingName]: valueFn }
   }
 
   /**
    * Return as valueAccessor function all the entries matching `ko-*`
    * @param {Node} node
    */
-  getBindingAccessors (node : Node, context?: BindingContext) {
-    const bindings = (Object.entries(node[NATIVE_BINDINGS] || {}) as any)
-      .filter(this.onlyBindings)
-    if (!bindings.length) { return null }
+  getBindingAccessors(node: Node, context?: BindingContext) {
+    const bindings = (Object.entries(node[NATIVE_BINDINGS] || {}) as any).filter(this.onlyBindings)
+    if (!bindings.length) {
+      return null
+    }
     return Object.assign({}, ...bindings.map(this.valueAsAccessor))
   }
 
@@ -62,7 +63,7 @@ export default class NativeProvider extends Provider {
    * @param {string} name
    * @param {any} value
    */
-  static addValueToNode (node : Node, name: string, value: any) {
+  static addValueToNode(node: Node, name: string, value: any) {
     const obj = node[NATIVE_BINDINGS] || (node[NATIVE_BINDINGS] = {})
     obj[name] = value
   }
@@ -72,7 +73,7 @@ export default class NativeProvider extends Provider {
    * @param {Node} node
    * @return {object} the stored values
    */
-  static getNodeValues (node : Node): any {
+  static getNodeValues(node: Node): any {
     return node[NATIVE_BINDINGS]
   }
 }
