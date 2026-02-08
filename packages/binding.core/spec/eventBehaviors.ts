@@ -21,7 +21,7 @@ describe('Binding: Event', function () {
   })
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    let provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
   })
@@ -105,7 +105,7 @@ describe('Binding: Event', function () {
   })
 
   it('Should let bubblable events bubble to parent elements by default', function () {
-    var model = {
+    let model = {
       innerWasCalled: false,
       innerDoCall: function () {
         this.innerWasCalled = true
@@ -124,7 +124,7 @@ describe('Binding: Event', function () {
   })
 
   it('Should be able to prevent bubbling of bubblable events using the (eventname)Bubble:false option', function () {
-    var model = {
+    let model = {
       innerWasCalled: false,
       innerDoCall: function () {
         this.innerWasCalled = true
@@ -144,9 +144,9 @@ describe('Binding: Event', function () {
 
   it('Should be able to supply handler params using "bind" helper', function () {
     // Using "bind" like this just eliminates the function literal wrapper - it's purely stylistic
-    var didCallHandler = false,
+    let didCallHandler = false,
       someObj = {}
-    var myHandler = function () {
+    let myHandler = function () {
       expect(this).toEqual(someObj)
       expect(arguments.length).toEqual(5)
 
@@ -235,7 +235,7 @@ describe('Binding: Event', function () {
   it('respects the `debounce` property', function () {
     jasmine.Clock.useMock()
     testNode.innerHTML = "<a data-bind='event: {click: {handler: fn, debounce: 50}}'></a>"
-    var calls = 0
+    let calls = 0
     const fn = () => calls++
     applyBindings({ fn }, testNode)
     triggerEvent(testNode.children[0], 'click')
@@ -278,13 +278,13 @@ describe('Binding: on.', function () {
   })
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    let provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
   })
 
   it('invokes argument as a function on event', function () {
-    var obs = observable(false)
+    let obs = observable(false)
     testNode.innerHTML = "<button data-bind='on.click: obs(true)'>hey</button>"
     applyBindings({ obs: obs }, testNode)
     expect(obs()).toEqual(false)

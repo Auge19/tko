@@ -25,10 +25,10 @@ describe('Binding: Foreach', function () {
   beforeEach(function () {
     testNode = jasmine.prepareTestNode()
   })
-  var bindingHandlers
+  let bindingHandlers
 
   beforeEach(function () {
-    var provider = new MultiProvider({ providers: [new DataBindProvider(), new VirtualProvider()] })
+    let provider = new MultiProvider({ providers: [new DataBindProvider(), new VirtualProvider()] })
     options.bindingProviderInstance = provider
     bindingHandlers = provider.bindingHandlers
     bindingHandlers.set(coreBindings)
@@ -54,7 +54,7 @@ describe('Binding: Foreach', function () {
 
   it('Should duplicate descendant nodes for each value in the array value (and bind them in the context of that supplied value)', function () {
     testNode.innerHTML = "<div data-bind='foreach: someItems'><span data-bind='text: childProp'></span></div>"
-    var someItems = [{ childProp: 'first child' }, { childProp: 'second child' }]
+    let someItems = [{ childProp: 'first child' }, { childProp: 'second child' }]
     applyBindings({ someItems: someItems }, testNode)
     expect(testNode.childNodes[0]).toContainHtml(
       '<span data-bind="text: childprop">first child</span><span data-bind="text: childprop">second child</span>'
@@ -73,7 +73,7 @@ describe('Binding: Foreach', function () {
     testNode.innerHTML = "<div data-bind='foreach: [1, 2]'><span></span></div>"
 
     // Apply some DOM Data to the SPAN
-    var span = testNode.childNodes[0].childNodes[0] as HTMLSpanElement
+    let span = testNode.childNodes[0].childNodes[0] as HTMLSpanElement
     expect(span.tagName).toEqual('SPAN')
     domData.set(span, 'mydata', 123)
 
@@ -90,7 +90,7 @@ describe('Binding: Foreach', function () {
 
   it('Should be able to use $data to reference each array item being bound', function () {
     testNode.innerHTML = "<div data-bind='foreach: someItems'><span data-bind='text: $data'></span></div>"
-    var someItems = ['alpha', 'beta']
+    let someItems = ['alpha', 'beta']
     applyBindings({ someItems: someItems }, testNode)
     expect(testNode.childNodes[0]).toContainHtml(
       '<span data-bind="text: $data">alpha</span><span data-bind="text: $data">beta</span>'
@@ -99,7 +99,7 @@ describe('Binding: Foreach', function () {
 
   it('Should add and remove nodes to match changes in the bound array', function () {
     testNode.innerHTML = "<div data-bind='foreach: someItems'><span data-bind='text: childProp'></span></div>"
-    var someItems = observableArray([{ childProp: 'first child' }, { childProp: 'second child' }])
+    let someItems = observableArray([{ childProp: 'first child' }, { childProp: 'second child' }])
     applyBindings({ someItems: someItems }, testNode)
     expect(testNode.childNodes[0]).toContainHtml(
       '<span data-bind="text: childprop">first child</span><span data-bind="text: childprop">second child</span>'
@@ -151,7 +151,7 @@ describe('Binding: Foreach', function () {
   it('Should remove all nodes corresponding to a removed array item, even if they were generated via containerless templates', function () {
     // Represents issue https://github.com/SteveSanderson/knockout/issues/185
     testNode.innerHTML = "<div data-bind='foreach: someitems'>a<!-- ko if:true -->b<!-- /ko --></div>"
-    var someitems = observableArray([1, 2])
+    let someitems = observableArray([1, 2])
     applyBindings({ someitems: someitems }, testNode)
     expect(testNode).toContainHtml(
       '<div data-bind="foreach: someitems">a<!-- ko if:true -->b<!-- /ko -->a<!-- ko if:true -->b<!-- /ko --></div>'
@@ -165,14 +165,14 @@ describe('Binding: Foreach', function () {
   it('Should remove all nodes corresponding to a removed array item, even if they were added via containerless syntax and there are no other nodes', function () {
     bindingHandlers.test = {
       init: function (element, valueAccessor) {
-        var value = valueAccessor()
+        let value = valueAccessor()
         virtualElements.prepend(element, document.createTextNode(value))
       }
     }
     virtualElements.allowedBindings['test'] = true
 
     testNode.innerHTML = 'x-<!--ko foreach: someitems--><!--ko test:$data--><!--/ko--><!--/ko-->'
-    var someitems = observableArray(['aaa', 'bbb'])
+    let someitems = observableArray(['aaa', 'bbb'])
     applyBindings({ someitems: someitems }, testNode)
     expect(testNode).toContainText('x-aaabbb')
 
@@ -184,7 +184,7 @@ describe('Binding: Foreach', function () {
   it('Should update all nodes corresponding to a changed array item, even if they were generated via containerless templates', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: someitems'><!-- ko if:true --><span data-bind='text: $data'></span><!-- /ko --></div>"
-    var someitems = [observable('A'), observable('B')]
+    let someitems = [observable('A'), observable('B')]
     applyBindings({ someitems: someitems }, testNode)
     expect(testNode).toContainText('AB')
 
@@ -196,7 +196,7 @@ describe('Binding: Foreach', function () {
   it('Should be able to supply show "_destroy"ed items via includeDestroyed option', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, includeDestroyed: true }'><span data-bind='text: childProp'></span></div>"
-    var someItems = observableArray([{ childProp: 'first child' }, { childProp: 'second child', _destroy: true }])
+    let someItems = observableArray([{ childProp: 'first child' }, { childProp: 'second child', _destroy: true }])
     applyBindings({ someItems: someItems }, testNode)
     expect(testNode.childNodes[0]).toContainHtml(
       '<span data-bind="text: childprop">first child</span><span data-bind="text: childprop">second child</span>'
@@ -206,8 +206,8 @@ describe('Binding: Foreach', function () {
   it('Should be able to supply afterAdd and beforeRemove callbacks', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, afterAdd: myAfterAdd, beforeRemove: myBeforeRemove }'><span data-bind='text: $data'></span></div>"
-    var someItems = observableArray(['first child'])
-    var afterAddCallbackData = new Array(),
+    let someItems = observableArray(['first child'])
+    let afterAddCallbackData = new Array(),
       beforeRemoveCallbackData = new Array()
     applyBindings(
       {
@@ -281,7 +281,7 @@ describe('Binding: Foreach', function () {
   it('Should call an afterRender callback function and not cause updates if an observable accessed in the callback is changed', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, afterRender: callback }'><span data-bind='text: childprop'></span></div>"
-    var callbackObservable = observable(1),
+    let callbackObservable = observable(1),
       someItems = observableArray([{ childprop: 'first child' }]),
       callbacks = 0
     applyBindings(
@@ -309,15 +309,15 @@ describe('Binding: Foreach', function () {
 
   it('Should call an afterRender callback, passing all of the rendered nodes, accounting for node preprocessing and virtual element bindings', function () {
     // Set up a binding provider that converts text nodes to expressions
-    var originalBindingProvider = options.bindingProviderInstance,
+    let originalBindingProvider = options.bindingProviderInstance,
       preprocessingBindingProvider = function () {}
     preprocessingBindingProvider.prototype = originalBindingProvider
     options.bindingProviderInstance = new preprocessingBindingProvider()
     options.bindingProviderInstance.preprocessNode = function (node) {
-      var dataNode: any = node
+      let dataNode: any = node
       if (node.nodeType === 3 && dataNode.data.charAt(0) === '$') {
-        var newNodes = [document.createComment('ko text: ' + dataNode.data), document.createComment('/ko')]
-        for (var i = 0; i < newNodes.length; i++) {
+        let newNodes = [document.createComment('ko text: ' + dataNode.data), document.createComment('/ko')]
+        for (let i = 0; i < newNodes.length; i++) {
           node.parentNode?.insertBefore(newNodes[i], node)
         }
         node.parentNode?.removeChild(node)
@@ -328,7 +328,7 @@ describe('Binding: Foreach', function () {
     // Now perform a foreach binding, and see that afterRender gets the output from the preprocessor and bindings
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, afterRender: callback }'><span>[</span>$data<span>]</span></div>"
-    var someItems = observableArray(['Alpha', 'Beta']),
+    let someItems = observableArray(['Alpha', 'Beta']),
       callbackReceivedArrayValues = new Array()
     applyBindings(
       {
@@ -356,7 +356,7 @@ describe('Binding: Foreach', function () {
     // See https://github.com/knockout/knockout/issues/1794
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, afterAdd: callback }'><span data-bind='text: $data'></span></div>"
-    var someItems = observableArray(['A', 'B', 'C']),
+    let someItems = observableArray(['A', 'B', 'C']),
       callback = function (element, index, data) {
         if (data === 'D') throw 'Exception'
       }
@@ -378,7 +378,7 @@ describe('Binding: Foreach', function () {
   it('Should call an afterAdd callback function and not cause updates if an observable accessed in the callback is changed', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, afterAdd: callback }'><span data-bind='text: childprop'></span></div>"
-    var callbackObservable = observable(1),
+    let callbackObservable = observable(1),
       someItems: ObservableArray = observableArray([]),
       callbacks = 0
     applyBindings(
@@ -408,7 +408,7 @@ describe('Binding: Foreach', function () {
   it('Should call a beforeRemove callback function and not cause updates if an observable accessed in the callback is changed', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, beforeRemove: callback }'><span data-bind='text: childprop'></span></div>"
-    var callbackObservable = observable(1),
+    let callbackObservable = observable(1),
       someItems = observableArray([{ childprop: 'first child' }, { childprop: 'second child' }]),
       callbacks = 0
     applyBindings(
@@ -439,7 +439,7 @@ describe('Binding: Foreach', function () {
   it('Should call an afterMove callback function and not cause updates if an observable accessed in the callback is changed', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, afterMove: callback }'><span data-bind='text: childprop'></span></div>"
-    var callbackObservable = observable(1),
+    let callbackObservable = observable(1),
       someItems = observableArray([{ childprop: 'first child' }]),
       callbacks = 0
     applyBindings(
@@ -469,7 +469,7 @@ describe('Binding: Foreach', function () {
   it('Should call a beforeMove callback function and not cause updates if an observable accessed in the callback is changed', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, beforeMove: callback }'><span data-bind='text: childprop'></span></div>"
-    var callbackObservable = observable(1),
+    let callbackObservable = observable(1),
       someItems = observableArray([{ childprop: 'first child' }]),
       callbacks = 0
     applyBindings(
@@ -501,7 +501,7 @@ describe('Binding: Foreach', function () {
     // This is now fixed so that the value is unwrapped just in the template handler and only peeked at in the foreach handler.
     // See https://github.com/SteveSanderson/knockout/issues/523
     testNode.innerHTML = "<div data-bind='foreach: myArray'><span data-bind='text: $data'></span></div>"
-    var myArrayWrapped = observable(observableArray(['data value']))
+    let myArrayWrapped = observable(observableArray(['data value']))
     applyBindings({ myArray: myArrayWrapped }, testNode)
     // Because the unwrapped value isn't an array, nothing gets rendered.
     expect(testNode.childNodes[0]).toContainText('')
@@ -512,7 +512,7 @@ describe('Binding: Foreach', function () {
     // This is now fixed so that the value is unwrapped just in the template handler and only peeked at in the foreach handler.
     // See https://github.com/SteveSanderson/knockout/issues/523
     testNode.innerHTML = "<div data-bind='foreach: myArray'><span data-bind='text: $data'></span></div>"
-    var myArrayWrapped = observable(observable(observableArray(['data value'])))
+    let myArrayWrapped = observable(observable(observableArray(['data value'])))
     applyBindings({ myArray: myArrayWrapped }, testNode)
     // Because the unwrapped value isn't an array, nothing gets rendered.
     expect(testNode.childNodes[0]).toContainText('')
@@ -525,7 +525,7 @@ describe('Binding: Foreach', function () {
       + "(Val: <span data-bind='text: $data'></span>, Parents: <span data-bind='text: $parents.length'></span>, Rootval: <span data-bind='text: $root.rootVal'></span>)"
       + '</div>'
       + '</div>'
-    var viewModel = {
+    let viewModel = {
       rootVal: 'ROOTVAL',
       items: observableArray([
         { children: observableArray(['A1', 'A2', 'A3']) },
@@ -543,7 +543,7 @@ describe('Binding: Foreach', function () {
     )
 
     // Verify we can access them later
-    var firstInnerTextNode = testNode.childNodes[0].childNodes[0].childNodes[1] as HTMLElement
+    let firstInnerTextNode = testNode.childNodes[0].childNodes[0].childNodes[1] as HTMLElement
     expect(firstInnerTextNode.nodeType).toEqual(1) // The first span associated with A1
     expect(dataFor(firstInnerTextNode)).toEqual('A1')
     expect(contextFor(firstInnerTextNode).$parent.children()[2]).toEqual('A3')
@@ -553,7 +553,7 @@ describe('Binding: Foreach', function () {
 
   it("Should be able to define a 'foreach' region using a containerless template", function () {
     testNode.innerHTML = "hi <!-- ko foreach: someitems --><span data-bind='text: childprop'></span><!-- /ko -->"
-    var someitems = [{ childprop: 'first child' }, { childprop: 'second child' }]
+    let someitems = [{ childprop: 'first child' }, { childprop: 'second child' }]
     applyBindings({ someitems: someitems }, testNode)
     expect(testNode).toContainHtml(
       'hi <!-- ko foreach: someitems --><span data-bind="text: childprop">first child</span><span data-bind="text: childprop">second child</span><!-- /ko -->'
@@ -565,7 +565,7 @@ describe('Binding: Foreach', function () {
   })
 
   it("Should be able to nest 'foreach' regions defined using containerless templates", function () {
-    var innerContents = document.createElement('DIV')
+    let innerContents = document.createElement('DIV')
     testNode.innerHTML = ''
     testNode.appendChild(document.createComment('ko foreach: items'))
     testNode.appendChild(document.createComment('ko foreach: children'))
@@ -577,7 +577,7 @@ describe('Binding: Foreach', function () {
     testNode.appendChild(document.createComment('/ko'))
     testNode.appendChild(document.createComment('/ko'))
 
-    var viewModel = {
+    let viewModel = {
       rootVal: 'ROOTVAL',
       items: observableArray([
         { children: observableArray(['A1', 'A2', 'A3']) },
@@ -592,7 +592,7 @@ describe('Binding: Foreach', function () {
     )
 
     // Verify we can access them later
-    var firstInnerSpan = testNode.childNodes[3] as HTMLSpanElement
+    let firstInnerSpan = testNode.childNodes[3] as HTMLSpanElement
     expect(firstInnerSpan).toContainText('A1') // It is the first span bound in the context of A1
     expect(dataFor(firstInnerSpan)).toEqual('A1')
     expect(contextFor(firstInnerSpan).$parent.children()[2]).toEqual('A3')
@@ -614,7 +614,7 @@ describe('Binding: Foreach', function () {
     testNode.childNodes[0].childNodes[1].appendChild(document.createComment('/ko'))
     testNode.childNodes[0].appendChild(document.createComment('/ko'))
 
-    var viewModel = { items: [{ childval: { childprop: 123 } }, { childval: null }, { childval: { childprop: 456 } }] }
+    let viewModel = { items: [{ childval: { childprop: 123 } }, { childval: null }, { childval: { childprop: 456 } }] }
     applyBindings(viewModel, testNode)
 
     expect(testNode).toContainHtml(
@@ -649,9 +649,9 @@ describe('Binding: Foreach', function () {
     // How IE <= 8 treats it:
     testNode.innerHTML =
       "<ul><li>Header item<!-- ko foreach: someitems --><li data-bind='text: $data'><!-- /ko --></ul>"
-    var viewModel = { someitems: ['Alpha', 'Beta'] }
+    let viewModel = { someitems: ['Alpha', 'Beta'] }
     applyBindings(viewModel, testNode)
-    var match = testNode.innerHTML.toLowerCase().match(/<\/li>/g)
+    let match = testNode.innerHTML.toLowerCase().match(/<\/li>/g)
     // Any of the following results are acceptable.
     if (!match) {
       // Opera 11.5 doesn't add any closing </li> tags
@@ -705,7 +705,7 @@ describe('Binding: Foreach', function () {
   it('Should be able to give an alias to $data using \"as\"', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, as: \"item\" }'><span data-bind='text: item'></span></div>"
-    var someItems = ['alpha', 'beta']
+    let someItems = ['alpha', 'beta']
     applyBindings({ someItems: someItems }, testNode)
     expect(testNode.childNodes[0]).toContainHtml(
       '<span data-bind="text: item">alpha</span><span data-bind="text: item">beta</span>'
@@ -719,7 +719,7 @@ describe('Binding: Foreach', function () {
       + '<span data-bind=\'text: item.name+":"+$data\'></span>,'
       + '</span>'
       + '</div>'
-    var someItems = [
+    let someItems = [
       { name: 'alpha', sub: ['a', 'b'] },
       { name: 'beta', sub: ['c'] }
     ]
@@ -734,7 +734,7 @@ describe('Binding: Foreach', function () {
       + '<span data-bind=\'text: item.name+":"+subvalue\'></span>,'
       + '</span>'
       + '</div>'
-    var someItems = [
+    let someItems = [
       { name: 'alpha', sub: ['a', 'b'] },
       { name: 'beta', sub: ['c', 'd'] }
     ]
@@ -745,7 +745,7 @@ describe('Binding: Foreach', function () {
   it('Should be able to give an alias to $data using \"as\", and use it within arbitrary descendant binding contexts', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, as: \"item\" }'><span data-bind='if: item.length'><span data-bind='text: item'></span>,</span></div>"
-    var someItems = ['alpha', 'beta']
+    let someItems = ['alpha', 'beta']
     applyBindings({ someItems: someItems }, testNode)
     expect(testNode.childNodes[0]).toContainText('alpha,beta,')
   })
@@ -753,17 +753,17 @@ describe('Binding: Foreach', function () {
   it('Should be able to give an alias to $data using \"as\", and use it within descendant binding contexts defined using containerless syntax', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, as: \"item\" }'>x<!-- ko if: item.length --><span data-bind='text: item'></span>x,<!-- /ko --></div>"
-    var someItems = ['alpha', 'beta']
+    let someItems = ['alpha', 'beta']
     applyBindings({ someItems: someItems }, testNode)
     expect(testNode.childNodes[0]).toContainText('xalphax,xbetax,')
   })
 
   it('Should be able to output HTML5 elements (even on IE<9, as long as you reference either innershiv.js or jQuery1.7+Modernizr)', function () {
-    var isSupported = jasmine.ieVersion >= 9 || window.innerShiv || window.jQuery
+    let isSupported = jasmine.ieVersion >= 9 || window.innerShiv || window.jQuery
     if (isSupported) {
       // Represents https://github.com/SteveSanderson/knockout/issues/194
       setHtml(testNode, "<div data-bind='foreach:someitems'><section data-bind='text: $data'></section></div>")
-      var viewModel = { someitems: ['Alpha', 'Beta'] }
+      let viewModel = { someitems: ['Alpha', 'Beta'] }
       applyBindings(viewModel, testNode)
       expect(testNode).toContainHtml(
         '<div data-bind="foreach:someitems"><section data-bind="text: $data">alpha</section><section data-bind="text: $data">beta</section></div>'
@@ -772,14 +772,14 @@ describe('Binding: Foreach', function () {
   })
 
   it('Should be able to output HTML5 elements within container-less templates (same as above)', function () {
-    var isSupported = jasmine.ieVersion >= 9 || window.innerShiv || window.jQuery
+    let isSupported = jasmine.ieVersion >= 9 || window.innerShiv || window.jQuery
     if (isSupported) {
       // Represents https://github.com/SteveSanderson/knockout/issues/194
       setHtml(
         testNode,
         "xxx<!-- ko foreach:someitems --><div><section data-bind='text: $data'></section></div><!-- /ko -->"
       )
-      var viewModel = { someitems: ['Alpha', 'Beta'] }
+      let viewModel = { someitems: ['Alpha', 'Beta'] }
       applyBindings(viewModel, testNode)
       expect(testNode).toContainHtml(
         'xxx<!-- ko foreach:someitems --><div><section data-bind="text: $data">alpha</section></div><div><section data-bind="text: $data">beta</section></div><!-- /ko -->'
@@ -789,7 +789,7 @@ describe('Binding: Foreach', function () {
 
   it('Should provide access to observable items through $rawData', function () {
     testNode.innerHTML = "<div data-bind='foreach: someItems'><input data-bind='value: $rawData'/></div>"
-    var x = observable('first'),
+    let x = observable('first'),
       y = observable('second'),
       someItems = observableArray([x, y])
     applyBindings({ someItems: someItems }, testNode)
@@ -811,12 +811,12 @@ describe('Binding: Foreach', function () {
 
   it('Should not re-render the nodes when an observable item changes', function () {
     testNode.innerHTML = "<div data-bind='foreach: someItems'><span data-bind='text: $data'></span></div>"
-    var x = observable('first'),
+    let x = observable('first'),
       someItems = [x]
     applyBindings({ someItems: someItems }, testNode)
     expect(testNode.childNodes[0]).toContainText('first')
 
-    var saveNode = testNode.childNodes[0].childNodes[0]
+    let saveNode = testNode.childNodes[0].childNodes[0]
     x('second')
     expect(testNode.childNodes[0]).toContainText('second')
     expect(testNode.childNodes[0].childNodes[0]).toEqual(saveNode)
@@ -828,7 +828,7 @@ describe('Binding: Foreach', function () {
     jasmine.Clock.useMock()
     testNode.innerHTML =
       "<div data-bind='foreach: {data: planets, beforeRemove: beforeRemove}'>--<span data-bind='text: name'></span>++</div>"
-    var planets = observableArray([
+    let planets = observableArray([
         { name: observable('Mercury') },
         { name: observable('Venus') },
         { name: observable('Earth') },
@@ -848,7 +848,7 @@ describe('Binding: Foreach', function () {
     expect(testNode).toContainText('--Mercury++--Venus++--Earth++--Moon++--Ceres++')
 
     // Remove an item; the surrounding text nodes are removed immediately, but not the element node
-    var deleted = planets.splice(3, 1)
+    let deleted = planets.splice(3, 1)
     expect(testNode).toContainText('--Mercury++--Venus++--Earth++Moon--Ceres++')
 
     // Add some items; this causes the binding to update
@@ -885,7 +885,7 @@ describe('Binding: Foreach', function () {
 
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, as: \"item\" }'><span data-bind='text: item'></span></div>"
-    var someItems = ['alpha', 'beta']
+    let someItems = ['alpha', 'beta']
     applyBindings({ someItems: someItems }, testNode)
 
     expect(testNode.childNodes[0].childNodes[0]).toContainText('alpha')
@@ -903,7 +903,7 @@ describe('Binding: Foreach', function () {
 
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, as: \"item\" }'><input data-bind='value: item'/></div>"
-    var x = observable('first'),
+    let x = observable('first'),
       y = observable('second'),
       someItems = observableArray([x, y])
     applyBindings({ someItems: someItems }, testNode)
@@ -929,12 +929,12 @@ describe('Binding: Foreach', function () {
   it('Should not re-render the nodes when an observable item changes', function () {
     testNode.innerHTML =
       "<div data-bind='foreach: { data: someItems, as: \"item\" }'><span data-bind='text: item'></span></div>"
-    var x = observable('first'),
+    let x = observable('first'),
       someItems = [x]
     applyBindings({ someItems: someItems }, testNode)
     expect(testNode.childNodes[0]).toContainText('first')
 
-    var saveNode = testNode.childNodes[0].childNodes[0]
+    let saveNode = testNode.childNodes[0].childNodes[0]
     x('second')
     expect(testNode.childNodes[0]).toContainText('second')
     expect(testNode.childNodes[0].childNodes[0]).toEqual(saveNode)
@@ -944,7 +944,7 @@ describe('Binding: Foreach', function () {
     options.bindingProviderInstance.preprocessNode = function (node) {
       // Replace <data /> with <span data-bind="text: $data"></span>
       if (node.tagName && node.tagName.toLowerCase() === 'data') {
-        var newNode = document.createElement('span')
+        let newNode = document.createElement('span')
         newNode.setAttribute('data-bind', 'text: $data')
         node.parentNode?.insertBefore(newNode, node)
         node.parentNode?.removeChild(node)
@@ -964,7 +964,7 @@ describe('Binding: Foreach', function () {
       + '<!-- ko text: $data --><!-- /ko -->'
       + '<button>DeleteMe</button>' // Tests that we can remove the last node even when the preceding node is a virtual element rather than a single node
       + '</div>'
-    var items = observableArray(['Alpha', 'Beta'])
+    let items = observableArray(['Alpha', 'Beta'])
 
     applyBindings({ items: items }, testNode)
     expect(testNode).toContainText('AlphaAlphaBetaBeta')

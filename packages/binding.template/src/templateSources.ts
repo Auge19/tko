@@ -27,7 +27,7 @@ import { tagNameLower as tagNameLowerFn, setHtml, domData, parseHtmlForTemplateN
 // ---- ko.templateSources.domElement -----
 
 // template types
-var templateScript = 1,
+let templateScript = 1,
   templateTextArea = 2,
   templateTemplate = 3,
   templateElement = 4
@@ -47,8 +47,8 @@ export interface TemplateSource {
   nodes: { (): Node; (valueToWrite: Node): void }
 }
 
-var dataDomDataPrefix = domData.nextKey() + '_'
-var templatesDomDataKey = domData.nextKey()
+let dataDomDataPrefix = domData.nextKey() + '_'
+let templatesDomDataKey = domData.nextKey()
 function getTemplateDomData(element) {
   return domData.get(element, templatesDomDataKey) || {}
 }
@@ -65,7 +65,7 @@ export class DomElement implements TemplateSource {
     if (!element) {
       return
     }
-    var tagNameLower = tagNameLowerFn(element)
+    let tagNameLower = tagNameLowerFn(element)
     this.templateType =
       tagNameLower === 'script'
         ? templateScript
@@ -80,7 +80,7 @@ export class DomElement implements TemplateSource {
   text(): string
   text(valueToWrite: string): void
   text(valueToWrite?: unknown): string | void {
-    var elemContentsProperty =
+    let elemContentsProperty =
       this.templateType === templateScript ? 'text' : this.templateType === templateTextArea ? 'value' : 'innerHTML'
 
     if (arguments.length == 0) {
@@ -104,7 +104,7 @@ export class DomElement implements TemplateSource {
     }
   }
   nodes: { (): Node; (valueToWrite: Node): void } = function (valueToWrite?: Node) {
-    var element = this.domElement
+    let element = this.domElement
     if (arguments.length == 0) {
       const templateData = getTemplateDomData(element)
       let nodes =
@@ -142,7 +142,7 @@ export class AnonymousTemplate extends DomElement {
   override text(valueToWrite: string): void
   override text(valueToWrite?: unknown): string | void {
     if (arguments.length == 0) {
-      var templateData = getTemplateDomData(this.domElement)
+      let templateData = getTemplateDomData(this.domElement)
       if (templateData.textData === undefined && templateData.containerData) {
         templateData.textData = templateData.containerData.innerHTML
       }

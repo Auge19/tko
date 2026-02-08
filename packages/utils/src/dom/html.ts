@@ -8,7 +8,7 @@ import { forceRefresh } from './fixes'
 import * as virtualElements from './virtualElements'
 import options from '../options'
 
-var none = [0, '', ''],
+let none = [0, '', ''],
   table = [1, '<table>', '</table>'],
   tbody = [2, '<table><tbody>', '</tbody></table>'],
   colgroup = [2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
@@ -46,7 +46,7 @@ function simpleHtmlParse(html: string, documentContext?: Document): Node[] {
   if (!documentContext) {
     documentContext = document
   }
-  var windowContext = documentContext['parentWindow'] || documentContext['defaultView'] || window
+  let windowContext = documentContext['parentWindow'] || documentContext['defaultView'] || window
 
   // Based on jQuery's "clean" function, but only accounting for table-related elements.
   // If you have referenced jQuery, this won't be used anyway - KO will use jQuery's "clean" function directly
@@ -86,7 +86,7 @@ function templateHtmlParse(html: string, documentContext?: Document): Node[] {
   if (!documentContext) {
     documentContext = document
   }
-  var template = documentContext.createElement('template') as HTMLTemplateElement
+  let template = documentContext.createElement('template') as HTMLTemplateElement
   template.innerHTML = html
   return makeArray(template.content.childNodes)
 }
@@ -179,7 +179,7 @@ export function setHtml(node: Node, html: Function | string) {
       jQuery(node).html(html)
     } else {
       // ... otherwise, use KO's own parsing logic.
-      var parsedNodes: Node[]
+      let parsedNodes: Node[]
       if (node.ownerDocument) {
         parsedNodes = parseHtmlFragment(html, node.ownerDocument)
       } else {
@@ -193,7 +193,7 @@ export function setHtml(node: Node, html: Function | string) {
           virtualElements.setDomNodeChildren(node, parsedNodes)
         }
       } else {
-        for (var i = 0; i < parsedNodes.length; i++) {
+        for (let i = 0; i < parsedNodes.length; i++) {
           node.appendChild(parsedNodes[i])
         }
       }
@@ -204,7 +204,7 @@ export function setHtml(node: Node, html: Function | string) {
 //TODO May be MaybeSubscribable<string> -> I actually don't want the dependency
 type TextContent = string | null | undefined | Function
 export function setTextContent(element: Node, textContent?: TextContent): void {
-  var value = typeof textContent === 'function' ? (textContent as Function)() : textContent
+  let value = typeof textContent === 'function' ? (textContent as Function)() : textContent
   if (value === null || value === undefined) {
     value = ''
   }
@@ -212,7 +212,7 @@ export function setTextContent(element: Node, textContent?: TextContent): void {
   // We need there to be exactly one child: a text node.
   // If there are no children, more than one, or if it's not a text node,
   // we'll clear everything and create a single text node.
-  var innerTextNode = virtualElements.firstChild(element)
+  let innerTextNode = virtualElements.firstChild(element)
   if (!innerTextNode || innerTextNode.nodeType != 3 || virtualElements.nextSibling(innerTextNode)) {
     virtualElements.setDomNodeChildren(element, [element.ownerDocument!.createTextNode(value)])
   } else {

@@ -16,12 +16,12 @@ initJasmine()
 
 describe('Observable', function () {
   it('Should be subscribable', function () {
-    var instance = observable()
+    let instance = observable()
     expect(isSubscribable(instance)).toEqual(true)
   })
 
   it('observable has limit', function () {
-    var instance = observable()
+    let instance = observable()
     expect(instance.limit).not.toBeUndefined()
   })
 
@@ -30,7 +30,7 @@ describe('Observable', function () {
   })
 
   it('Should advertise that instances are observable', function () {
-    var instance = observable()
+    let instance = observable()
     expect(isObservable(instance)).toEqual(true)
   })
 
@@ -50,12 +50,12 @@ describe('Observable', function () {
   })
 
   it('Should be able to write values to it', function () {
-    var instance = observable()
+    let instance = observable()
     instance(123)
   })
 
   it('Should be able to write to multiple observable properties on a model object using chaining syntax', function () {
-    var model = { prop1: observable(), prop2: observable() }
+    let model = { prop1: observable(), prop2: observable() }
     model.prop1('A').prop2('B')
 
     expect(model.prop1()).toEqual('A')
@@ -63,8 +63,8 @@ describe('Observable', function () {
   })
 
   it('Should be able to use Function.prototype methods to access/update', function () {
-    var instance = observable('A')
-    var obj = {}
+    let instance = observable('A')
+    let obj = {}
 
     expect(instance.call(null)).toEqual('A')
     expect(instance.call(obj, 'B')).toBe(obj)
@@ -72,31 +72,31 @@ describe('Observable', function () {
   })
 
   it('Should advertise that instances can have values written to them', function () {
-    var instance = observable(function () {})
+    let instance = observable(function () {})
     expect(isWriteableObservable(instance)).toEqual(true)
     expect(isWritableObservable(instance)).toEqual(true)
   })
 
   it('Should be able to read back most recent value', function () {
-    var instance = observable()
+    let instance = observable()
     instance(123)
     instance(234)
     expect(instance()).toEqual(234)
   })
 
   it('Should initially have undefined value', function () {
-    var instance = observable()
+    let instance = observable()
     expect(instance()).toEqual(undefined)
   })
 
   it('Should be able to set initial value as constructor param', function () {
-    var instance = observable('Hi!')
+    let instance = observable('Hi!')
     expect(instance()).toEqual('Hi!')
   })
 
   it('Should notify subscribers about each new value', function () {
-    var instance = observable()
-    var notifiedValues = new Array()
+    let instance = observable()
+    let notifiedValues = new Array()
     instance.subscribe(function (value) {
       notifiedValues.push(value)
     })
@@ -108,8 +108,8 @@ describe('Observable', function () {
   })
 
   it('Should notify "spectator" subscribers about each new value', function () {
-    var instance = observable()
-    var notifiedValues = new Array()
+    let instance = observable()
+    let notifiedValues = new Array()
     instance.subscribe(
       function (value) {
         notifiedValues.push(value)
@@ -124,13 +124,13 @@ describe('Observable', function () {
   })
 
   it('Should be able to tell it that its value has mutated, at which point it notifies subscribers', function () {
-    var instance = observable()
-    var notifiedValues = new Array()
+    let instance = observable()
+    let notifiedValues = new Array()
     instance.subscribe(function (value) {
       notifiedValues.push(value.childProperty)
     })
 
-    var someUnderlyingObject = { childProperty: 'A' }
+    let someUnderlyingObject = { childProperty: 'A' }
     instance(someUnderlyingObject)
     expect(notifiedValues.length).toEqual(1)
     expect(notifiedValues[0]).toEqual('A')
@@ -142,8 +142,8 @@ describe('Observable', function () {
   })
 
   it('Should notify "beforeChange" subscribers before each new value', function () {
-    var instance = observable()
-    var notifiedValues = new Array()
+    let instance = observable()
+    let notifiedValues = new Array()
     instance.subscribe(
       function (value) {
         notifiedValues.push(value)
@@ -161,8 +161,8 @@ describe('Observable', function () {
   })
 
   it('Should be able to tell it that its value will mutate, at which point it notifies "beforeChange" subscribers', function () {
-    var instance = observable()
-    var notifiedValues = new Array()
+    let instance = observable()
+    let notifiedValues = new Array()
     instance.subscribe(
       function (value) {
         notifiedValues.push(value ? value.childProperty : value)
@@ -171,7 +171,7 @@ describe('Observable', function () {
       'beforeChange'
     )
 
-    var someUnderlyingObject = { childProperty: 'A' }
+    let someUnderlyingObject = { childProperty: 'A' }
     instance(someUnderlyingObject)
     expect(notifiedValues.length).toEqual(1)
     expect(notifiedValues[0]).toEqual(undefined)
@@ -187,11 +187,11 @@ describe('Observable', function () {
   })
 
   it('Should ignore writes when the new value is primitive and strictly equals the old value', function () {
-    var instance = observable()
-    var notifiedValues = new Array()
+    let instance = observable()
+    let notifiedValues = new Array()
     instance.subscribe(notifiedValues.push, notifiedValues)
 
-    for (var i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i++) {
       instance('A')
       expect(instance()).toEqual('A')
       expect(notifiedValues).toEqual(['A'])
@@ -203,16 +203,16 @@ describe('Observable', function () {
   })
 
   it('Should ignore writes when both the old and new values are strictly null', function () {
-    var instance = observable(null)
-    var notifiedValues = new Array()
+    let instance = observable(null)
+    let notifiedValues = new Array()
     instance.subscribe(notifiedValues.push, notifiedValues)
     instance(null)
     expect(notifiedValues).toEqual([])
   })
 
   it('Should ignore writes when both the old and new values are strictly undefined', function () {
-    var instance = observable(undefined)
-    var notifiedValues = new Array()
+    let instance = observable(undefined)
+    let notifiedValues = new Array()
     instance.subscribe(notifiedValues.push, notifiedValues)
     instance(undefined)
     expect(notifiedValues).toEqual([])
@@ -221,17 +221,17 @@ describe('Observable', function () {
   it('Should notify subscribers of a change when an object value is written, even if it is identical to the old value', function () {
     // Because we can't tell whether something further down the object graph has changed, we regard
     // all objects as new values. To override this, set an "equalityComparer" callback
-    var constantObject = {}
-    var instance = observable(constantObject)
-    var notifiedValues = new Array()
+    let constantObject = {}
+    let instance = observable(constantObject)
+    let notifiedValues = new Array()
     instance.subscribe(notifiedValues.push, notifiedValues)
     instance(constantObject)
     expect(notifiedValues).toEqual([constantObject])
   })
 
   it("Should notify subscribers of a change even when an identical primitive is written if you've set the equality comparer to null", function () {
-    var instance = observable('A')
-    var notifiedValues = new Array()
+    let instance = observable('A')
+    let notifiedValues = new Array()
     instance.subscribe(notifiedValues.push, notifiedValues)
 
     // No notification by default
@@ -245,12 +245,12 @@ describe('Observable', function () {
   })
 
   it('Should ignore writes when the equalityComparer callback states that the values are equal', function () {
-    var instance = observable()
+    let instance = observable()
     instance.equalityComparer = function (a, b) {
       return !(a && b) ? a === b : a.id == b.id
     }
 
-    var notifiedValues = new Array()
+    let notifiedValues = new Array()
     instance.subscribe(notifiedValues.push, notifiedValues)
 
     instance({ id: 1 })
@@ -282,8 +282,8 @@ describe('Observable', function () {
   })
 
   it('Should expose a "notify" extender that can configure the observable to notify on all writes, even if the value is unchanged', function () {
-    var instance = observable()
-    var notifiedValues = new Array()
+    let instance = observable()
+    let notifiedValues = new Array()
     instance.subscribe(notifiedValues.push, notifiedValues)
 
     instance(123)
@@ -305,8 +305,8 @@ describe('Observable', function () {
   })
 
   it('Should be possible to replace notifySubscribers with a custom handler', function () {
-    var instance = observable(123)
-    var interceptedNotifications = new Array()
+    let instance = observable(123)
+    let interceptedNotifications = new Array()
     instance.subscribe(function () {
       throw new Error('Should not notify subscribers by default once notifySubscribers is overridden')
     })
@@ -336,7 +336,7 @@ describe('Observable', function () {
       return this()
     }
 
-    var instance = observable(123)
+    let instance = observable(123)
     expect((instance as any).customProp).toEqual('subscribable value')
     expect((instance as any).customFunc()).toEqual(123)
   })
@@ -352,10 +352,10 @@ describe('Observable', function () {
       delete (observable.fn as any).customFunction2
     })
 
-    var myObservable = observable()
+    let myObservable = observable()
 
-    var customFunction1 = function () {}
-    var customFunction2 = function () {}
+    let customFunction1 = function () {}
+    let customFunction2 = function () {}
 
     ;(subscribable.fn as any).customFunction1 = customFunction1
     ;(observable.fn as any).customFunction2 = customFunction2
@@ -376,7 +376,7 @@ describe('Observable', function () {
 
 describe('unwrap', function () {
   it('Should return the supplied value for non-observables', function () {
-    var someObject = { abc: 123 }
+    let someObject = { abc: 123 }
 
     expect(unwrap(123)).toBe(123)
     expect(unwrap(someObject)).toBe(someObject)

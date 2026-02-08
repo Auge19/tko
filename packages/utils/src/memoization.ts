@@ -3,7 +3,7 @@
 //
 import { arrayPushAll } from './array'
 
-var memos = {}
+let memos = {}
 
 function randomMax8HexChars() {
   return (((1 + Math.random()) * 0x100000000) | 0).toString(16).substring(1)
@@ -19,12 +19,12 @@ function findMemoNodes(rootNode: Node, appendToArray: any[]) {
   }
   if (rootNode.nodeType == 8) {
     const comment = rootNode as Comment
-    var memoId = parseMemoText(comment.nodeValue)
+    let memoId = parseMemoText(comment.nodeValue)
     if (memoId != null) {
       appendToArray.push({ domNode: rootNode, memoId: memoId })
     }
   } else if (rootNode.nodeType == 1) {
-    for (var i = 0, childNodes = rootNode.childNodes, j = childNodes.length; i < j; i++) {
+    for (let i = 0, childNodes = rootNode.childNodes, j = childNodes.length; i < j; i++) {
       findMemoNodes(childNodes[i], appendToArray)
     }
   }
@@ -34,13 +34,13 @@ export function memoize(callback: (val: any) => void): string {
   if (typeof callback !== 'function') {
     throw new Error('You can only pass a function to memoization.memoize()')
   }
-  var memoId = generateRandomId()
+  let memoId = generateRandomId()
   memos[memoId] = callback
   return '<!--[ko_memo:' + memoId + ']-->'
 }
 
 export function unmemoize(memoId: string, callbackParams?: any[]) {
-  var callback = memos[memoId]
+  let callback = memos[memoId]
   if (callback === undefined) {
     throw new Error("Couldn't find any memo with ID " + memoId + ". Perhaps it's already been unmemoized.")
   }
@@ -53,11 +53,11 @@ export function unmemoize(memoId: string, callbackParams?: any[]) {
 }
 
 export function unmemoizeDomNodeAndDescendants(domNode: Node, extraCallbackParamsArray?: any[]) {
-  var memos = new Array()
+  let memos = new Array()
   findMemoNodes(domNode, memos)
-  for (var i = 0, j = memos.length; i < j; i++) {
-    var node = memos[i].domNode
-    var combinedParams = [node]
+  for (let i = 0, j = memos.length; i < j; i++) {
+    let node = memos[i].domNode
+    let combinedParams = [node]
     if (extraCallbackParamsArray) {
       arrayPushAll(combinedParams, extraCallbackParamsArray)
     }
@@ -74,6 +74,6 @@ export function parseMemoText(memoText: string | null): string | null {
     return null
   }
 
-  var match = memoText.match(/^\[ko_memo\:(.*?)\]$/)
+  let match = memoText.match(/^\[ko_memo\:(.*?)\]$/)
   return match ? match[1] : null
 }

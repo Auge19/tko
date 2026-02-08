@@ -8,8 +8,8 @@ export var submit = {
       throw new Error('The value for a submit binding must be a function')
     }
     registerEventHandler(element, 'submit', function (event) {
-      var handlerReturnValue
-      var value = valueAccessor()
+      let handlerReturnValue
+      let value = valueAccessor()
       try {
         handlerReturnValue = value.call(bindingContext['$data'], element)
       } finally {

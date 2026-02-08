@@ -39,7 +39,7 @@ export function arrayMap<T = any, U = any>(array: ArrayLike<T>, mapping: (item: 
 }
 
 export function arrayRemoveItem<T = any>(array: Array<T>, itemToRemove: T): void {
-  var index = arrayIndexOf(array, itemToRemove)
+  let index = arrayIndexOf(array, itemToRemove)
   if (index > 0) {
     array.splice(index, 1)
   } else if (index === 0) {
@@ -70,7 +70,7 @@ export function arrayPushAll<T = any>(array: Array<T>, valuesToPush: ArrayLike<T
   if (isArray(valuesToPush)) {
     array.push.apply(array, valuesToPush)
   } else {
-    for (var i = 0, j = valuesToPush.length; i < j; i++) {
+    for (let i = 0, j = valuesToPush.length; i < j; i++) {
       array.push(valuesToPush[i])
     }
   }
@@ -78,7 +78,7 @@ export function arrayPushAll<T = any>(array: Array<T>, valuesToPush: ArrayLike<T
 }
 
 export function addOrRemoveItem(array, value, included: boolean) {
-  var existingEntryIndex = arrayIndexOf(typeof array.peek === 'function' ? array.peek() : array, value)
+  let existingEntryIndex = arrayIndexOf(typeof array.peek === 'function' ? array.peek() : array, value)
   if (existingEntryIndex < 0) {
     if (included) {
       array.push(value)
@@ -98,7 +98,7 @@ export function makeArray<T = any>(arrayLikeObject: ArrayLike<T>): T[] {
 export function range(min: () => number | number, max: () => number | number): number[] {
   const minimum = typeof min === 'function' ? (min as () => number)() : (min as number)
   const maximum = typeof max === 'function' ? (max as () => number)() : (max as number)
-  var result: number[] = []
+  let result: number[] = []
   for (let i = minimum as number; i <= maximum; i++) {
     result.push(i)
   }
@@ -108,13 +108,13 @@ export function range(min: () => number | number, max: () => number | number): n
 // Go through the items that have been added and deleted and try to find matches between them.
 export function findMovesInArrayComparison(left, right, limitFailedCompares?: number | boolean) {
   if (left.length && right.length) {
-    var failedCompares, l, r, leftItem, rightItem
+    let failedCompares, l, r, leftItem, rightItem
     for (
       failedCompares = l = 0;
       (!limitFailedCompares || failedCompares < limitFailedCompares) && (leftItem = left[l]);
       ++l
     ) {
-      // eslint-disable-next-line no-cond-assign
+       
       for (r = 0; (rightItem = right[r]); ++r) {
         if (leftItem.value === rightItem.value) {
           leftItem.moved = rightItem.index
@@ -172,7 +172,7 @@ function compareSmallArrayToBigArray<T = any>(
   statusNotInBig: 'added' | 'deleted',
   options: CompareArraysOptions
 ): ArrayChanges<T> {
-  var myMin = Math.min,
+  let myMin = Math.min,
     myMax = Math.max,
     editDistanceMatrix = new Array(),
     smlIndex,
@@ -201,14 +201,14 @@ function compareSmallArrayToBigArray<T = any>(
         thisRow[bigIndex] = lastRow[bigIndex - 1]
       } else {
         // copy value (no edit)
-        var northDistance = lastRow[bigIndex] || maxDistance // not in big (deletion)
-        var westDistance = thisRow[bigIndex - 1] || maxDistance // not in small (addition)
+        let northDistance = lastRow[bigIndex] || maxDistance // not in big (deletion)
+        let westDistance = thisRow[bigIndex - 1] || maxDistance // not in small (addition)
         thisRow[bigIndex] = myMin(northDistance, westDistance) + 1
       }
     }
   }
 
-  var editScript = new Array(),
+  let editScript = new Array(),
     meMinusOne,
     notInSml = new Array(),
     notInBig = new Array()

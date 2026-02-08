@@ -17,7 +17,7 @@ describe('Binding: Unique Name', function () {
   })
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    let provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
   })

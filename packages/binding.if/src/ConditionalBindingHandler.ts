@@ -106,8 +106,8 @@ export default class ConditionalBindingHandler extends AsyncBindingHandler {
   }
 
   detectElse(element) {
-    var children = virtualElements.childNodes(element)
-    for (var i = 0, j = children.length; i < j; ++i) {
+    let children = virtualElements.childNodes(element)
+    for (let i = 0, j = children.length; i < j; ++i) {
       if (this.isElseNode(children[i])) {
         return true
       }
@@ -127,7 +127,7 @@ export default class ConditionalBindingHandler extends AsyncBindingHandler {
     const elseNodes = new Array()
     let target = ifNodes
 
-    for (var i = 0, j = children.length; i < j; ++i) {
+    for (let i = 0, j = children.length; i < j; ++i) {
       if (hasElse && this.isElseNode(children[i])) {
         target = elseNodes
         hasElse = false

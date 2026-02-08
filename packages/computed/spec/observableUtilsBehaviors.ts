@@ -4,7 +4,7 @@ import { when } from '../src'
 
 describe('when', function () {
   it('Runs callback when predicate function becomes true, but only once', function () {
-    var x = observable(3),
+    let x = observable(3),
       called = 0
 
     when(
@@ -32,7 +32,7 @@ describe('when', function () {
   })
 
   it('Runs callback if predicate function is already true', function () {
-    var x = observable(4),
+    let x = observable(4),
       called = 0
 
     when(
@@ -55,7 +55,7 @@ describe('when', function () {
   })
 
   it('Accepts an observable as the predicate', function () {
-    var x = observable(false),
+    let x = observable(false),
       called = 0
 
     when(
@@ -75,10 +75,10 @@ describe('when', function () {
   })
 
   it('Returns an object with a dispose function that cancels the notification', function () {
-    var x = observable(false),
+    let x = observable(false),
       called = 0
 
-    var handle = when(
+    let handle = when(
       x,
       function () {
         called++
@@ -97,7 +97,7 @@ describe('when', function () {
   })
 
   it('Will call callback function only once even if value is updated during callback', function () {
-    var x = observable(false),
+    let x = observable(false),
       called = 0
 
     when(
@@ -118,7 +118,7 @@ describe('when', function () {
   })
 
   it("Should be able to specify a 'this' pointer for the callback", function () {
-    var model = {
+    let model = {
       someProperty: 123,
       myCallback: function () {
         expect(this.someProperty).toEqual(123)

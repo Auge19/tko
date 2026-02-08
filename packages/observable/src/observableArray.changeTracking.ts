@@ -81,7 +81,7 @@ export function trackArrayChanges(target: ObservableArray, options?: CompareArra
 
     // Each time the array changes value, capture a clone so that on the next
     // change it's possible to produce a diff
-    var previousContents = new Array().concat(target.peek() === undefined ? [] : target.peek())
+    let previousContents = new Array().concat(target.peek() === undefined ? [] : target.peek())
     cachedDiff = null
     arrayChangeSubscription = target.subscribe(function (currentContents) {
       let changes
@@ -122,7 +122,7 @@ export function trackArrayChanges(target: ObservableArray, options?: CompareArra
     if (!trackingChanges || pendingNotifications) {
       return
     }
-    var diff = new Array(),
+    let diff = new Array(),
       arrayLength = rawArray.length,
       argsLength = args.length,
       offset = 0

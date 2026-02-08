@@ -4,7 +4,7 @@ import { unwrap } from '@tko/observable'
 
 import { BindingHandler } from '@tko/bind'
 
-var operaVersion, safariVersion, firefoxVersion
+let operaVersion, safariVersion, firefoxVersion
 
 /**
  * TextInput binding handler for modern browsers (legacy below).

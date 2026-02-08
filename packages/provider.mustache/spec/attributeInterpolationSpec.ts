@@ -170,7 +170,7 @@ describe('Attribute Interpolation Markup Provider', function () {
   })
 
   it('Should convert value and checked attributes to two-way bindings', function () {
-    var input = document.createElement('input')
+    let input = document.createElement('input')
     input.type = 'checkbox'
     input.setAttribute('checked', '{{expr2}}')
     input.setAttribute('value', '{{expr1}}')
@@ -219,9 +219,9 @@ describe('Attribute Interpolation Markup Provider', function () {
   })
 
   it('should set the style attribute (when there is a `style` binding)', function () {
-    var obs = Observable()
+    let obs = Observable()
     testNode.innerHTML = '<div style="color: {{ obs }}"></div>'
-    var div = testNode.childNodes[0] as HTMLDivElement
+    let div = testNode.childNodes[0] as HTMLDivElement
     applyBindings({ obs: obs }, testNode)
     expect(div.getAttribute('style')).toEqual('color: ')
     obs('red')
@@ -235,7 +235,7 @@ describe('Attribute Interpolation Markup bindings', function () {
     testNode = jasmine.prepareTestNode()
   })
 
-  var bindingHandlers
+  let bindingHandlers
 
   beforeEach(function () {
     const providers = [new AttributeMustacheProvider(), new DataBindProvider()]
@@ -294,7 +294,7 @@ describe('Attribute Interpolation Markup bindings', function () {
 
   it('Should update when observable changes', function () {
     testNode.innerHTML = "<div title='The best {{what}}.'></div>"
-    var observable = Observable('time')
+    let observable = Observable('time')
     applyBindings({ what: observable }, testNode)
     const node = testNode.childNodes[0] as HTMLDivElement
     expect(node.title).toEqual('The best time.')
@@ -304,7 +304,7 @@ describe('Attribute Interpolation Markup bindings', function () {
 
   it('Should update when observable changes (quotation marks and backspaces)', function () {
     testNode.innerHTML = '<div title=\'The "best" {{what}}.\'></div>'
-    var observable = Observable('time "test"')
+    let observable = Observable('time "test"')
     applyBindings({ what: observable }, testNode)
     expect((testNode.childNodes[0] as HTMLDivElement).title).toEqual('The \"best\" time "test".')
     observable('fun \\ test')
@@ -313,7 +313,7 @@ describe('Attribute Interpolation Markup bindings', function () {
 
   it('Should convert value attribute to two-way binding', function () {
     testNode.innerHTML = "<input value='{{value}}'/>"
-    var observable = Observable('default value')
+    let observable = Observable('default value')
     applyBindings({ value: observable }, testNode)
     const node = testNode.childNodes[0] as HTMLInputElement
 
@@ -326,7 +326,7 @@ describe('Attribute Interpolation Markup bindings', function () {
 
   it('Should convert checked attribute to two-way binding', function () {
     testNode.innerHTML = "<input type='checkbox' checked='{{isChecked}}'/>"
-    var observable = Observable(true)
+    let observable = Observable(true)
     applyBindings({ isChecked: observable }, testNode)
     const node = testNode.childNodes[0] as HTMLInputElement
 

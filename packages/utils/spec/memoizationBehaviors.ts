@@ -7,7 +7,7 @@ function parseMemoCommentHtml(commentHtml: string) {
 
 describe('Memoization', function () {
   it('Should only accept a function', function () {
-    var threw = false
+    let threw = false
     try {
       memoization.memoize({} as any)
     } catch (ex) {
@@ -17,14 +17,14 @@ describe('Memoization', function () {
   })
 
   it('Should return an HTML comment', function () {
-    var result = memoization.memoize(function () {})
+    let result = memoization.memoize(function () {})
     expect(typeof result).toEqual('string')
     expect(result.substring(0, 4)).toEqual('<!--')
   })
 
   it('Should call the function when unmemoizing', function () {
-    var didCall = false
-    var memo = memoization.memoize(function () {
+    let didCall = false
+    let memo = memoization.memoize(function () {
       didCall = true
     })
     memoization.unmemoize(parseMemoCommentHtml(memo))
@@ -32,10 +32,10 @@ describe('Memoization', function () {
   })
 
   it('Should not be able to unmemoize more than once', function () {
-    var memo = memoization.memoize(function () {})
+    let memo = memoization.memoize(function () {})
     memoization.unmemoize(parseMemoCommentHtml(memo))
 
-    var threw = false
+    let threw = false
     try {
       memoization.unmemoize(parseMemoCommentHtml(memo))
     } catch (ex) {
@@ -45,8 +45,8 @@ describe('Memoization', function () {
   })
 
   it('Should be able to find memos in a DOM tree and unmemoize them, passing the memo node as a param', function () {
-    var containerNode = document.createElement('DIV')
-    var didCall = false
+    let containerNode = document.createElement('DIV')
+    let didCall = false
     containerNode.innerHTML =
       'Hello '
       + memoization.memoize(function (domNode) {
@@ -58,7 +58,7 @@ describe('Memoization', function () {
   })
 
   it('After unmemoizing a DOM tree, removes the memo nodes', function () {
-    var containerNode = document.createElement('DIV')
+    let containerNode = document.createElement('DIV')
     containerNode.innerHTML = 'Hello ' + memoization.memoize(function () {})
 
     expect(containerNode.childNodes.length).toEqual(2)

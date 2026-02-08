@@ -32,7 +32,7 @@ import type { TemplateEngine, TemplateOptions } from './templateEngine'
 
 import { AnonymousTemplate } from './templateSources'
 
-var _templateEngine: TemplateEngine
+let _templateEngine: TemplateEngine
 const cleanContainerDomDataKey = domData.nextKey()
 
 export function setTemplateEngine(tEngine: TemplateEngine | undefined): void {
@@ -65,16 +65,16 @@ function activateBindingsOnContinuousNodeArray(
   // (2) Unmemoizes any memos in the DOM subtree (e.g., to activate bindings that had been memoized during template rewriting)
 
   if (continuousNodeArray.length) {
-    var firstNode = continuousNodeArray[0]
-    var lastNode = continuousNodeArray[continuousNodeArray.length - 1]
-    var parentNode = firstNode.parentNode
-    var provider = koOptions.bindingProviderInstance
-    var preprocessNode = provider.preprocessNode
+    let firstNode = continuousNodeArray[0]
+    let lastNode = continuousNodeArray[continuousNodeArray.length - 1]
+    let parentNode = firstNode.parentNode
+    let provider = koOptions.bindingProviderInstance
+    let preprocessNode = provider.preprocessNode
 
     if (preprocessNode) {
       invokeForEachNodeInContinuousRange(firstNode, lastNode, function (node, nextNodeInRange) {
-        var nodePreviousSibling = node.previousSibling
-        var newNodes = preprocessNode.call(provider, node)
+        let nodePreviousSibling = node.previousSibling
+        let newNodes = preprocessNode.call(provider, node)
         if (newNodes) {
           if (node === firstNode) {
             firstNode = newNodes[0] || nextNodeInRange
@@ -125,10 +125,10 @@ function getFirstNodeFromPossibleArray(nodeOrNodeArray) {
 
 function executeTemplate(targetNodeOrNodeArray, renderMode, template, bindingContext, options, afterBindingCallback) {
   options = options || {}
-  var firstTargetNode = targetNodeOrNodeArray && getFirstNodeFromPossibleArray(targetNodeOrNodeArray)
-  var templateDocument = (firstTargetNode || template || {}).ownerDocument
-  var templateEngineToUse = options.templateEngine || _templateEngine
-  var renderedNodesArray = templateEngineToUse.renderTemplate(template, bindingContext, options, templateDocument)
+  let firstTargetNode = targetNodeOrNodeArray && getFirstNodeFromPossibleArray(targetNodeOrNodeArray)
+  let templateDocument = (firstTargetNode || template || {}).ownerDocument
+  let templateEngineToUse = options.templateEngine || _templateEngine
+  let renderedNodesArray = templateEngineToUse.renderTemplate(template, bindingContext, options, templateDocument)
 
   // Loosely check result is an array of DOM nodes
   if (
@@ -138,7 +138,7 @@ function executeTemplate(targetNodeOrNodeArray, renderMode, template, bindingCon
     throw new Error('Template engine must return an array of DOM nodes')
   }
 
-  var haveAddedNodesToParent = false
+  let haveAddedNodesToParent = false
   switch (renderMode) {
     case 'replaceChildren':
       virtualElements.setDomNodeChildren(targetNodeOrNodeArray, renderedNodesArray)
@@ -198,26 +198,26 @@ export function renderTemplate<T = any>(
   renderMode = renderMode || 'replaceChildren'
 
   if (targetNodeOrNodeArray) {
-    var firstTargetNode = getFirstNodeFromPossibleArray(targetNodeOrNodeArray)
+    let firstTargetNode = getFirstNodeFromPossibleArray(targetNodeOrNodeArray)
 
-    var whenToDispose = function () {
+    let whenToDispose = function () {
       return !firstTargetNode || !domNodeIsAttachedToDocument(firstTargetNode)
     } // Passive disposal (on next evaluation)
-    var activelyDisposeWhenNodeIsRemoved =
+    let activelyDisposeWhenNodeIsRemoved =
       firstTargetNode && renderMode === 'replaceNode' ? firstTargetNode.parentNode : firstTargetNode
 
     return computed(
       // So the DOM is automatically updated when any dependency changes
       function () {
         // Ensure we've got a proper binding context to work with
-        var bindingContext =
+        let bindingContext =
           dataOrBindingContext && dataOrBindingContext instanceof BindingContextConstructor
             ? dataOrBindingContext
             : new BindingContextConstructor(dataOrBindingContext, undefined, undefined, undefined, {
                 exportDependencies: true
               })
 
-        var templateName = resolveTemplateName(template, bindingContext.$data, bindingContext)
+        let templateName = resolveTemplateName(template, bindingContext.$data, bindingContext)
         const renderedNodesArray = executeTemplate(
           targetNodeOrNodeArray,
           renderMode,
@@ -253,7 +253,7 @@ export default function renderTemplateForEach(
 ) {
   // Since setDomNodeChildrenFromArrayMapping always calls executeTemplateForArrayItem and then
   // activateBindingsCallback for added items, we can store the binding context in the former to use in the latter.
-  var arrayItemContext
+  let arrayItemContext
 
   // This will be called by setDomNodeChildrenFromArrayMapping to get the nodes to add to targetNode
   function executeTemplateForArrayItem(arrayValue, index) {
@@ -272,7 +272,7 @@ export default function renderTemplateForEach(
       })
     }
 
-    var templateName = resolveTemplateName(template, arrayValue, arrayItemContext)
+    let templateName = resolveTemplateName(template, arrayValue, arrayItemContext)
     return executeTemplate(
       targetNode,
       'ignoreTargetNode',
@@ -284,7 +284,7 @@ export default function renderTemplateForEach(
   }
 
   // This will be called whenever setDomNodeChildrenFromArrayMapping has added nodes to targetNode
-  var activateBindingsCallback = function (arrayValue, addedNodesArray /*, index */) {
+  let activateBindingsCallback = function (arrayValue, addedNodesArray /*, index */) {
     activateBindingsOnContinuousNodeArray(addedNodesArray, arrayItemContext, afterBindingCallback)
     if (options.afterRender) {
       options.afterRender(addedNodesArray, arrayValue)
@@ -313,7 +313,7 @@ export default function renderTemplateForEach(
     options.includeDestroyed === false || (koOptions.foreachHidesDestroyed && !options.includeDestroyed)
   if (!shouldHideDestroyed && !options.beforeRemove && isObservableArray(arrayOrObservableArray)) {
     localSetDomNodeChildrenFromArrayMapping(arrayOrObservableArray.peek())
-    var subscription = arrayOrObservableArray.subscribe(
+    let subscription = arrayOrObservableArray.subscribe(
       function (changeList) {
         localSetDomNodeChildrenFromArrayMapping(arrayOrObservableArray(), changeList)
       },
@@ -325,7 +325,7 @@ export default function renderTemplateForEach(
   } else {
     return computed(
       function () {
-        var unwrappedArray = unwrap(arrayOrObservableArray) || []
+        let unwrappedArray = unwrap(arrayOrObservableArray) || []
         const unwrappedIsIterable = Symbol.iterator in unwrappedArray
         if (!unwrappedIsIterable) {
           unwrappedArray = [unwrappedArray]
@@ -403,12 +403,12 @@ export class TemplateBindingHandler extends AsyncBindingHandler {
   onValueChange() {
     const element = this.$element
     const bindingContext = this.$context
-    var value = this.value
-    var options = unwrap(value)
-    var shouldDisplay = true
+    let value = this.value
+    let options = unwrap(value)
+    let shouldDisplay = true
     let templateComputed: ReturnType<typeof renderTemplateForEach> | ReturnType<typeof renderTemplate> | null = null
-    var elseChainSatisfied = domData.get(element, 'conditional').elseChainSatisfied
-    var templateName
+    let elseChainSatisfied = domData.get(element, 'conditional').elseChainSatisfied
+    let templateName
 
     if (typeof options === 'string') {
       templateName = value
@@ -428,7 +428,7 @@ export class TemplateBindingHandler extends AsyncBindingHandler {
 
     if ('foreach' in options) {
       // Render once for each data point (treating data set as empty if shouldDisplay==false)
-      var dataArray = (shouldDisplay && options.foreach) || []
+      let dataArray = (shouldDisplay && options.foreach) || []
       templateComputed = renderTemplateForEach(
         templateName || element,
         dataArray,
@@ -441,7 +441,7 @@ export class TemplateBindingHandler extends AsyncBindingHandler {
       elseChainSatisfied((unwrap(dataArray) || []).length !== 0)
     } else if (shouldDisplay) {
       // Render once for this single data point (or use the viewModel if no data was provided)
-      var innerBindingContext =
+      let innerBindingContext =
         'data' in options
           ? bindingContext.createStaticChildContext(options.data, options.as) // Given an explicit 'data' value, we create a child binding context for it
           : bindingContext // Given no explicit 'data' value, we retain the same binding context

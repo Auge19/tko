@@ -191,10 +191,10 @@ function limitNotifySubscribers(value, event?: string) {
  * @param limitFunction The function to limit notifications.
  */
 subscribable.fn.limit = function limit(limitFunction) {
-  var self = this
-  var selfIsObservable = isObservable(self)
-  var beforeChange = 'beforeChange'
-  var ignoreBeforeChange: boolean, notifyNextChange: boolean, previousValue: any, pendingValue: any, didUpdate: boolean
+  let self = this
+  let selfIsObservable = isObservable(self)
+  let beforeChange = 'beforeChange'
+  let ignoreBeforeChange: boolean, notifyNextChange: boolean, previousValue: any, pendingValue: any, didUpdate: boolean
 
   if (!self._origNotifySubscribers) {
     // Moved out of "limit" to avoid the extra closure
@@ -202,7 +202,7 @@ subscribable.fn.limit = function limit(limitFunction) {
     self.notifySubscribers = limitNotifySubscribers
   }
 
-  var finish = limitFunction(function () {
+  let finish = limitFunction(function () {
     self._notificationIsPending = false
 
     // If an observable provided a reference to itself, access it to get the latest value.
@@ -249,7 +249,7 @@ subscribable.fn.limit = function limit(limitFunction) {
 
 Object.setPrototypeOf(observable.fn, subscribable.fn)
 
-var protoProperty = (observable.protoProperty = options.protoProperty)
+let protoProperty = (observable.protoProperty = options.protoProperty)
 observable.fn[protoProperty] = observable
 
 // Subclasses can add themselves to observableProperties so that

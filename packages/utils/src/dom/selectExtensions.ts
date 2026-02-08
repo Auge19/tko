@@ -1,7 +1,7 @@
 import { tagNameLower } from './info'
 import * as domData from './data'
 
-var hasDomDataExpandoProperty = Symbol('Knockout selectExtensions hasDomDataProperty')
+let hasDomDataExpandoProperty = Symbol('Knockout selectExtensions hasDomDataProperty')
 
 // Normally, SELECT elements and their OPTIONs can only take value of type 'string' (because the values
 // are stored on DOM attributes). ko.selectExtensions provides a way for SELECTs/OPTIONs to have values
@@ -40,7 +40,7 @@ export var selectExtensions = {
           }
           ;(element as HTMLOptionElement).value = value
         } else {
-          var el = element as any //TODO Custom-Type with hasDomDataExpandoProperty
+          let el = element as any //TODO Custom-Type with hasDomDataExpandoProperty
           // Store arbitrary object using DomData
           domData.set(element, selectExtensions.optionValueDomDataKey, value)
           el[hasDomDataExpandoProperty] = true
@@ -55,7 +55,7 @@ export var selectExtensions = {
             // A blank string or null value will select the caption
             value = undefined
           }
-          var selection = -1
+          let selection = -1
 
           const selectElement = element as HTMLSelectElement
 

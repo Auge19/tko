@@ -54,7 +54,7 @@ export default class Parser {
   ) {}
 
   white() {
-    var ch = this.ch
+    let ch = this.ch
     while (ch && ch <= ' ') {
       ch = this.next()
     }
@@ -68,8 +68,8 @@ export default class Parser {
     if (ch !== '/') {
       return ch
     }
-    var p = this.at
-    var second = this.lookahead()
+    let p = this.at
+    let second = this.lookahead()
     if (second === '/') {
       while (ch) {
         ch = this.next()
@@ -123,11 +123,11 @@ export default class Parser {
 
   name() {
     // A name of a binding
-    var name = ''
-    var enclosedBy
+    let name = ''
+    let enclosedBy
     this.white()
 
-    var ch = this.ch
+    let ch = this.ch
 
     if (ch === "'" || ch === '"') {
       enclosedBy = ch
@@ -327,7 +327,7 @@ export default class Parser {
   }
 
   string() {
-    var ch = this.ch
+    let ch = this.ch
     if (ch === '"') {
       return this.readString('"')?.join('')
     } else if (ch === "'") {
@@ -481,9 +481,9 @@ export default class Parser {
     }
 
     function filter(value, ignored, context, globals, node) {
-      var argValues = [value]
+      let argValues = [value]
 
-      for (var i = 0, j = args.length; i < j; ++i) {
+      for (let i = 0, j = args.length; i < j; ++i) {
         argValues.push(Node.value_of(args[i], context, globals, node))
       }
 
@@ -588,14 +588,14 @@ export default class Parser {
       return undefined
     }
 
-    var dereferences = this.dereferences()
+    let dereferences = this.dereferences()
 
     if (nodes.length === 1 && !dereferences.length) {
       return nodes[0]
     }
 
-    for (var i = 0, j = dereferences.length; i < j; ++i) {
-      var deref = dereferences[i]
+    for (let i = 0, j = dereferences.length; i < j; ++i) {
+      let deref = dereferences[i]
       if (deref.constructor === Arguments) {
         nodes.push(operators.call)
       } else {
@@ -619,7 +619,7 @@ export default class Parser {
   }
 
   ternary(nodes) {
-    var ternary = new Ternary()
+    let ternary = new Ternary()
     ternary.yes = this.singleValueExpression()
     this.next(':')
     ternary.no = this.singleValueExpression()
@@ -879,7 +879,7 @@ export default class Parser {
     this.ch = ' '
 
     try {
-      var result = fn()
+      let result = fn()
       this.white()
       if (this.ch) {
         this.error('Syntax Error')

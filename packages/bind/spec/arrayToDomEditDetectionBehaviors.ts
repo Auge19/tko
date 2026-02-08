@@ -9,7 +9,7 @@ initJasmine()
 
 function copyDomNodeChildren(domNode: HTMLElement) {
   const copy: ChildNode[] = []
-  for (var i = 0; i < domNode.childNodes.length; i++) {
+  for (let i = 0; i < domNode.childNodes.length; i++) {
     copy.push(domNode.childNodes[i])
   }
   return copy

@@ -23,14 +23,14 @@ export class NativeTemplateEngine extends TemplateEngineBase {
     templateDocument?: Document
   ): Node[] {
     const version = ieVersion ?? 0
-    var useNodesIfAvailable = !(version < 9), // IE<9 cloneNode doesn't work properly
+    let useNodesIfAvailable = !(version < 9), // IE<9 cloneNode doesn't work properly
       templateNodesFunc = useNodesIfAvailable ? templateSource.nodes : null,
       templateNodes = templateNodesFunc ? templateSource.nodes?.() : null
 
     if (templateNodes) {
       return makeArray(templateNodes.cloneNode(true).childNodes)
     } else {
-      var templateText = templateSource.text()
+      let templateText = templateSource.text()
       return parseHtmlFragment(templateText, templateDocument)
     }
   }

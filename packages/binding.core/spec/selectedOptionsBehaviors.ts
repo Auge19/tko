@@ -21,13 +21,13 @@ describe('Binding: Selected Options', function () {
   })
 
   beforeEach(function () {
-    var provider = new DataBindProvider()
+    let provider = new DataBindProvider()
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
   })
 
   it('Should only be applicable to SELECT nodes', function () {
-    var threw = false
+    let threw = false
     testNode.innerHTML = "<input data-bind='selectedOptions:[]' />"
     try {
       applyBindings({}, testNode)
@@ -38,9 +38,9 @@ describe('Binding: Selected Options', function () {
   })
 
   it('Should set selection in the SELECT node to match the model', function () {
-    var bObject = {}
-    var values = observableArray(['A', bObject, 'C'])
-    var selection = observableArray([bObject])
+    let bObject = {}
+    let values = observableArray(['A', bObject, 'C'])
+    let selection = observableArray([bObject])
     testNode.innerHTML =
       "<select multiple='multiple' data-bind='options:myValues, selectedOptions:mySelection'></select>"
     applyBindings({ myValues: values, mySelection: selection }, testNode)
@@ -60,9 +60,9 @@ describe('Binding: Selected Options', function () {
       }
     }
 
-    var cObject = {}
-    var values = observableArray(['A', 'B', cObject])
-    var selection = observableArray(['B'])
+    let cObject = {}
+    let values = observableArray(['A', 'B', cObject])
+    let selection = observableArray(['B'])
     testNode.innerHTML =
       "<select multiple='multiple' data-bind='options:myValues, selectedOptions:mySelection'></select>"
     applyBindings({ myValues: values, mySelection: selection }, testNode)
@@ -87,10 +87,10 @@ describe('Binding: Selected Options', function () {
       }
     }
 
-    var cObject = {}
-    var values = observableArray(['A', 'B', cObject])
-    var selection = ['B']
-    var myModel = { myValues: values, mySelection: selection }
+    let cObject = {}
+    let values = observableArray(['A', 'B', cObject])
+    let selection = ['B']
+    let myModel = { myValues: values, mySelection: selection }
     testNode.innerHTML =
       "<select multiple='multiple' data-bind='options:myValues, selectedOptions:mySelection'></select>"
     applyBindings(myModel, testNode)
@@ -115,7 +115,7 @@ describe('Binding: Selected Options', function () {
       }
     }
 
-    var selection = observableArray([])
+    let selection = observableArray([])
     testNode.innerHTML =
       "<select multiple='multiple' data-bind='selectedOptions:mySelection'><optgroup label='group'><option value='a'>a-text</option><option value='b'>b-text</option><option value='c'>c-text</option></optgroup></select>"
     applyBindings({ mySelection: selection }, testNode)
@@ -131,7 +131,7 @@ describe('Binding: Selected Options', function () {
   })
 
   it('Should set selection in the SELECT node inside an optgroup to match the model', function () {
-    var selection = observableArray(['a'])
+    let selection = observableArray(['a'])
     testNode.innerHTML =
       "<select multiple='multiple' data-bind='selectedOptions:mySelection'><optgroup label='group'><option value='a'>a-text</option><option value='b'>b-text</option><option value='c'>c-text</option></optgroup><optgroup label='group2'><option value='d'>d-text</option></optgroup></select>"
     applyBindings({ mySelection: selection }, testNode)
@@ -147,9 +147,9 @@ describe('Binding: Selected Options', function () {
   })
 
   it('Should not change the scroll position when updating the view', function () {
-    var selection = observableArray(),
+    let selection = observableArray(),
       data = new Array()
-    for (var i = 1; i < 101; i++) {
+    for (let i = 1; i < 101; i++) {
       data.push({ code: '0000' + i, name: 'Item ' + i })
     }
 
@@ -157,7 +157,7 @@ describe('Binding: Selected Options', function () {
       '<select multiple="multiple" data-bind="options: data, optionsText: \'name\', optionsValue: \'code\', selectedOptions: selectedItems"></select>'
     applyBindings({ selectedItems: selection, data: data }, testNode)
 
-    var selectElem = testNode.childNodes[0] as HTMLElement
+    let selectElem = testNode.childNodes[0] as HTMLElement
     expect(selectElem.scrollTop).toBe(0)
     expect(selectElem).toHaveSelectedValues([])
 
@@ -166,7 +166,7 @@ describe('Binding: Selected Options', function () {
     expect(selectElem).toHaveSelectedValues(['0000100'])
 
     selectElem.scrollTop = 80
-    var previousScrollTop = selectElem.scrollTop // some browsers modify the scrollTop right away
+    let previousScrollTop = selectElem.scrollTop // some browsers modify the scrollTop right away
     selection.push('000050')
     expect(selectElem.scrollTop).toBe(previousScrollTop)
     expect(selectElem).toHaveSelectedValues(['000050', '0000100'])

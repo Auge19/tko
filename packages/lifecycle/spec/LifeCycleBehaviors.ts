@@ -8,7 +8,7 @@ import { LifeCycle } from '../src'
 describe('KO LifeCycle', function () {
   describe('mixInto', function () {
     it('extends a function prototype', function () {
-      var fn = function () {}
+      let fn = function () {}
       LifeCycle.mixInto(fn)
       assert.isFunction(fn.prototype.subscribe)
       assert.isFunction(fn.prototype.computed)
@@ -20,7 +20,7 @@ describe('KO LifeCycle', function () {
     })
 
     it('adds to a constructed item', function () {
-      var Ctr, instance
+      let Ctr, instance
       Ctr = function () {}
       instance = new Ctr()
       LifeCycle.mixInto(Ctr)
@@ -122,7 +122,7 @@ describe('KO LifeCycle', function () {
 
   describe('dispose', function () {
     it('disposes of subscriptions', function () {
-      var Ctr, c, o
+      let Ctr, c, o
       o = observable()
       Ctr = (function () {
         function Ctr() {
@@ -139,7 +139,7 @@ describe('KO LifeCycle', function () {
     })
 
     it('disposes of computeds', function () {
-      var Ctr, c, o
+      let Ctr, c, o
       o = observable()
       Ctr = (function () {
         function Ctr() {
@@ -158,7 +158,7 @@ describe('KO LifeCycle', function () {
     })
 
     it('addEventListener removes the event on dispose', function () {
-      var Ctr, c, div, o
+      let Ctr, c, div, o
       o = observable(0)
       div = document.createElement('div')
       Ctr = (function () {

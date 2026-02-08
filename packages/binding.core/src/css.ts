@@ -5,7 +5,7 @@ import { unwrap } from '@tko/observable'
 export var css = {
   aliases: ['class'],
   update: function (element, valueAccessor) {
-    var value = unwrap(valueAccessor())
+    let value = unwrap(valueAccessor())
     if (value !== null && typeof value === 'object') {
       objectForEach(value, function (className, shouldHaveClass) {
         shouldHaveClass = unwrap(shouldHaveClass)

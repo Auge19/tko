@@ -34,7 +34,7 @@ function captureCompareArraysCalls(callback) {
 
 describe('Observable Array change tracking', function () {
   it('Supplies changelists to subscribers', function () {
-    var myArray = observableArray(['Alpha', 'Beta', 'Gamma']),
+    let myArray = observableArray(['Alpha', 'Beta', 'Gamma']),
       changelist
 
     myArray.subscribe(
@@ -54,7 +54,7 @@ describe('Observable Array change tracking', function () {
 
   it("Only computes diffs when there's at least one active arrayChange subscription", function () {
     captureCompareArraysCalls(function (callLog) {
-      var myArray = observableArray(['Alpha', 'Beta', 'Gamma']),
+      let myArray = observableArray(['Alpha', 'Beta', 'Gamma']),
         changelist
 
       // Nobody has yet subscribed for arrayChange notifications, so
@@ -63,7 +63,7 @@ describe('Observable Array change tracking', function () {
       expect(callLog.length).toBe(0)
 
       // When there's a subscriber, it does compute diffs
-      var subscription = myArray.subscribe(
+      let subscription = myArray.subscribe(
         function (changes) {
           changelist = changes
         },
@@ -103,7 +103,7 @@ describe('Observable Array change tracking', function () {
 
   it('Reuses cached diff results', function () {
     captureCompareArraysCalls(function (callLog) {
-      var myArray = observableArray(['Alpha', 'Beta', 'Gamma']),
+      let myArray = observableArray(['Alpha', 'Beta', 'Gamma']),
         changelist1,
         changelist2
 
@@ -177,7 +177,7 @@ describe('Observable Array change tracking', function () {
 
   it('Skips the diff algorithm when the array mutation is a known operation', function () {
     captureCompareArraysCalls(function (callLog) {
-      var myArray = observableArray(['Alpha', 'Beta', 'Gamma']),
+      let myArray = observableArray(['Alpha', 'Beta', 'Gamma']),
         browserSupportsSpliceWithoutDeletionCount = [1, 2].splice(1).length === 1
 
       // Make sure there is one subscription, or we short-circuit cacheDiffForKnownOperation.
@@ -249,7 +249,7 @@ describe('Observable Array change tracking', function () {
       } else {
         // Browser doesn't support that underlying operation, so just set the state
         // to what it needs to be to run the remaining tests
-        var prevCallLogLength = callLog.length
+        let prevCallLogLength = callLog.length
         myArray(['First', 'Second'])
 
         // Also restore previous call log length
@@ -310,15 +310,15 @@ describe('Observable Array change tracking', function () {
   })
 
   it('should restore previous subscription notifications', function () {
-    var source = observableArray()
-    var notifySubscribers = source.notifySubscribers
-    var arrayChange = source.subscribe(function () {}, null, 'arrayChange')
+    let source = observableArray()
+    let notifySubscribers = source.notifySubscribers
+    let arrayChange = source.subscribe(function () {}, null, 'arrayChange')
     arrayChange.dispose()
     expect(source.notifySubscribers).toBe(notifySubscribers)
   })
 
   it('Should support tracking of any observable using extender', function () {
-    var myArray = observable(['Alpha', 'Beta', 'Gamma']).extend({ trackArrayChanges: true }),
+    let myArray = observable(['Alpha', 'Beta', 'Gamma']).extend({ trackArrayChanges: true }),
       changelist
 
     myArray.subscribe(
@@ -342,7 +342,7 @@ describe('Observable Array change tracking', function () {
     ])
 
     // Check that extending the observable again doesn't break anything an only one diff is generated
-    var changelist2,
+    let changelist2,
       callCount = 0
     myArray = myArray.extend({ trackArrayChanges: true })
 
@@ -363,8 +363,8 @@ describe('Observable Array change tracking', function () {
 
   // Per: https://github.com/knockout/knockout/issues/1503
   it('Should clean up a single arrayChange dependency', function () {
-    var source = observableArray()
-    var arrayChange = source.subscribe(function () {}, null, 'arrayChange')
+    let source = observableArray()
+    let arrayChange = source.subscribe(function () {}, null, 'arrayChange')
     expect(source.getSubscriptionsCount('arrayChange')).toBe(1)
     arrayChange.dispose()
     expect(source.getSubscriptionsCount()).toBe(0)
@@ -372,7 +372,7 @@ describe('Observable Array change tracking', function () {
 
   it('Should support recursive updates (modify array within arrayChange callback)', function () {
     // See https://github.com/knockout/knockout/issues/1552
-    var toAdd = {
+    let toAdd = {
       name: '1',
       nodes: [
         { name: '1.1', nodes: [{ name: '1.1.1', nodes: [] }] },
@@ -381,14 +381,14 @@ describe('Observable Array change tracking', function () {
       ]
     }
 
-    var list = observableArray([] as any[])
+    let list = observableArray([] as any[])
 
     // This adds all descendent nodes to the list when a node is added
     list.subscribe(
       function (events) {
         events = events.slice(0)
-        for (var i = 0; i < events.length; i++) {
-          var event = events[i]
+        for (let i = 0; i < events.length; i++) {
+          let event = events[i]
           switch (event.status) {
             case 'added':
               list.push.apply(list, event.value.nodes)
@@ -410,10 +410,10 @@ describe('Observable Array change tracking', function () {
     // In order to test this, we must have a scenario in which a move is not recognized as such without the option.
     // This scenario doesn't represent the definition of the spec itself and may need to be modified if the move
     // detection algorithm in Knockout is changed. (See also the similar test in arrayEditDetectionBehaviors.js)
-    var array1 = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
-    var array2 = [1, 2, 3, 4, 'T', 6, 7, 8, 9, 10]
+    let array1 = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
+    let array2 = [1, 2, 3, 4, 'T', 6, 7, 8, 9, 10]
 
-    var myArray = observableArray(array1),
+    let myArray = observableArray(array1),
       changelist
 
     myArray.subscribe(
@@ -435,7 +435,7 @@ describe('Observable Array change tracking', function () {
   })
 
   function testKnownOperation(array, operationName, options) {
-    var changeList,
+    let changeList,
       subscription = array.subscribe(
         function (changes) {
           expect(array()).toEqual(options.result)

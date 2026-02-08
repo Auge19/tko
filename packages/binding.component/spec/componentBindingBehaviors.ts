@@ -42,7 +42,7 @@ describe('Components: Component binding', function () {
     outerViewModel = { testComponentBindingValue: testComponentBindingValue, isOuterViewModel: true }
     testNode.innerHTML = '<div data-bind="component: testComponentBindingValue"></div>'
 
-    var provider = new MultiProvider({
+    let provider = new MultiProvider({
       providers: [new ComponentProvider(), new DataBindProvider(), new VirtualProvider(), new NativeProvider()]
     })
     options.bindingProviderInstance = provider
@@ -102,7 +102,7 @@ describe('Components: Component binding', function () {
   })
 
   it("Replaces the element's contents with a clone of the template", function () {
-    var testTemplate = document.createDocumentFragment()
+    let testTemplate = document.createDocumentFragment()
     testTemplate.appendChild(document.createElement('div'))
     testTemplate.appendChild(document.createTextNode(' '))
     testTemplate.appendChild(document.createElement('span')) //TODO good example for ASI..
@@ -185,7 +185,7 @@ describe('Components: Component binding', function () {
     window.require = function (moduleNames, callback) {
       expect(moduleNames[0]).toBe('testViewModelModule')
       setTimeout(function () {
-        var constructor = function (params) {
+        let constructor = function (params) {
           this.viewModelProperty = params
         }
         callback(constructor)
@@ -198,7 +198,7 @@ describe('Components: Component binding', function () {
       viewModel: { require: 'testViewModelModule' }
     })
 
-    var testList = observableArray(['first'])
+    let testList = observableArray(['first'])
     testNode.innerHTML =
       '<div data-bind="foreach: testList">'
       + '<div data-bind="component: { name: \'test-component\', params: $data }"></div>'
@@ -275,7 +275,7 @@ describe('Components: Component binding', function () {
 
   it('Passes nonobservable params to the component', function () {
     // Set up a component that logs its constructor params
-    var receivedParams = new Array()
+    let receivedParams = new Array()
     components.register(testComponentName, {
       viewModel: function (params) {
         receivedParams.push(params)
@@ -295,7 +295,7 @@ describe('Components: Component binding', function () {
 
   it('Passes through observable params without unwrapping them (so a given component instance can observe them changing)', function () {
     // Set up a component that logs its constructor params
-    var receivedParams = new Array()
+    let receivedParams = new Array()
     components.register(testComponentName, {
       viewModel: function (params) {
         receivedParams.push(params)
@@ -361,7 +361,7 @@ describe('Components: Component binding', function () {
 
     // See it appeared, and the expected subscriptions were registered
     expect(testNode.firstChild).not.toBeNull()
-    var firstAlphaTemplateNode = testNode.firstChild?.firstChild as HTMLElement,
+    let firstAlphaTemplateNode = testNode.firstChild?.firstChild as HTMLElement,
       alphaViewModelInstance = dataFor(firstAlphaTemplateNode)
     expect(firstAlphaTemplateNode.className).toBe('alpha')
     expect(testNode).toContainText('Alpha value is 123.')
@@ -438,7 +438,7 @@ describe('Components: Component binding', function () {
 
     // See it appeared, and the expected subscriptions were registered
     expect(testNode.firstChild).not.toBeNull()
-    var firstAlphaTemplateNode = testNode.firstChild?.firstChild as HTMLElement,
+    let firstAlphaTemplateNode = testNode.firstChild?.firstChild as HTMLElement,
       alphaViewModelInstance = dataFor(firstAlphaTemplateNode)
     expect(firstAlphaTemplateNode.className).toBe('alpha')
     expect(testNode).toContainText('Alpha value is 123.')
@@ -476,7 +476,7 @@ describe('Components: Component binding', function () {
     })
 
     // Instantiate the first component, via a binding that unwraps an observable before it reaches the component
-    var someObservable = observable('First')
+    let someObservable = observable('First')
     testNode.innerHTML =
       '<div data-bind="component: { name: \''
       + testComponentName
@@ -485,7 +485,7 @@ describe('Components: Component binding', function () {
     jasmine.Clock.tick(1)
 
     expect(testNode.firstChild).not.toBeNull()
-    var firstTemplateNode = testNode.firstChild?.firstChild as HTMLElement,
+    let firstTemplateNode = testNode.firstChild?.firstChild as HTMLElement,
       firstViewModelInstance = dataFor(firstTemplateNode)
     expect(firstViewModelInstance instanceof testViewModel).toBe(true)
     expect(testNode).toContainText('Value is First.')
@@ -503,7 +503,7 @@ describe('Components: Component binding', function () {
     expect(domData.get(firstTemplateNode, 'TestValue')).toBe(undefined)
 
     // New viewmodel is a new instance
-    var secondViewModelInstance = dataFor(testNode.firstChild?.firstChild as HTMLElement)
+    let secondViewModelInstance = dataFor(testNode.firstChild?.firstChild as HTMLElement)
     expect(secondViewModelInstance instanceof testViewModel).toBe(true)
     expect(secondViewModelInstance).not.toBe(firstViewModelInstance)
   })
@@ -511,7 +511,7 @@ describe('Components: Component binding', function () {
   it('Is possible to pass expressions that can vary observably and evaluate as writable observable instances', function () {
     // This spec is copied, with small modifications, from customElementBehaviors.js to show that the same component
     // definition can be used with the component binding and with custom elements.
-    var constructorCallCount = 0
+    let constructorCallCount = 0
     components.register('test-component', {
       template: '<input data-bind="value: myval"/>',
       viewModel: function (params) {
@@ -527,7 +527,7 @@ describe('Components: Component binding', function () {
     // The component itself doesn't have to know or care that the supplied value is nested - the
     // custom element syntax takes care of producing a single computed property that gives the
     // unwrapped inner value.
-    var innerObservable = observable('inner1'),
+    let innerObservable = observable('inner1'),
       outerObservable = observable({ inner: innerObservable })
     testNode.innerHTML =
       '<div data-bind="component: { name: \'' + testComponentName + '\', params: { somevalue: outer().inner } }"></div>'
@@ -552,7 +552,7 @@ describe('Components: Component binding', function () {
     expect(innerObservable()).toEqual('inner3')
 
     // See we can mutate the outer value and see the result show up (cleaning subscriptions to the old inner value)
-    var newInnerObservable = observable('newinner')
+    let newInnerObservable = observable('newinner')
     outerObservable({ inner: newInnerObservable })
     jasmine.Clock.tick(1) // modifying the outer observable causes the component to reload, which happens asynchronously
     expect((testNode.children[0].children[0] as HTMLInputElement).value).toEqual('newinner')
@@ -588,7 +588,7 @@ describe('Components: Component binding', function () {
     applyBindings(outerViewModel, testNode)
     jasmine.Clock.tick(1)
     expect(testNode.firstChild).not.toBeNull()
-    var firstTemplateNode = testNode.firstChild?.firstChild as HTMLElement,
+    let firstTemplateNode = testNode.firstChild?.firstChild as HTMLElement,
       viewModelInstance = dataFor(firstTemplateNode)
     expect(viewModelInstance instanceof TestViewModel).toBe(true)
     expect(viewModelInstance.wasDisposed).not.toBe(true)
@@ -599,7 +599,7 @@ describe('Components: Component binding', function () {
   })
 
   it('Does not inject the template or instantiate the viewmodel if the element was cleaned before component loading completed', function () {
-    var numConstructorCalls = 0
+    let numConstructorCalls = 0
     components.register(testComponentName, {
       viewModel: function () {
         numConstructorCalls++
@@ -628,7 +628,7 @@ describe('Components: Component binding', function () {
 
     // Set up a mock module loader, so we can control asynchronous load completion
     this.restoreAfter(window, 'require')
-    var requireCallbacks = {}
+    let requireCallbacks = {}
     window.require = function (moduleNames, callback) {
       expect(moduleNames.length).toBe(1) // In this scenario, it always will be
       expect(moduleNames[0] in requireCallbacks).toBe(false) // In this scenario, we only require each module once
@@ -636,7 +636,7 @@ describe('Components: Component binding', function () {
     }
 
     // Define four separate components so we can switch between them
-    var constructorCallLog = new Array()
+    let constructorCallLog = new Array()
     function testViewModel1(params) {
       constructorCallLog.push([1, params])
     }
@@ -669,7 +669,7 @@ describe('Components: Component binding', function () {
       template: '<div>Component 4 template</div>'
     })
     this.after(function () {
-      for (var i = 0; i < 4; i++) {
+      for (let i = 0; i < 4; i++) {
         components.unregister('component-' + i)
       }
     })
@@ -702,7 +702,7 @@ describe('Components: Component binding', function () {
     requireCallbacks['module-3'](testViewModel3)
     expect(constructorCallLog).toEqual([[3, testComponentParams]])
     expect(testNode).toContainText('Component 3 template')
-    var viewModelInstance = dataFor(testNode.firstChild?.firstChild as HTMLElement)
+    let viewModelInstance = dataFor(testNode.firstChild?.firstChild as HTMLElement)
     expect(viewModelInstance instanceof testViewModel3).toBe(true)
     expect(viewModelInstance.wasDisposed).not.toBe(true)
 
@@ -750,7 +750,7 @@ describe('Components: Component binding', function () {
     components.register(testComponentName, { template: '<div data-bind="text: myvalue"></div>' })
     testComponentParams.myvalue = 'some parameter value'
 
-    var callbacks = 0
+    let callbacks = 0
     outerViewModel.callback = function (nodes, data) {
       expect(nodes.length).toEqual(1)
       expect(nodes[0]).toEqual(testNode.children[0].children[0])

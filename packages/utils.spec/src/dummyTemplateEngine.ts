@@ -52,20 +52,20 @@ export class DummyTemplateEngine extends TemplateEngineBase {
     rt_options,
     templateDocument
   ) {
-    var data = bindingContext['$data']
+    let data = bindingContext['$data']
     if (data && typeof data.get_value === 'function') {
       // For cases when data is an Identifier/Expression.
       data = data.get_value(data, bindingContext)
     }
     templateDocument = templateDocument || document
     rt_options = rt_options || {}
-    var templateText: any = templateSource.text()
+    let templateText: any = templateSource.text()
     if (typeof templateText == 'function') templateText = templateText(data, rt_options)
 
     templateText = rt_options.showParams ? templateText + ', data=' + data + ', options=' + rt_options : templateText
     // var templateOptions = options.templateOptions; // Have templateOptions in scope to support [js:templateOptions.foo] syntax
 
-    var result
+    let result
 
     data = data || {}
     // Builders (e.g. rollup) mangle `data` to e.g. `data$$1`.
@@ -84,9 +84,9 @@ export class DummyTemplateEngine extends TemplateEngineBase {
       return renderTemplate(templateName, data, rt_options)
     })
 
-    var evalHandler = function (match, script) {
+    let evalHandler = function (match, script) {
       try {
-        var evalResult = eval(script)
+        let evalResult = eval(script)
         return evalResult === null || evalResult === undefined ? '' : evalResult.toString()
       } catch (ex: any) {
         throw new Error('Error evaluating script: [js: ' + script + ']\n\nException: ' + ex.toString())
@@ -113,7 +113,7 @@ export class DummyTemplateEngine extends TemplateEngineBase {
 
   rewriteTemplate(template, rewriterCallback, templateDocument) {
     // Only rewrite if the template isn't a function (can't rewrite those)
-    var templateSource = this.makeTemplateSource(template, templateDocument)
+    let templateSource = this.makeTemplateSource(template, templateDocument)
 
     // TODO
     // if (typeof templateSource?.text() != "function")

@@ -143,7 +143,7 @@ function applyBindingsToNodeAndDescendantsInternal(
   nodeVerified: Node,
   asyncBindingsApplied
 ) {
-  var isElement = nodeVerified.nodeType === 1
+  let isElement = nodeVerified.nodeType === 1
   if (isElement) {
     // Workaround IE <= 8 HTML parsing weirdness
     virtualElements.normaliseVirtualElementDomStructure(nodeVerified)
@@ -243,7 +243,7 @@ function applyBindingsToNodeInternal<T>(
   }
 
   // Use bindings if given, otherwise fall back on asking the bindings provider to give us some bindings
-  var bindings: Record<string, any> | null = null
+  let bindings: Record<string, any> | null = null
   if (sourceBindings && typeof sourceBindings !== 'function') {
     bindings = sourceBindings
   } else {

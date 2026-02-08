@@ -6,7 +6,7 @@
 
 import { isObservable } from './observable'
 
-var maxNestedObservableDepth: number = 10 // Escape the (unlikely) pathological case where an observable's current value is itself (or similar reference cycle)
+let maxNestedObservableDepth: number = 10 // Escape the (unlikely) pathological case where an observable's current value is itself (or similar reference cycle)
 
 export function toJS<T = any>(rootObject: T): T {
   if (arguments.length == 0) {
@@ -16,7 +16,7 @@ export function toJS<T = any>(rootObject: T): T {
   // We just unwrap everything at every level in the object graph
   return mapJsObjectGraph(rootObject, function (valueToMap: any) {
     // Loop because an observable's value might in turn be another observable wrapper
-    for (var i = 0; isObservable(valueToMap) && i < maxNestedObservableDepth; i++) {
+    for (let i = 0; isObservable(valueToMap) && i < maxNestedObservableDepth; i++) {
       valueToMap = valueToMap()
     }
     return valueToMap
@@ -29,7 +29,7 @@ export function toJSON<T = any>(
   space?: string | number
 ): string {
   // replacer and space are optional
-  var plainJavaScriptObject = toJS(rootObject)
+  let plainJavaScriptObject = toJS(rootObject)
   return JSON.stringify(plainJavaScriptObject, replacer, space)
 }
 
@@ -39,7 +39,7 @@ function mapJsObjectGraph<T = any>(
   visitedObjects = new Map()
 ): any {
   rootObject = mapInputCallback(rootObject)
-  var canHaveProperties =
+  let canHaveProperties =
     typeof rootObject === 'object'
     && rootObject !== null
     && rootObject !== undefined
@@ -52,11 +52,11 @@ function mapJsObjectGraph<T = any>(
     return rootObject
   }
 
-  var outputProperties: any = rootObject instanceof Array ? [] : {}
+  let outputProperties: any = rootObject instanceof Array ? [] : {}
   visitedObjects.set(rootObject, outputProperties)
 
   visitPropertiesOrArrayEntries(rootObject, function (indexer: any) {
-    var propertyValue = mapInputCallback(rootObject[indexer])
+    let propertyValue = mapInputCallback(rootObject[indexer])
 
     switch (typeof propertyValue) {
       case 'boolean':
@@ -81,7 +81,7 @@ function mapJsObjectGraph<T = any>(
 
 function visitPropertiesOrArrayEntries<T = any>(rootObject: T, visitorCallback: (indexer: any) => void): void {
   if (rootObject instanceof Array) {
-    for (var i = 0; i < rootObject.length; i++) {
+    for (let i = 0; i < rootObject.length; i++) {
       visitorCallback(i)
     }
 
@@ -90,7 +90,7 @@ function visitPropertiesOrArrayEntries<T = any>(rootObject: T, visitorCallback: 
       visitorCallback('toJSON')
     }
   } else {
-    for (var propertyName in rootObject) {
+    for (let propertyName in rootObject) {
       visitorCallback(propertyName)
     }
   }

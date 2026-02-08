@@ -9,18 +9,18 @@ import type { ObservableArray } from '@tko/observable'
 
 import { deferUpdates } from './defer'
 
-var primitiveTypes = { undefined: 1, boolean: 1, number: 1, string: 1 }
+let primitiveTypes = { undefined: 1, boolean: 1, number: 1, string: 1 }
 
 export function valuesArePrimitiveAndEqual(a, b) {
-  var oldValueIsPrimitive = a === null || (typeof a) in primitiveTypes
+  let oldValueIsPrimitive = a === null || (typeof a) in primitiveTypes
   return oldValueIsPrimitive ? a === b : false
 }
 
 export function applyExtenders(requestedExtenders?) {
-  var target = this
+  let target = this
   if (requestedExtenders) {
     objectForEach(requestedExtenders, function (key, value) {
-      var extenderHandler = extenders[key]
+      let extenderHandler = extenders[key]
       if (typeof extenderHandler === 'function') {
         target = extenderHandler(target, value) || target
       } else {
@@ -53,7 +53,7 @@ export function deferred(target: any, option: boolean) {
 }
 
 export function rateLimit(target: any, options: string | any) {
-  var timeout, method, limitFunction
+  let timeout, method, limitFunction
 
   if (typeof options === 'number') {
     timeout = options

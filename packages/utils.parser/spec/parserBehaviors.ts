@@ -52,21 +52,21 @@ describe('the bindings parser', function () {
   })
 
   it('works with alphanumerics ä and å (unicode < 0x0100)', function () {
-    var binding_string = 'a: å, b: ä'
+    let binding_string = 'a: å, b: ä'
     const ctx = ctxStub({ å: 135, ä: 955 })
-    var value = new Parser().parse(binding_string, ctx)
+    let value = new Parser().parse(binding_string, ctx)
     assert.equal(value.a(), 135, 'å')
     assert.equal(value.b(), 955, 'ä')
   })
 
   it('works with alphanumeric π (unicode > 0x0100)', function () {
-    var binding_string = 'a: π'
-    var value = new Parser().parse(binding_string, ctxStub({ π: 3.14 }))
+    let binding_string = 'a: π'
+    let value = new Parser().parse(binding_string, ctxStub({ π: 3.14 }))
     assert.equal(value.a(), 3.14, 'π')
   })
 
   it('applies negation (-)', function () {
-    var binding_string = 'a: -1, b: -2, c: -10.09, x: -x, y: -y, z: -(4 + 4)',
+    let binding_string = 'a: -1, b: -2, c: -10.09, x: -x, y: -y, z: -(4 + 4)',
       context = ctxStub({ x: 2, y: observable(4) }),
       value = new Parser().parse(binding_string, context)
     assert.equal(value.a(), -1)
@@ -78,36 +78,36 @@ describe('the bindings parser', function () {
   })
 
   it('parses an array of JSON values', function () {
-    var binding = 'x: [1, 2.1, true, false, null, undefined]',
+    let binding = 'x: [1, 2.1, true, false, null, undefined]',
       bindings = new Parser(null).parse(binding, ctxStub())
     assert.deepEqual(bindings.x(), [1, 2.1, true, false, null, undefined])
   })
 
   it('undefined keyword works', function () {
-    var value = new Parser().parse('y: undefined', ctxStub())
+    let value = new Parser().parse('y: undefined', ctxStub())
     assert.equal(value.y(), void 0)
   })
 
   it('parses single-quote strings', function () {
-    var binding = "text: 'st\\'r'",
+    let binding = "text: 'st\\'r'",
       bindings = new Parser().parse(binding, ctxStub())
     assert.equal(bindings.text(), "st'r")
   })
 
   it('parses bare `text` as `text: null`', function () {
-    var binding = 'text',
+    let binding = 'text',
       bindings = new Parser().parse(binding, ctxStub())
     assert.deepEqual(bindings.text(), null)
   })
 
   it('parses `text: "alpha"`', function () {
-    var binding = 'text: "alpha"',
+    let binding = 'text: "alpha"',
       bindings = new Parser(null, {}).parse(binding)
     assert.deepEqual(bindings.text(), 'alpha')
   })
 
   it("parses `a: 'a', b, c: 'c'` => ..., b: null, ...", function () {
-    var binding = "a: 'a', b, c: 'c'",
+    let binding = "a: 'a', b, c: 'c'",
       bindings = new Parser(null, {}).parse(binding)
     assert.deepEqual(bindings.a(), 'a')
     assert.deepEqual(bindings.b(), null)
@@ -115,7 +115,7 @@ describe('the bindings parser', function () {
   })
 
   it("parses text: {object: 'string'}", function () {
-    var binding = "text: {object: 'string'}",
+    let binding = "text: {object: 'string'}",
       bindings = new Parser(null, {}).parse(binding)
     assert.deepEqual(bindings.text(), { object: 'string' })
   })
@@ -135,14 +135,14 @@ describe('the bindings parser', function () {
   })
 
   it('parses object: attr: {name: observable(value)}', function () {
-    var binding = 'attr : { klass: kValue }',
+    let binding = 'attr : { klass: kValue }',
       context = ctxStub({ kValue: observable('Gollum') }),
       bindings = new Parser().parse(binding, context)
     assert.equal(bindings.attr().klass(), 'Gollum')
   })
 
   it('parses object: attr: {n1: v1, n2: v2}', function () {
-    var binding = 'attr : { a: x, b: y }',
+    let binding = 'attr : { a: x, b: y }',
       context = ctxStub({ x: 'Real', y: 'Imaginary' }),
       bindings = new Parser().parse(binding, context)
     assert.equal(bindings.attr().a, 'Real')
@@ -150,7 +150,7 @@ describe('the bindings parser', function () {
   })
 
   it('parses object: attr: {n1: v1, n2: v2,}', function () {
-    var binding = 'attr : { a: x, b: y, }',
+    let binding = 'attr : { a: x, b: y, }',
       context = ctxStub({ x: 'Real', y: 'Imaginary' }),
       bindings = new Parser().parse(binding, context)
     assert.equal(bindings.attr().a, 'Real')
@@ -158,7 +158,7 @@ describe('the bindings parser', function () {
   })
 
   it('parses compound operator d()[0]()', function () {
-    var binding = 'attr: d()[0]()',
+    let binding = 'attr: d()[0]()',
       d = function () {
         return [
           function () {
@@ -173,7 +173,7 @@ describe('the bindings parser', function () {
 
   it('parses string+var+string', function () {
     // re issue #27
-    var binding = "text: 'prefix'+name+'postfix'",
+    let binding = "text: 'prefix'+name+'postfix'",
       context = ctxStub({ name: observable('mike') }),
       bindings = new Parser().parse(binding, context)
     assert.equal(bindings.text(), 'prefixmikepostfix')
@@ -181,7 +181,7 @@ describe('the bindings parser', function () {
 
   it('parses object literals with C++ style comments', function () {
     // From https://github.com/knockout/knockout/issues/1524
-    var binding =
+    let binding =
         'model: v, //wiring the router\n'
         + "afterCompose: 'ac', //wiring the router\n"
         + "//transition:'entrance', //use the 'entrance' transition when switching views\n"
@@ -198,7 +198,7 @@ describe('the bindings parser', function () {
   })
 
   it('parses object literals with C style comments', function () {
-    var binding =
+    let binding =
         'a: xxx, /* First comment */\n'
         + "b: 'yyy', /* Comment that comments-out the next whole next line\n"
         + "x: 'nothing', //this is also skipped */\n"
@@ -256,48 +256,48 @@ describe('parseExpression', function () {
 
 describe('the parsing of expressions', function () {
   it('works with explicit braces ( )', function () {
-    var binding = 'attr : (x)',
+    let binding = 'attr : (x)',
       context = { x: 'spot' },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.attr(), 'spot')
   })
 
   it('computes a + b', function () {
-    var binding = 'text: a + b',
+    let binding = 'text: a + b',
       context = { a: 1, b: 2 },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.text(), 3)
   })
 
   it('computes obs(a) + obs(b)', function () {
-    var binding = 'text: a + b',
+    let binding = 'text: a + b',
       context = { a: observable(1), b: observable(2) },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.text(), 3)
   })
 
   it('computes a + b * c', function () {
-    var binding = 'text: a + b * c',
+    let binding = 'text: a + b * c',
       context = { a: 1, b: 2, c: 4 },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.text(), 1 + 2 * 4)
   })
 
   it('compares a + 3 > b * obs(c)', function () {
-    var binding = 'text: a + 3 > b * c',
+    let binding = 'text: a + 3 > b * c',
       context = { a: 1, b: 2, c: observable(4) },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.text(), 1 + 3 > 2 * 4)
   })
 
   it('respects brackets () precedence', function () {
-    var binding = 'text: 2 * (3 + 4)',
+    let binding = 'text: 2 * (3 + 4)',
       bindings = new Parser(null, {}).parse(binding)
     assert.equal(bindings.text(), 2 * (3 + 4))
   })
 
   it('respects && and == precedence', function () {
-    var binding = 'text: x && y == z',
+    let binding = 'text: x && y == z',
       context = { x: observable(), y: observable(), z: observable() },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.text(), undefined, 'a')
@@ -313,14 +313,14 @@ describe('the parsing of expressions', function () {
   })
 
   it('computes complex arithematic as expected', function () {
-    var binding = 'text: 1 * 4 % 3 + 11 * 99 / (8 - 14)',
+    let binding = 'text: 1 * 4 % 3 + 11 * 99 / (8 - 14)',
       bindings = new Parser(null, {}).parse(binding)
     assert.equal(bindings.text(), ((1 * 4) % 3) + (11 * 99) / (8 - 14))
     // == -180.5
   })
 
   it('recalculates observables', function () {
-    var binding = 'text: a - b',
+    let binding = 'text: a - b',
       context = { a: observable(1), b: observable(2) },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.text(), -1)
@@ -329,7 +329,7 @@ describe('the parsing of expressions', function () {
   })
 
   it('sets properties of objects', function () {
-    var binding = 'text: { x: 3 < 1, y: a < b }',
+    let binding = 'text: { x: 3 < 1, y: a < b }',
       context = { a: observable(1), b: observable(2) },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.text().x, false)
@@ -339,7 +339,7 @@ describe('the parsing of expressions', function () {
   })
 
   it('has working logic operations', function () {
-    var binding = 'text: a || b',
+    let binding = 'text: a || b',
       context = { a: observable(false), b: observable(false) },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.text(), false)
@@ -352,14 +352,14 @@ describe('the parsing of expressions', function () {
   })
 
   it('does not unwrap a single observable argument', function () {
-    var binding = 'text: a',
+    let binding = 'text: a',
       context = { a: observable() },
       bindings = makeBindings(binding, context)
     assert.ok(isObservable(bindings.text()))
   })
 
   it('parses a string of functions a().b()', function () {
-    var binding = 'ref: a().b()',
+    let binding = 'ref: a().b()',
       b = function () {
         return 'Cee'
       },
@@ -372,7 +372,7 @@ describe('the parsing of expressions', function () {
   })
 
   it('parses negative numbers', function () {
-    var binding = 'text: -30 - 20',
+    let binding = 'text: -30 - 20',
       bindings = new Parser(null, {}).parse(binding)
     assert.equal(bindings.text(), -50)
   })
@@ -380,7 +380,7 @@ describe('the parsing of expressions', function () {
 
 describe('unary operations', function () {
   it('include the negation operator', function () {
-    var binding = 'neg: !a',
+    let binding = 'neg: !a',
       context = { a: observable(false) },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.neg(), true)
@@ -389,7 +389,7 @@ describe('unary operations', function () {
   })
 
   it('does the double negative', function () {
-    var binding = 'neg: !!a',
+    let binding = 'neg: !!a',
       context = { a: observable(false) },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.neg(), false)
@@ -398,7 +398,7 @@ describe('unary operations', function () {
   })
 
   it('works in an object', function () {
-    var binding = 'neg: { x: !a, y: !!a }',
+    let binding = 'neg: { x: !a, y: !!a }',
       context = { a: observable(false) },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.neg().x, true)
@@ -409,7 +409,7 @@ describe('unary operations', function () {
   })
 
   it('prefix increments observable on lookup', function () {
-    var binding = 'neg: ++a',
+    let binding = 'neg: ++a',
       context = { a: observable(4) },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.neg(), 5)
@@ -418,7 +418,7 @@ describe('unary operations', function () {
   })
 
   it('prefix increments object property on lookup', function () {
-    var binding = 'neg: ++a',
+    let binding = 'neg: ++a',
       context = { a: 5 },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.neg(), 6)
@@ -437,7 +437,7 @@ describe('unary operations', function () {
 
   describe('lambdas (=>)', function () {
     it('evaluates the expression when called', function () {
-      var binding = 'x: => y(true)',
+      let binding = 'x: => y(true)',
         context = { y: observable() },
         bindings = makeBindings(binding, context)
       assert.equal(context.y(), undefined)
@@ -447,7 +447,7 @@ describe('unary operations', function () {
 
     it("evaluates the lambda in canonical '() =>' form", function () {
       // FIXME
-      var binding = 'x: () => y(true)',
+      let binding = 'x: () => y(true)',
         context = { y: observable() },
         bindings = makeBindings(binding, context)
       assert.equal(context.y(), undefined)
@@ -456,7 +456,7 @@ describe('unary operations', function () {
     })
 
     it('calls a function with arguments', function () {
-      var binding = 'x: => yfn(146)',
+      let binding = 'x: => yfn(146)',
         obs = observable(),
         context = {
           yfn: function (n) {
@@ -535,14 +535,14 @@ describe('unary operations', function () {
 
   describe('@ lookup/unwrap', function () {
     it('unwraps an observable', function () {
-      var binding = 'x: @obs',
+      let binding = 'x: @obs',
         context = { obs: observable(129) },
         bindings = makeBindings(binding, context)
       assert.equal(bindings.x(), 129)
     })
 
     it('calls a function', function () {
-      var binding = 'x: @fn',
+      let binding = 'x: @fn',
         context = {
           fn: function () {
             return 122
@@ -553,7 +553,7 @@ describe('unary operations', function () {
     })
 
     it('returns a static item', function () {
-      var binding = 'x: @"123", y: @1245, z: @null, q: @undefined, p:@`rz${1}x`',
+      let binding = 'x: @"123", y: @1245, z: @null, q: @undefined, p:@`rz${1}x`',
         bindings = new Parser(null, {}).parse(binding)
       assert.equal(bindings.x(), '123')
       assert.equal(bindings.y(), 1245)
@@ -563,13 +563,13 @@ describe('unary operations', function () {
     })
 
     it('parses the textInterpolation attribute markup', function () {
-      var binding = '\'attr.title\':""+"hello "+@"name"+"!"',
+      let binding = '\'attr.title\':""+"hello "+@"name"+"!"',
         bindings = new Parser(null, {}).parse(binding)
       assert.equal(bindings['attr']().title, 'hello name!')
     })
 
     it('unwraps after a function is called', function () {
-      var binding = 'x: "a" + @ fn() + "b"',
+      let binding = 'x: "a" + @ fn() + "b"',
         context = {
           fn: function () {
             return observable('14x')
@@ -582,7 +582,7 @@ describe('unary operations', function () {
 
   describe('Ternary prop ? then : else', function () {
     it('computes a ? b : c', function () {
-      var binding = 'x: a ? 6 : 42',
+      let binding = 'x: a ? 6 : 42',
         obs = observable(false),
         context = { a: obs },
         bindings = makeBindings(binding, context)
@@ -594,7 +594,7 @@ describe('unary operations', function () {
     })
 
     it('computes nested a ? b ? c : d : e', function () {
-      var binding = "x: a ? b ? 'c' : 'd' : 'e'",
+      let binding = "x: a ? b ? 'c' : 'd' : 'e'",
         a = observable(false),
         b = observable(false),
         context = { a: a, b: b },
@@ -609,7 +609,7 @@ describe('unary operations', function () {
     })
 
     it('computes nested a ? b : c ? d : e', function () {
-      var binding = "x: a ? 'b' : c ? 'd' : 'e'",
+      let binding = "x: a ? 'b' : c ? 'd' : 'e'",
         a = observable(false),
         c = observable(false),
         context = { a: a, c: c },
@@ -624,7 +624,7 @@ describe('unary operations', function () {
     })
 
     it('computes a ? 1 + 1 : 2 + 2', function () {
-      var binding = 'x: a ? 1+1 : 2+2',
+      let binding = 'x: a ? 1+1 : 2+2',
         context = { a: observable(false) },
         bindings = makeBindings(binding, context)
       assert.equal(bindings.x(), 4)
@@ -633,7 +633,7 @@ describe('unary operations', function () {
     })
 
     it('computes unwrapped elements first', function () {
-      var binding = "x: 'string' + @(a() ? 'a' : '!a')",
+      let binding = "x: 'string' + @(a() ? 'a' : '!a')",
         obs = observable(true),
         context = {
           a: function () {
@@ -658,7 +658,7 @@ describe('unary operations', function () {
 
 describe('anonymous functions', function () {
   it('raises an error', function () {
-    var binding = 'x: function () { return v() }'
+    let binding = 'x: function () { return v() }'
     function b() {
       new Parser(null, {}).parse(binding)
     }
@@ -677,14 +677,14 @@ describe('anonymous functions', function () {
 
 describe('array accessors - []', function () {
   it('works for [ int ]', function () {
-    var binding = 'ref: a[ 4 ]',
+    let binding = 'ref: a[ 4 ]',
       context = { a: { 4: 'square' } },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.ref(), 'square')
   })
 
   it('works for [ string ]', function () {
-    var binding = "neg: a [ 'hello' ]",
+    let binding = "neg: a [ 'hello' ]",
       context = { a: { hello: 128 } },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.neg(), 128)
@@ -692,7 +692,7 @@ describe('array accessors - []', function () {
 
   it('works for [ observable ]', function () {
     // make sure observables can be keys to objects.
-    var binding = 'neg: a[ x ]',
+    let binding = 'neg: a[ x ]',
       x = observable(0),
       context = { a: {}, x: x },
       bindings
@@ -702,7 +702,7 @@ describe('array accessors - []', function () {
   })
 
   it('works for [ observable() ]', function () {
-    var binding = 'neg: a[ x() ]',
+    let binding = 'neg: a[ x() ]',
       context = { a: [123, 456], x: observable(1) },
       bindings = makeBindings(binding, context)
     assert.equal(bindings.neg(), 456)
@@ -711,7 +711,7 @@ describe('array accessors - []', function () {
   })
 
   it('works off a function e.g. f()[1]', function () {
-    var binding = 'neg: f()[3]',
+    let binding = 'neg: f()[3]',
       f = function () {
         return [3, 4, 5, 6]
       },
@@ -721,7 +721,7 @@ describe('array accessors - []', function () {
   })
 
   it('returns values in an inline array', function () {
-    var binding = "neg: [1, o, 'z', f(), `a${o}c`]",
+    let binding = "neg: [1, o, 'z', f(), `a${o}c`]",
       f = function () {
         return 'E'
       },
@@ -743,23 +743,23 @@ describe('array accessors - []', function () {
 })
 
 describe('Virtual elements', function () {
-  var instance
+  let instance
   beforeEach(function () {
     instance = options.bindingProviderInstance = new VirtualProvider()
   })
 
   it('binds to a raw comment', function () {
-    var cmt = document.createComment('ko test: obs')
+    let cmt = document.createComment('ko test: obs')
     assert.ok(instance.nodeHasBindings(cmt))
   })
 
   it('ignores non ko: comments', function () {
-    var cmt = document.createComment('hello world')
+    let cmt = document.createComment('hello world')
     assert.notOk(instance.nodeHasBindings(cmt))
   })
 
   it('binds text in virtual element', function () {
-    var cmt = document.createComment('ko text: obs'),
+    let cmt = document.createComment('ko text: obs'),
       context = ctxStub({ obs: observable('a towel') }),
       bindings
     bindings = instance.getBindingAccessors(cmt, context)
@@ -769,7 +769,7 @@ describe('Virtual elements', function () {
   })
 
   it('binds a sub-element comment', function () {
-    var div = document.createElement('div'),
+    let div = document.createElement('div'),
       context = { obs: observable('a sperm whale') }
     div.appendChild(document.createComment('ko text: obs'))
     div.appendChild(document.createComment('/ko'))
@@ -781,7 +781,7 @@ describe('Virtual elements', function () {
 
 describe('ES6-style interpolated strings', function () {
   function expect_equal(binding, context, expect) {
-    var bindings = makeBindings('v: ' + binding, context)
+    let bindings = makeBindings('v: ' + binding, context)
     assert.equal(bindings.v(), expect)
   }
 
@@ -814,12 +814,12 @@ describe('ES6-style interpolated strings', function () {
   })
 
   it('interpolates multiple primitives', function () {
-    var ctx = { w: 'W', x: 'X', y: 'Y', z: 'Z' }
+    let ctx = { w: 'W', x: 'X', y: 'Y', z: 'Z' }
     expect_equal('`${w}a${x}c${y}d${z}`', ctx, 'WaXcYdZ')
   })
 
   it('interpolates a function', function () {
-    var ctx = {
+    let ctx = {
       foo: function () {
         return '123'
       }
@@ -828,17 +828,17 @@ describe('ES6-style interpolated strings', function () {
   })
 
   it('interpolates an observable', function () {
-    var ctx = { foo: observable('444') }
+    let ctx = { foo: observable('444') }
     expect_equal('`A${foo()}B`', ctx, 'A444B')
   })
 
   it('automatically unwraps an observable', function () {
-    var ctx = { foo: observable('444') }
+    let ctx = { foo: observable('444') }
     expect_equal('`A${foo}B`', ctx, 'A444B')
   })
 
   it('looks up complex expressions', function () {
-    var ctx = {
+    let ctx = {
       a: function () {
         return { b: [0, 0, { c: 4 }] }
       }
@@ -856,7 +856,7 @@ interface ExtendedObservable {
 }
 
 describe('compound expressions', function () {
-  var d = 42,
+  let d = 42,
     e = [9, 8],
     c = { d: d, e: e },
     b = { c: c },
@@ -904,12 +904,12 @@ describe('compound expressions', function () {
   obs.P = y
 
   function expect_equal(binding, expect) {
-    var bindings = new Parser(null).parse('v: ' + binding, $context)
+    let bindings = new Parser(null).parse('v: ' + binding, $context)
     assert.equal(bindings.v(), expect)
   }
 
   function expect_deep_equal(binding, expect) {
-    var bindings = new Parser(null).parse('v: ' + binding, $context)
+    let bindings = new Parser(null).parse('v: ' + binding, $context)
     assert.deepEqual(bindings.v(), expect)
   }
 
@@ -955,12 +955,12 @@ describe('compound expressions', function () {
   })
 
   it("gets 'brick' from x.y[0]()()[1].yf2b", function () {
-    var expect = (x.y[0]() as any)()[1].yf2b
+    let expect = (x.y[0]() as any)()[1].yf2b
     expect_equal('x.y[0]()()[1].yf2b', expect)
   })
 
   it("gets 'air' from x . y [ 0 ] ( ) ( ) [ 0 ] . yf2a", function () {
-    var expect = (x.y[0]() as any)()[0].yf2a
+    let expect = (x.y[0]() as any)()[0].yf2a
     expect_equal(
       '\n\r\t x\n\r\t  .\n\r\t  y\n\r\t  [\n\r\t  0'
         + '\n\r\t  ]\n\r\t  (\n\r\t  )\n\r\t  (\n\r\t  )\n\r\t  ['
@@ -970,7 +970,7 @@ describe('compound expressions', function () {
   })
 
   it('gets z()[0]()', function () {
-    var expect = z()[0]()
+    let expect = z()[0]()
     expect_equal('z()[0]()', expect)
   })
 

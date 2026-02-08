@@ -179,7 +179,7 @@ var ko_subscribable_fn: SubscribableFunctions = {
     if (event) {
       return (this._subscriptions[event] && this._subscriptions[event].length) || 0
     } else {
-      var total = 0
+      let total = 0
       objectForEach(this._subscriptions, function (eventName, subscriptions) {
         if (eventName !== 'dirty') {
           total += subscriptions.length
@@ -234,10 +234,10 @@ var ko_subscribable_fn: SubscribableFunctions = {
   extend: applyExtenders,
 
   limit(limitFunction: Function): void {
-    var self = this
-    var selfIsObservable = isObservable(self)
-    var beforeChange = 'beforeChange'
-    var ignoreBeforeChange: boolean,
+    let self = this
+    let selfIsObservable = isObservable(self)
+    let beforeChange = 'beforeChange'
+    let ignoreBeforeChange: boolean,
       notifyNextChange: boolean,
       previousValue: any,
       pendingValue: any,
@@ -249,7 +249,7 @@ var ko_subscribable_fn: SubscribableFunctions = {
       self.notifySubscribers = limitNotifySubscribers
     }
 
-    var finish = limitFunction(function () {
+    let finish = limitFunction(function () {
       self._notificationIsPending = false
 
       // If an observable provided a reference to itself, access it to get the latest value.

@@ -9,7 +9,7 @@ import { initJasmine } from '@tko/utils.spec'
 initJasmine()
 
 describe('Components: Loader registry', function () {
-  var testAsyncDelay = 20,
+  let testAsyncDelay = 20,
     testComponentName = 'test-component',
     testComponentConfig: any = {},
     testComponentDefinition = { template: {} },
@@ -69,12 +69,12 @@ describe('Components: Loader registry', function () {
       // Set up a chain of loaders, then query it
       components.loaders = chain
 
-      var loadedDefinition = 'Not yet loaded'
+      let loadedDefinition = 'Not yet loaded'
       components.get(testComponentName, function (definition) {
         loadedDefinition = definition
       })
 
-      var onLoaded = function () {
+      let onLoaded = function () {
         if ('expectedDefinition' in options) {
           expect(loadedDefinition).toBe(options.expectedDefinition)
         }
@@ -134,7 +134,7 @@ describe('Components: Loader registry', function () {
   })
 
   it('Obtains component config and component definition objects by invoking each loader in turn, asynchronously, until one supplies a value', function () {
-    var loaders = [
+    let loaders = [
       loaderThatDoesNotReturnAnything,
       loaderThatHasNoHandlers,
       loaderThatReturnsDefinition,
@@ -147,7 +147,7 @@ describe('Components: Loader registry', function () {
   })
 
   it('Supplies null if no registered loader returns a config object', function () {
-    var loaders = [
+    let loaders = [
       loaderThatDoesNotReturnAnything,
       loaderThatHasNoHandlers,
       loaderThatReturnsDefinition,
@@ -158,7 +158,7 @@ describe('Components: Loader registry', function () {
   })
 
   it('Supplies null if no registered loader returns a component for a given config object', function () {
-    var loaders = [
+    let loaders = [
       loaderThatDoesNotReturnAnything,
       loaderThatHasNoHandlers,
       loaderThatReturnsConfig,
@@ -173,7 +173,7 @@ describe('Components: Loader registry', function () {
     // We would detect that a getConfig call wants to return synchronously based on getting a
     // non-undefined return value, and in that case would not wait for the callback.
 
-    var loaders = [
+    let loaders = [
       loaderThatReturnsDefinition,
       loaderThatDoesNotReturnAnything,
       {
@@ -199,7 +199,7 @@ describe('Components: Loader registry', function () {
     // We would detect that a loadComponent call wants to return synchronously based on getting a
     // non-undefined return value, and in that case would not wait for the callback.
 
-    var loaders = [
+    let loaders = [
       loaderThatReturnsConfig,
       loaderThatDoesNotReturnAnything,
       {
@@ -224,7 +224,7 @@ describe('Components: Loader registry', function () {
     // This behavior is for consistency. Developers calling components.get shouldn't have to
     // be concerned about whether the callback fires before or after their next line of code.
 
-    var wasAsync = false
+    let wasAsync = false
 
     testLoaderChain(this, [loaderThatCompletesSynchronously], {
       expectedDefinition: testComponentDefinition,
@@ -239,7 +239,7 @@ describe('Components: Loader registry', function () {
   it('Supplies component definition synchronously if the "synchronous" flag is provided and the loader completes synchronously', function () {
     // Set up a synchronous loader that returns a component marked as synchronous
     this.restoreAfter(components, 'loaders')
-    var testSyncComponentConfig = { synchronous: true },
+    let testSyncComponentConfig = { synchronous: true },
       testSyncComponentDefinition = {},
       syncComponentName = 'my-sync-component',
       getConfigCallCount = 0
@@ -257,7 +257,7 @@ describe('Components: Loader registry', function () {
     ]
 
     // See that the initial load can complete synchronously
-    var initialLoadCompletedSynchronously = false
+    let initialLoadCompletedSynchronously = false
     components.get(syncComponentName, function (definition) {
       expect(definition).toBe(testSyncComponentDefinition)
       initialLoadCompletedSynchronously = true
@@ -266,7 +266,7 @@ describe('Components: Loader registry', function () {
     expect(getConfigCallCount).toBe(1)
 
     // See that subsequent cached loads can complete synchronously
-    var cachedLoadCompletedSynchronously = false
+    let cachedLoadCompletedSynchronously = false
     components.get(syncComponentName, function (definition) {
       expect(definition).toBe(testSyncComponentDefinition)
       cachedLoadCompletedSynchronously = true
@@ -284,7 +284,7 @@ describe('Components: Loader registry', function () {
     // if the component isn't yet loaded, then their computed would die early. The argument for
     // this behavior, then, is that it prevents a really obscure and hard-to-repro race condition
     // bug by stopping developers from relying on synchronous dependency detection here at all.
-    var someObservable = observable('Initial'),
+    let someObservable = observable('Initial'),
       callbackCount = 0
     computed(function () {
       components.get(syncComponentName, function (/* definition */) {
@@ -307,14 +307,14 @@ describe('Components: Loader registry', function () {
     components.loaders = [loaderThatReturnsConfig, loaderThatReturnsDefinition]
 
     // Perform an initial load to prime the cache. Also verify it's set up to be async.
-    var initialLoadWasAsync = false
+    let initialLoadWasAsync = false
     getComponentDefinition(testComponentName, function (initialDefinition) {
       expect(initialLoadWasAsync).toBe(true)
       expect(initialDefinition).toBe(testComponentDefinition)
 
       // Perform a subsequent load and verify it completes synchronously, because
       // the component config has the 'synchronous' flag
-      var cachedLoadWasSynchronous = false
+      let cachedLoadWasSynchronous = false
       components.get(testComponentName, function (cachedDefinition) {
         cachedLoadWasSynchronous = true
         expect(cachedDefinition).toBe(testComponentDefinition)
@@ -348,7 +348,7 @@ describe('Components: Loader registry', function () {
     })
 
     // Fetch the component definition, and see it's the right thing
-    var definition1
+    let definition1
     getComponentDefinition('some-component', function (definition) {
       definition1 = definition
       expect(definition1.createViewModel().isTheTestComponent).toBe(true)
@@ -386,7 +386,7 @@ describe('Components: Loader registry', function () {
 
   it('Only commences a single loading process, even if multiple requests arrive before loading has completed', function () {
     // Set up a mock AMD environment that logs calls
-    var someModuleTemplate = new Array(),
+    let someModuleTemplate = new Array(),
       someComponentModule = { template: someModuleTemplate },
       requireCallLog = new Array()
     this.restoreAfter(window, 'require')
@@ -400,14 +400,14 @@ describe('Components: Loader registry', function () {
     components.register(testComponentName, { require: 'path/testcomponent' })
 
     // Begin loading the module; see it synchronously made a request to the module loader
-    var definition1
+    let definition1
     components.get(testComponentName, function (loadedDefinition) {
       definition1 = loadedDefinition
     })
     expect(requireCallLog).toEqual([['path/testcomponent']])
 
     // Even a little while later, the module hasn't yet loaded
-    var definition2
+    let definition2
     waits(20)
     runs(function () {
       expect(definition1).toBe(undefined)
@@ -442,7 +442,7 @@ describe('Components: Loader registry', function () {
   })
 
   function getComponentDefinition(componentName, assertionCallback) {
-    var loadedDefinition,
+    let loadedDefinition,
       hasCompleted = false
     runs(function () {
       components.get(componentName, function (definition) {

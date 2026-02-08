@@ -16,7 +16,7 @@ export var selectedOptions = {
 
   init: function (element, valueAccessor, _allBindings: AllBindings) {
     registerEventHandler(element, 'change', function () {
-      var value = valueAccessor(),
+      let value = valueAccessor(),
         valueToWrite = new Array()
       arrayForEach(element.getElementsByTagName('option'), function (node) {
         if (node.selected) {
@@ -32,12 +32,12 @@ export var selectedOptions = {
       throw new Error('values binding applies only to SELECT elements')
     }
 
-    var newValue = unwrap(valueAccessor()),
+    let newValue = unwrap(valueAccessor()),
       previousScrollTop = element.scrollTop
 
     if (newValue && typeof newValue.length === 'number') {
       arrayForEach(element.getElementsByTagName('option'), function (node) {
-        var isSelected = arrayIndexOf(newValue, selectExtensions.readValue(node)) >= 0
+        let isSelected = arrayIndexOf(newValue, selectExtensions.readValue(node)) >= 0
         if (node.selected != isSelected) {
           // This check prevents flashing of the select element in IE
           setOptionNodeSelectionState(node, isSelected)
