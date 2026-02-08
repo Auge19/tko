@@ -21,7 +21,7 @@ describe('Components: Provider', function () {
   describe('custom elements', function () {
     // Note: knockout/spec/components
     beforeEach(function () {
-      let provider = new MultiProvider({ providers: [new DataBindProvider(), new ComponentProvider()] })
+      const provider = new MultiProvider({ providers: [new DataBindProvider(), new ComponentProvider()] })
       options.bindingProviderInstance = provider
       bindingHandlers = provider.bindingHandlers
 
@@ -35,8 +35,8 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      let initialMarkup = 'He: <helium></helium>'
-      let root = document.createElement('div')
+      const initialMarkup = 'He: <helium></helium>'
+      const root = document.createElement('div')
       root.innerHTML = initialMarkup
 
       // Since components are loaded asynchronously, it doesn't show up synchronously
@@ -56,7 +56,7 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      let ce = document.createElement('argon')
+      const ce = document.createElement('argon')
       ce.setAttribute('params', 'alpha: 1, beta: [2], charlie: {x: 3}, delta: delta')
       applyBindings({ delta: 'QxE' }, ce)
       expect(ce.innerHTML).toEqual('<b>sXZ <u data-bind="text: delta">G2k</u></b>')
@@ -78,23 +78,23 @@ describe('Components: Provider', function () {
         this.cvalue = params.value
       }
 
-      let ps = document.createElement('script')
+      const ps = document.createElement('script')
       ps.setAttribute('id', 'parent-44')
       ps.setAttribute('type', 'text/html')
       ps.innerHTML =
         '<div>Parent: <span data-bind="text: parentvalue"></span></div>' + '<child params="value: parentvalue"></child>'
       document.body.appendChild(ps)
 
-      let cs = document.createElement('script')
+      const cs = document.createElement('script')
       cs.setAttribute('id', 'child-44')
       cs.setAttribute('type', 'text/html')
       cs.innerHTML = ''
       document.body.appendChild(cs)
 
-      let div = document.createElement('div')
+      const div = document.createElement('div')
       div.innerHTML = '<div data-bind="text: appvalue"></div>' + '<parent params="value: appvalue"></parent>'
 
-      let viewModel = new AppViewModel('hello')
+      const viewModel = new AppViewModel('hello')
       components.register('parent', {
         template: { element: 'parent-44' },
         viewModel: ParentViewModel,
@@ -107,7 +107,7 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      let options = {
+      const options = {
         attribute: 'data-bind',
         globals: window,
         bindings: bindingHandlers,
@@ -128,7 +128,7 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      let ce = document.createElement('lithium')
+      const ce = document.createElement('lithium')
       ce.setAttribute('params', '   ')
       applyBindings({ delta: 'QxE' }, ce)
       // No error raised.
@@ -144,7 +144,7 @@ describe('Components: Provider', function () {
         synchronous: true,
         ignoreCustomElementWarning: true
       })
-      let ne = document.createElement('neon')
+      const ne = document.createElement('neon')
       ne.setAttribute('params', 'text: "Knights of Ne."')
       applyBindings({}, ne)
       // No error raised.

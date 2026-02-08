@@ -3,7 +3,7 @@ import { setElementName } from '@tko/utils'
 export var uniqueName = {
   init: function (element, valueAccessor) {
     if (valueAccessor()) {
-      let name = 'ko_unique_' + ++uniqueName.currentIndex
+      const name = 'ko_unique_' + ++uniqueName.currentIndex
       setElementName(element, name)
     }
   },

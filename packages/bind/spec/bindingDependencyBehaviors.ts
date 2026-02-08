@@ -29,15 +29,15 @@ describe('Binding dependencies', function () {
   })
 
   beforeEach(function () {
-    let provider = new MultiProvider({ providers: [new DataBindProvider(), new VirtualProvider()] })
+    const provider = new MultiProvider({ providers: [new DataBindProvider(), new VirtualProvider()] })
     options.bindingProviderInstance = provider
     bindingHandlers = provider.bindingHandlers
     bindingHandlers.set(coreBindings)
   })
 
   it('If the binding handler depends on an observable, invokes the init handler once and the update handler whenever a new value is available', function () {
-    let observable = observableConstructor()
-    let initPassedValues = new Array(),
+    const observable = observableConstructor()
+    const initPassedValues = new Array(),
       updatePassedValues = new Array()
     bindingHandlers.test = {
       init: function (element, valueAccessor) {
@@ -62,7 +62,7 @@ describe('Binding dependencies', function () {
   })
 
   it('If the associated DOM element was removed by KO, handler subscriptions are disposed immediately', function () {
-    let observable = observableConstructor('A')
+    const observable = observableConstructor('A')
     bindingHandlers.anyHandler = {
       update: function (element, valueAccessor) {
         valueAccessor()
@@ -79,7 +79,7 @@ describe('Binding dependencies', function () {
   })
 
   it('If the associated DOM element was removed independently of KO, handler subscriptions are disposed on the next evaluation', function () {
-    let observable = observableConstructor('A')
+    const observable = observableConstructor('A')
     bindingHandlers.anyHandler = {
       update: function (element, valueAccessor) {
         valueAccessor()
@@ -97,8 +97,8 @@ describe('Binding dependencies', function () {
   })
 
   it('If the binding attribute involves an observable, re-invokes the bindings if the observable notifies a change', function () {
-    let observable = observableConstructor({ message: 'hello' })
-    let passedValues = new Array()
+    const observable = observableConstructor({ message: 'hello' })
+    const passedValues = new Array()
     bindingHandlers.test = {
       update: function (element, valueAccessor) {
         passedValues.push(valueAccessor())
@@ -116,13 +116,13 @@ describe('Binding dependencies', function () {
   })
 
   it('Should not reinvoke init for notifications triggered during first evaluation', function () {
-    let observable = observableConstructor('A')
+    const observable = observableConstructor('A')
     let initCalls = 0
     bindingHandlers.test = {
       init: function (element, valueAccessor) {
         initCalls++
 
-        let value = valueAccessor()
+        const value = valueAccessor()
 
         // Read the observable (to set up a dependency on it), and then also write to it (to trigger re-eval of bindings)
         // This logic probably wouldn't be in init but might be indirectly invoked by init
@@ -146,7 +146,7 @@ describe('Binding dependencies', function () {
       init: function (element, valueAccessor) {
         // Read the observable (to set up a dependency on it), and then also write to it (to trigger re-eval of bindings)
         // This logic probably wouldn't be in init but might be indirectly invoked by init
-        let value = valueAccessor()
+        const value = valueAccessor()
         value()
         value('B')
       }
@@ -183,7 +183,7 @@ describe('Binding dependencies', function () {
       }
     }
     testNode.innerHTML = "<div data-bind='testInit: myProp()'></div><div data-bind='testUpdate: myProp()'></div>"
-    let vm = observableConstructor({ myProp: observableConstructor('initial value') })
+    const vm = observableConstructor({ myProp: observableConstructor('initial value') })
     applyBindings(vm, testNode)
     expect(lastBoundValueInit).toEqual('initial value')
     expect(lastBoundValueUpdate).toEqual('initial value')
@@ -230,10 +230,10 @@ describe('Binding dependencies', function () {
   })
 
   it('Should not subscribe to observables accessed in init function', function () {
-    let observable = observableConstructor('A')
+    const observable = observableConstructor('A')
     bindingHandlers.test = {
       init: function (element, valueAccessor) {
-        let value = valueAccessor()
+        const value = valueAccessor()
         value()
       }
     }
@@ -247,7 +247,7 @@ describe('Binding dependencies', function () {
     delete bindingHandlers.nonexistentHandler
     let observable = observableConstructor(),
       updateValue
-    let vm = { myObservable: observable, myNonObservable: 'first value' }
+    const vm = { myObservable: observable, myNonObservable: 'first value' }
     bindingHandlers.existentHandler = {
       update: function (element, valueAccessor, allBindings) {
         valueAccessor()() // create dependency
@@ -288,13 +288,13 @@ describe('Binding dependencies', function () {
   })
 
   it('Should track observables accessed within the binding provider\'s "getBindingAccessor" function', function () {
-    let observable = observableConstructor('substitute')
+    const observable = observableConstructor('substitute')
 
     class TestProvider extends DataBindProvider {
       getBindingAccessors(node, bindingContext) {
-        let bindings = super.getBindingAccessors(node, bindingContext)
+        const bindings = super.getBindingAccessors(node, bindingContext)
         if (bindings && bindings.text) {
-          let newValue = observable()
+          const newValue = observable()
           bindings.text = () => newValue
         }
         return bindings
@@ -364,13 +364,13 @@ describe('Binding dependencies', function () {
         return { controlsDescendantBindings: true }
       },
       update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-        let innerContext = bindingContext.createChildContext({ childprop: unwrap(valueAccessor()) })
+        const innerContext = bindingContext.createChildContext({ childprop: unwrap(valueAccessor()) })
         element.innerHTML = "<span data-bind='text: childprop'></span>"
         applyBindingsToDescendants(innerContext, element)
       }
     }
 
-    let callbackSpy1 = jasmine.createSpy('callbackSpy1'),
+    const callbackSpy1 = jasmine.createSpy('callbackSpy1'),
       callbackSpy2 = jasmine.createSpy('callbackSpy2'),
       vm = { observable: observableConstructor('value'), callback: callbackSpy1 }
 
@@ -430,38 +430,38 @@ describe('Binding dependencies', function () {
     })
 
     it("Should provide access to the view model's observable through $rawData", function () {
-      let vm = observableConstructor('text')
+      const vm = observableConstructor('text')
       testNode.innerHTML = "<div data-bind='text:$data'></div>"
       applyBindings(vm, testNode)
       expect(testNode).toContainText('text')
 
-      let context = contextFor(testNode)
+      const context = contextFor(testNode)
       expect(context.$data).toEqual('text')
       expect(context.$rawData).toBe(vm)
     })
 
     it('Should set $rawData to the observable returned from a function', function () {
-      let vm = observableConstructor('text')
+      const vm = observableConstructor('text')
       testNode.innerHTML = "<div data-bind='text:$data'></div>"
       applyBindings<any>(function () {
         return vm
       }, testNode)
       expect(testNode).toContainText('text')
 
-      let context = contextFor(testNode)
+      const context = contextFor(testNode)
       expect(context.$data).toEqual('text')
       expect(context.$rawData).toBe(vm)
     })
 
     it('Should set $rawData to the view model if a function unwraps the observable view model', function () {
-      let vm = observableConstructor('text')
+      const vm = observableConstructor('text')
       testNode.innerHTML = "<div data-bind='text:$data'></div>"
       applyBindings(function () {
         return vm()
       }, testNode)
       expect(testNode).toContainText('text')
 
-      let context = contextFor(testNode)
+      const context = contextFor(testNode)
       expect(context.$data).toEqual('text')
       expect(context.$rawData).toBe('text')
 
@@ -473,7 +473,7 @@ describe('Binding dependencies', function () {
     })
 
     it('Should dispose view model subscription on next update when bound node is removed outside of KO', function () {
-      let vm = observableConstructor('text')
+      const vm = observableConstructor('text')
       testNode.innerHTML = "<div data-bind='text:$data'></div>"
       applyBindings(vm, testNode)
       expect(vm.getSubscriptionsCount()).toEqual(1)
@@ -500,7 +500,7 @@ describe('Binding dependencies', function () {
 
       testNode.innerHTML =
         "<div data-bind='setChildContext:obj1'><span data-bind='text:prop1'></span><span data-bind='text:$root.prop2'></span></div>"
-      let vm = observableConstructor({ obj1: { prop1: 'First ' }, prop2: 'view model' })
+      const vm = observableConstructor({ obj1: { prop1: 'First ' }, prop2: 'view model' })
       applyBindings(vm, testNode)
       expect(testNode).toContainText('First view model')
 
@@ -521,7 +521,7 @@ describe('Binding dependencies', function () {
     it('Should update all extended contexts (including values copied from the parent)', function () {
       bindingHandlers.withProperties = {
         init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-          let innerBindingContext = bindingContext.extend(valueAccessor)
+          const innerBindingContext = bindingContext.extend(valueAccessor)
           applyBindingsToDescendants(innerBindingContext, element)
           return { controlsDescendantBindings: true }
         }
@@ -529,7 +529,7 @@ describe('Binding dependencies', function () {
 
       testNode.innerHTML =
         "<div data-bind='withProperties: obj1'><span data-bind='text:prop1'></span><span data-bind='text:prop2'></span><span data-bind='text:$rawData().prop3'></span></div>"
-      let vm = observableConstructor({ obj1: { prop1: 'First ' }, prop2: 'view ', prop3: 'model' })
+      const vm = observableConstructor({ obj1: { prop1: 'First ' }, prop2: 'view ', prop3: 'model' })
       applyBindings(vm, testNode)
       expect(testNode).toContainText('First view model')
 
@@ -555,7 +555,7 @@ describe('Binding dependencies', function () {
         }
       }
 
-      let vm1 = observableConstructor('vm1'),
+      const vm1 = observableConstructor('vm1'),
         vm2 = observableConstructor('vm2'),
         whichVm = observableConstructor(vm1)
       testNode.innerHTML = "<div data-bind='extended: {}'><div data-bind='text: $data'></div></div>"
@@ -564,7 +564,7 @@ describe('Binding dependencies', function () {
       }, testNode)
       expect(testNode).toContainText('vm1')
 
-      let parentContext = contextFor(testNode),
+      const parentContext = contextFor(testNode),
         childContext = contextFor(testNode.childNodes[0].childNodes[0])
 
       expect(parentContext.$data).toEqual('vm1')
@@ -584,7 +584,7 @@ describe('Binding dependencies', function () {
     it('Should update an extended child context', function () {
       bindingHandlers.withProperties = {
         init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-          let childBindingContext = bindingContext.createChildContext(null, null, function (context) {
+          const childBindingContext = bindingContext.createChildContext(null, null, function (context) {
             extend(context, valueAccessor())
           })
           applyBindingsToDescendants(childBindingContext, element)
@@ -594,7 +594,7 @@ describe('Binding dependencies', function () {
 
       testNode.innerHTML =
         "<div data-bind='withProperties: obj1'><span data-bind='text:prop1'></span><span data-bind='text:$parent.prop2'></span></div>"
-      let vm = observableConstructor({ obj1: { prop1: 'First ' }, prop2: 'view model' })
+      const vm = observableConstructor({ obj1: { prop1: 'First ' }, prop2: 'view model' })
       applyBindings(vm, testNode)
       expect(testNode).toContainText('First view model')
 

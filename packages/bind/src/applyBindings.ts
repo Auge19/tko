@@ -143,7 +143,7 @@ function applyBindingsToNodeAndDescendantsInternal(
   nodeVerified: Node,
   asyncBindingsApplied
 ) {
-  let isElement = nodeVerified.nodeType === 1
+  const isElement = nodeVerified.nodeType === 1
   if (isElement) {
     // Workaround IE <= 8 HTML parsing weirdness
     virtualElements.normaliseVirtualElementDomStructure(nodeVerified)
@@ -153,7 +153,7 @@ function applyBindingsToNodeAndDescendantsInternal(
   // (1) We need to store the binding info for the node (all element nodes)
   // (2) It might have bindings (e.g., it has a data-bind attribute, or it's a marker for a containerless template)
 
-  let shouldApplyBindings =
+  const shouldApplyBindings =
     isElement // Case (1)
     || hasBindings(nodeVerified) // Case (2)
 

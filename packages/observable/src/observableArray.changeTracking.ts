@@ -31,8 +31,8 @@ export function trackArrayChanges(target: ObservableArray, options?: CompareArra
   let arrayChangeSubscription
   let pendingNotifications = 0
   let underlyingNotifySubscribersFunction
-  let underlyingBeforeSubscriptionAddFunction = target.beforeSubscriptionAdd
-  let underlyingAfterSubscriptionRemoveFunction = target.afterSubscriptionRemove
+  const underlyingBeforeSubscriptionAddFunction = target.beforeSubscriptionAdd
+  const underlyingAfterSubscriptionRemoveFunction = target.afterSubscriptionRemove
 
   // Watch "subscribe" calls, and for array change events, ensure change tracking is enabled
   target.beforeSubscriptionAdd = function (event) {

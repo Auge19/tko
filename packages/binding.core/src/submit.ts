@@ -9,7 +9,7 @@ export var submit = {
     }
     registerEventHandler(element, 'submit', function (event) {
       let handlerReturnValue
-      let value = valueAccessor()
+      const value = valueAccessor()
       try {
         handlerReturnValue = value.call(bindingContext['$data'], element)
       } finally {

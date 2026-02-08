@@ -25,14 +25,14 @@ describe('Binding: Text', function () {
   })
 
   beforeEach(function () {
-    let provider = new MultiProvider({ providers: [new DataBindProvider(), new VirtualProvider()] })
+    const provider = new MultiProvider({ providers: [new DataBindProvider(), new VirtualProvider()] })
     options.bindingProviderInstance = provider
     bindingHandlers = provider.bindingHandlers
     bindingHandlers.set(coreBindings.bindings)
   })
 
   it('Should assign the value to the node, HTML-encoding the value', function () {
-    let model = { textProp: '\'Val <with> "special" <i>characters</i>\'' }
+    const model = { textProp: '\'Val <with> "special" <i>characters</i>\'' }
     testNode.innerHTML = "<span data-bind='text:textProp'></span>"
     applyBindings(model, testNode)
     expect(testNode.childNodes[0].textContent || (testNode.childNodes[0] as HTMLElement).innerText).toEqual(
@@ -43,7 +43,7 @@ describe('Binding: Text', function () {
   it('Should assign an empty string as value if the model value is null', function () {
     testNode.innerHTML = "<span data-bind='text:(null)' ></span>"
     applyBindings(null, testNode)
-    let actualText =
+    const actualText =
       'textContent' in testNode.childNodes[0]
         ? testNode.childNodes[0].textContent
         : (testNode.childNodes[0] as HTMLElement).innerText
@@ -53,7 +53,7 @@ describe('Binding: Text', function () {
   it('Should assign an empty string as value if the model value is undefined', function () {
     testNode.innerHTML = "<span data-bind='text:undefined' ></span>"
     applyBindings(null, testNode)
-    let actualText =
+    const actualText =
       'textContent' in testNode.childNodes[0]
         ? testNode.childNodes[0].textContent
         : (testNode.childNodes[0] as HTMLElement).innerText
@@ -61,7 +61,7 @@ describe('Binding: Text', function () {
   })
 
   it('Should work with virtual elements, adding a text node between the comments', function () {
-    let myObservable = observable('Some text')
+    const myObservable = observable('Some text')
     testNode.innerHTML = 'xxx <!-- ko text: textProp --><!-- /ko -->'
     applyBindings({ textProp: myObservable }, testNode)
     expect(testNode).toContainText('xxx Some text')
@@ -94,7 +94,7 @@ describe('Binding: Text', function () {
 
     // First replace the binding provider with one that's hardcoded to replace all text
     // content with a special message, via a binding handler that operates on text nodes
-    let originalBindingProvider = options.bindingProviderInstance
+    const originalBindingProvider = options.bindingProviderInstance
 
     class TestProvider extends Provider {
       get FOR_NODE_TYPES() {
@@ -111,7 +111,7 @@ describe('Binding: Text', function () {
         return true
       }
       getBindingAccessors(node, bindingContext) {
-        let bindings = originalBindingProvider.getBindingAccessors(node, bindingContext)
+        const bindings = originalBindingProvider.getBindingAccessors(node, bindingContext)
         if (node.nodeType === 3) {
           return {
             replaceTextNodeContent: function () {
@@ -130,7 +130,7 @@ describe('Binding: Text', function () {
       }
     }
 
-    let tp = new TestProvider()
+    const tp = new TestProvider()
     tp.bindingHandlers = originalBindingProvider.bindingHandlers
     options.bindingProviderInstance = tp
 

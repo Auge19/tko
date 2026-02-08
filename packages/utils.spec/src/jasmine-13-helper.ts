@@ -158,7 +158,7 @@ export function initJasmine() {
       } catch (e) {
         exception = e
       }
-      let exceptionMessage = exception && (exception.message || exception)
+      const exceptionMessage = exception && (exception.message || exception)
 
       this.message = function () {
         const notText = this.isNot ? ' not' : ''

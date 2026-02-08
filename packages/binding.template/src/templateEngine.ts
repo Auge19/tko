@@ -80,7 +80,7 @@ export abstract class TemplateEngineBase implements TemplateEngine {
     // Named template
     if (typeof template === 'string') {
       templateDocument = templateDocument || document
-      let elem = templateDocument.getElementById(template)
+      const elem = templateDocument.getElementById(template)
       if (!elem) {
         options.onError(new Error('Cannot find template with ID ' + template))
       }
@@ -99,7 +99,7 @@ export abstract class TemplateEngineBase implements TemplateEngine {
     options: TemplateOptions<any>,
     templateDocument?: Document
   ): Node[] {
-    let templateSource = this.makeTemplateSource(template, templateDocument)
+    const templateSource = this.makeTemplateSource(template, templateDocument)
     if (templateSource == null) {
       return []
     }

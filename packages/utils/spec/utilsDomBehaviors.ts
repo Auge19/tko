@@ -3,7 +3,7 @@ import { registerEventHandler, virtualElements } from '../src'
 import options from '../src/options'
 import type { KnockoutInstance } from '@tko/builder'
 
-let ko: KnockoutInstance = globalThis.ko || {}
+const ko: KnockoutInstance = globalThis.ko || {}
 ko.utils = utils as any
 ko.options = options
 
@@ -63,7 +63,7 @@ describe('registerEventHandler', function () {
 
     this.restoreAfter(ko.options, 'useOnlyNativeEvents')
 
-    let element = document.createElement('button')
+    const element = document.createElement('button')
     let eventFired = false
     let jQueryModified = false
 
@@ -102,7 +102,7 @@ describe('registerEventHandler', function () {
   it('should not use jQuery eventing with useOnlyNativeEvents option set to true', function () {
     this.restoreAfter(ko.options, 'useOnlyNativeEvents')
 
-    let element = document.createElement('button')
+    const element = document.createElement('button')
     let eventFired = false
     let jQueryModified = false
 
@@ -135,19 +135,19 @@ describe('cloneNodes', function () {
   })
 
   it('should return clones', function () {
-    let newNodes = ko.utils.cloneNodes([testNode])
-    let isClone = !testNode.isSameNode(newNodes[0]) && testNode.isEqualNode(newNodes[0])
+    const newNodes = ko.utils.cloneNodes([testNode])
+    const isClone = !testNode.isSameNode(newNodes[0]) && testNode.isEqualNode(newNodes[0])
     expect(isClone).toBe(true)
   })
 
   it('should clone deeply', function () {
-    let child = document.createElement('DIV')
+    const child = document.createElement('DIV')
     testNode.appendChild(child)
 
-    let newNodes = ko.utils.cloneNodes([testNode])
-    let newChild = newNodes[0].childNodes[0]
+    const newNodes = ko.utils.cloneNodes([testNode])
+    const newChild = newNodes[0].childNodes[0]
 
-    let childIsClone = !child.isSameNode(newChild) && child.isEqualNode(newChild)
+    const childIsClone = !child.isSameNode(newChild) && child.isEqualNode(newChild)
 
     expect(childIsClone).toBe(true)
   })

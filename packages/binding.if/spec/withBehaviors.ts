@@ -24,7 +24,7 @@ describe('Binding: With', function () {
   })
 
   beforeEach(function () {
-    let provider = new MultiProvider({ providers: [new DataBindProvider(), new VirtualProvider()] })
+    const provider = new MultiProvider({ providers: [new DataBindProvider(), new VirtualProvider()] })
     options.bindingProviderInstance = provider
     provider.bindingHandlers.set(coreBindings)
     provider.bindingHandlers.set(withBindings)
@@ -48,9 +48,9 @@ describe('Binding: With', function () {
   })
 
   it('Should leave descendant nodes unchanged if the value is truthy', function () {
-    let someItem = observable({ childProp: 'child prop value' })
+    const someItem = observable({ childProp: 'child prop value' })
     testNode.innerHTML = "<div data-bind='with: someItem'><span data-bind='text: childProp'></span></div>"
-    let originalNode = testNode.childNodes[0].childNodes[0]
+    const originalNode = testNode.childNodes[0].childNodes[0]
 
     // Value is initially true, so nodes are retained
     applyBindings({ someItem: someItem }, testNode)
@@ -59,7 +59,7 @@ describe('Binding: With', function () {
   })
 
   it('Should toggle the presence and bindedness of descendant nodes according to the truthiness of the value, performing binding in the context of the value', function () {
-    let someItem = observable(undefined)
+    const someItem = observable(undefined)
     testNode.innerHTML =
       "<div data-bind='with: someItem'><span data-bind='text: occasionallyExistentChildProp'></span></div>"
     applyBindings({ someItem: someItem }, testNode)
@@ -78,7 +78,7 @@ describe('Binding: With', function () {
   })
 
   it('Should reconstruct and bind descendants when the data item notifies about mutation', function () {
-    let someItem = observable({ childProp: 'Hello' })
+    const someItem = observable({ childProp: 'Hello' })
 
     testNode.innerHTML = "<div data-bind='with: someItem'><span data-bind='text: childProp'></span></div>"
     applyBindings({ someItem: someItem }, testNode)
@@ -92,7 +92,7 @@ describe('Binding: With', function () {
 
   it('Should not bind the same elements more than once even if the supplied value notifies a change', function () {
     let countedClicks = 0
-    let someItem = observable({
+    const someItem = observable({
       childProp: observable('Hello'),
       handleClick: function () {
         countedClicks++
@@ -142,7 +142,7 @@ describe('Binding: With', function () {
       { name: 'outer', topItem: { name: 'top', middleItem: { name: 'middle', bottomItem: { name: 'bottom' } } } },
       testNode
     )
-    let finalContainer = testNode.childNodes[0].childNodes[0].childNodes[0]
+    const finalContainer = testNode.childNodes[0].childNodes[0].childNodes[0]
     expect(finalContainer.childNodes[0]).toContainText('bottom')
     expect(finalContainer.childNodes[1]).toContainText('middle')
     expect(finalContainer.childNodes[2]).toContainText('top')
@@ -155,7 +155,7 @@ describe('Binding: With', function () {
     expect(contextFor(testNode.childNodes[0].childNodes[0]).$data.name).toEqual('top')
     expect(contextFor(testNode.childNodes[0].childNodes[0].childNodes[0]).$data.name).toEqual('middle')
     expect(contextFor(testNode.childNodes[0].childNodes[0].childNodes[0].childNodes[0]).$data.name).toEqual('bottom')
-    let firstSpan = testNode.childNodes[0].childNodes[0].childNodes[0].childNodes[0] as HTMLElement
+    const firstSpan = testNode.childNodes[0].childNodes[0].childNodes[0].childNodes[0] as HTMLElement
     expect(firstSpan.tagName).toEqual('SPAN')
     expect(contextFor(firstSpan).$data.name).toEqual('bottom')
     expect(contextFor(firstSpan).$root.name).toEqual('outer')
@@ -203,7 +203,7 @@ describe('Binding: With', function () {
 
     testNode.innerHTML =
       "<div data-bind='with: someItem, as: \"item\"'><span data-bind='text: item.childProp'></span></div>"
-    let someItem = { childProp: 'Hello' }
+    const someItem = { childProp: 'Hello' }
     applyBindings({ someItem: someItem }, testNode)
 
     expect(testNode.childNodes[0].childNodes[0]).toContainText('Hello')
@@ -217,7 +217,7 @@ describe('Binding: With', function () {
     }
 
     testNode.innerHTML = "<div data-bind='with: someItem, as: \"item\"'><input data-bind='value: item'/></div>"
-    let someItem = observable('Hello')
+    const someItem = observable('Hello')
     applyBindings({ someItem: someItem }, testNode)
     expect((testNode.childNodes[0].childNodes[0] as HTMLInputElement).value).toEqual('Hello')
 
@@ -240,11 +240,11 @@ describe('Binding: With', function () {
     }
 
     testNode.innerHTML = "<div data-bind='with: someItem, as: \"item\"'><span data-bind='text: item'></span></div>"
-    let someItem = observable('first')
+    const someItem = observable('first')
     applyBindings({ someItem }, testNode)
     expect(testNode.childNodes[0]).toContainText('first')
 
-    let saveNode = testNode.childNodes[0].childNodes[0]
+    const saveNode = testNode.childNodes[0].childNodes[0]
     someItem('second')
     expect(testNode.childNodes[0]).toContainText('second')
     expect(testNode.childNodes[0].childNodes[0]).toEqual(saveNode)
@@ -256,7 +256,7 @@ describe('Binding: With', function () {
       return
     }
 
-    let someItem = observable(undefined)
+    const someItem = observable(undefined)
     testNode.innerHTML =
       "<div data-bind='with: someItem, as: \"item\"'><span data-bind='text: item().occasionallyExistentChildProp'></span></div>"
     applyBindings({ someItem: someItem }, testNode)
@@ -275,7 +275,7 @@ describe('Binding: With', function () {
   })
 
   it('Should be able to define an "with" region using a containerless template', function () {
-    let someitem = observable(undefined)
+    const someitem = observable(undefined)
     testNode.innerHTML =
       'hello <!-- ko with: someitem --><span data-bind="text: occasionallyexistentchildprop"></span><!-- /ko --> goodbye'
     applyBindings({ someitem: someitem }, testNode)
@@ -302,7 +302,7 @@ describe('Binding: With', function () {
       + 'Got child: <span data-bind="text: childprop"></span>'
       + '<!-- /ko -->'
       + '<!-- /ko -->'
-    let viewModel = { topitem: observable(null) }
+    const viewModel = { topitem: observable(null) }
     applyBindings(viewModel, testNode)
 
     // First neither are there
@@ -328,7 +328,7 @@ describe('Binding: With', function () {
   it('Should provide access to an observable viewModel through $rawData', function () {
     testNode.innerHTML = `<div data-bind='with: item'><input data-bind='value: $rawData'/><div data-bind='text: $data'></div></div>`
 
-    let item = observable('one')
+    const item = observable('one')
     applyBindings({ item: item }, testNode)
     expect(item.getSubscriptionsCount('change')).toEqual(3) // subscriptions are the with and value bindings, and the binding contex
     expect(testNode.childNodes[0]).toHaveValues(['one'])
@@ -354,7 +354,7 @@ describe('Binding: With', function () {
     testNode.innerHTML = '<div data-bind="with: getTotal">Total: <div data-bind="text: $data"></div>'
 
     function ViewModel() {
-      let self = this
+      const self = this
       self.items = observableArray([{ x: observable(4) }])
       self.getTotal = function () {
         let total = 0
@@ -365,7 +365,7 @@ describe('Binding: With', function () {
       }
     }
 
-    let model = new ViewModel()
+    const model = new ViewModel()
     applyBindings(model, testNode)
     expect(testNode).toContainText('Total: 4')
 
@@ -388,7 +388,7 @@ describe('Binding: With', function () {
             <!-- /ko -->`
 
     function ViewModel() {
-      let self = this
+      const self = this
       self.items = observableArray([{ x: observable(4) }])
       self.getTotal = function () {
         return self.items().reduce(function (sum, value) {
@@ -397,7 +397,7 @@ describe('Binding: With', function () {
       }
     }
 
-    let model = new ViewModel()
+    const model = new ViewModel()
     applyBindings(model, testNode)
 
     model.items.push({ x: observable(15) })

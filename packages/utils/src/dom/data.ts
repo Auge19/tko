@@ -77,7 +77,7 @@ function get(node: Node, key: string) {
 
 function set(node: Node, key: string, value: any) {
   // Make sure we don't actually create a new domData key if we are actually deleting a value
-  let dataForNode = getDataForNode(node, value !== undefined /* createIfNotFound */)
+  const dataForNode = getDataForNode(node, value !== undefined /* createIfNotFound */)
   if (dataForNode) {
     dataForNode[key] = value
   }

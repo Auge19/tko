@@ -234,9 +234,9 @@ var ko_subscribable_fn: SubscribableFunctions = {
   extend: applyExtenders,
 
   limit(limitFunction: Function): void {
-    let self = this
-    let selfIsObservable = isObservable(self)
-    let beforeChange = 'beforeChange'
+    const self = this
+    const selfIsObservable = isObservable(self)
+    const beforeChange = 'beforeChange'
     let ignoreBeforeChange: boolean,
       notifyNextChange: boolean,
       previousValue: any,
@@ -249,7 +249,7 @@ var ko_subscribable_fn: SubscribableFunctions = {
       self.notifySubscribers = limitNotifySubscribers
     }
 
-    let finish = limitFunction(function () {
+    const finish = limitFunction(function () {
       self._notificationIsPending = false
 
       // If an observable provided a reference to itself, access it to get the latest value.

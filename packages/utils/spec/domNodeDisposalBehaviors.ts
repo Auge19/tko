@@ -36,8 +36,8 @@ describe('DOM node disposal', function () {
 
   it('Should run registered disposal callbacks on descendants when a node is cleaned', function () {
     let didRun = false
-    let childNode = document.createElement('DIV')
-    let grandChildNode = document.createElement('DIV')
+    const childNode = document.createElement('DIV')
+    const grandChildNode = document.createElement('DIV')
     testNode.appendChild(childNode)
     childNode.appendChild(grandChildNode)
     addDisposeCallback(grandChildNode, function () {
@@ -51,7 +51,7 @@ describe('DOM node disposal', function () {
 
   it('Should run registered disposal callbacks and detach from DOM when a node is removed', function () {
     let didRun = false
-    let childNode = document.createElement('DIV')
+    const childNode = document.createElement('DIV')
     testNode.appendChild(childNode)
     addDisposeCallback(childNode, function () {
       didRun = true
@@ -66,7 +66,7 @@ describe('DOM node disposal', function () {
 
   it('Should be able to remove previously-registered disposal callbacks', function () {
     let didRun = false
-    let callback = function () {
+    const callback = function () {
       didRun = true
     }
     addDisposeCallback(testNode, callback)
@@ -78,12 +78,12 @@ describe('DOM node disposal', function () {
   })
 
   it('Should not clean descendant nodes that are removed by a parent dispose handler', function () {
-    let childNode = document.createElement('DIV')
-    let grandChildNode = document.createElement('DIV')
-    let childSpy = jasmine.createSpy('childSpy').andCallFake(function () {
+    const childNode = document.createElement('DIV')
+    const grandChildNode = document.createElement('DIV')
+    const childSpy = jasmine.createSpy('childSpy').andCallFake(function () {
       childNode.removeChild(grandChildNode)
     })
-    let grandChildSpy = jasmine.createSpy('grandChildSpy')
+    const grandChildSpy = jasmine.createSpy('grandChildSpy')
 
     testNode.appendChild(childNode)
     childNode.appendChild(grandChildNode)
@@ -96,14 +96,14 @@ describe('DOM node disposal', function () {
   })
 
   it('Should not clean nodes that are removed by a comment dispose handler', function () {
-    let childNode = document.createComment('ko comment')
-    let grandChildNode = document.createElement('DIV')
-    let childNode2 = document.createComment('ko comment')
-    let childSpy = jasmine.createSpy('childSpy').andCallFake(function () {
+    const childNode = document.createComment('ko comment')
+    const grandChildNode = document.createElement('DIV')
+    const childNode2 = document.createComment('ko comment')
+    const childSpy = jasmine.createSpy('childSpy').andCallFake(function () {
       testNode.removeChild(grandChildNode)
     })
-    let grandChildSpy = jasmine.createSpy('grandChildSpy')
-    let child2Spy = jasmine.createSpy('child2Spy')
+    const grandChildSpy = jasmine.createSpy('grandChildSpy')
+    const child2Spy = jasmine.createSpy('child2Spy')
 
     testNode.appendChild(childNode)
     testNode.appendChild(grandChildNode)
@@ -120,11 +120,11 @@ describe('DOM node disposal', function () {
 
   it('Should continue cleaning if a cleaned node is removed in a handler', function () {
     var childNode: Node = document.createElement('DIV')
-    let childNode2: Node = document.createElement('DIV')
-    let removeChildSpy = jasmine.createSpy('removeChildSpy').andCallFake(function () {
+    const childNode2: Node = document.createElement('DIV')
+    const removeChildSpy = jasmine.createSpy('removeChildSpy').andCallFake(function () {
       testNode.removeChild(childNode)
     })
-    let childSpy = jasmine.createSpy('childSpy')
+    const childSpy = jasmine.createSpy('childSpy')
 
     // Test by removing the node itself
     testNode.appendChild(childNode)
@@ -140,7 +140,7 @@ describe('DOM node disposal', function () {
     childSpy.reset()
 
     // Test by removing a previous node
-    let childNode3 = document.createElement('DIV')
+    const childNode3 = document.createElement('DIV')
     testNode.appendChild(childNode)
     testNode.appendChild(childNode2)
     testNode.appendChild(childNode3)
@@ -175,11 +175,11 @@ describe('DOM node disposal', function () {
     // DOM data is gone, and therefore recreating a new DOM data store for the clone.
 
     // Create an element with DOM data
-    let originalNode = document.createElement('DIV')
+    const originalNode = document.createElement('DIV')
     addDisposeCallback(originalNode, function () {})
 
     // Clone it, then dispose it. Then check it's still safe to associate DOM data with the clone.
-    let cloneNode = originalNode.cloneNode(true)
+    const cloneNode = originalNode.cloneNode(true)
     cleanNode(originalNode)
     addDisposeCallback(cloneNode, function () {})
   })
@@ -208,7 +208,7 @@ describe('DOM node disposal', function () {
       return // Nothing to test. Run the specs with jQuery referenced for this to do anything.
     }
 
-    let obj = {}
+    const obj = {}
     jQuery.data(testNode, 'ko_test', obj)
     expect(jQuery.data(testNode, 'ko_test')).toBe(obj)
 
@@ -225,7 +225,7 @@ describe('DOM node disposal', function () {
     }
     otherNodeCleanerFunctions.length = 0
 
-    let obj = {}
+    const obj = {}
     jQuery.data(testNode, 'ko_test', obj)
     expect(jQuery.data(testNode, 'ko_test')).toBe(obj)
 

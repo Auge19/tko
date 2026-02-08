@@ -26,8 +26,8 @@ describe('Throttled observables', function () {
   }) // Workaround for spurious timing-related failures on IE8 (issue #736)
 
   it('Should notify subscribers asynchronously after writes stop for the specified timeout duration', function () {
-    let observable = koObservable('A').extend({ throttle: 100 })
-    let notifiedValues = new Array()
+    const observable = koObservable('A').extend({ throttle: 100 })
+    const notifiedValues = new Array()
     observable.subscribe(function (value) {
       notifiedValues.push(value)
     })
@@ -70,11 +70,11 @@ describe('Throttled dependent observables', function () {
   }) // Workaround for spurious timing-related failures on IE8 (issue #736)
 
   it('Should notify subscribers asynchronously after dependencies stop updating for the specified timeout duration', function () {
-    let underlying = koObservable()
-    let asyncDepObs = koComputed(function () {
+    const underlying = koObservable()
+    const asyncDepObs = koComputed(function () {
       return underlying()
     }).extend({ throttle: 100 })
-    let notifiedValues = new Array()
+    const notifiedValues = new Array()
     asyncDepObs.subscribe(function (value) {
       notifiedValues.push(value)
     })
@@ -112,8 +112,8 @@ describe('Throttled dependent observables', function () {
 
   it('Should run evaluator only once when dependencies stop updating for the specified timeout duration', function () {
     let evaluationCount = 0
-    let someDependency = koObservable()
-    let asyncDepObs = koComputed(function () {
+    const someDependency = koObservable()
+    const asyncDepObs = koComputed(function () {
       evaluationCount++
       return someDependency()
     }).extend({ throttle: 100 })
@@ -156,8 +156,8 @@ describe('Rate-limited', function () {
 
   describe('Subscribable', function () {
     it('Should delay change notifications', function () {
-      let subscribable = new koSubscribable().extend({ rateLimit: 500 })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const subscribable = new koSubscribable().extend({ rateLimit: 500 })
+      const notifySpy = jasmine.createSpy('notifySpy')
       subscribable.subscribe(notifySpy)
       subscribable.subscribe(notifySpy, null, 'custom')
 
@@ -180,8 +180,8 @@ describe('Rate-limited', function () {
     })
 
     it('Should notify every timeout interval using notifyAtFixedRate method ', function () {
-      let subscribable = new koSubscribable().extend({ rateLimit: { method: 'notifyAtFixedRate', timeout: 50 } })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const subscribable = new koSubscribable().extend({ rateLimit: { method: 'notifyAtFixedRate', timeout: 50 } })
+      const notifySpy = jasmine.createSpy('notifySpy')
       subscribable.subscribe(notifySpy)
 
       // Push 10 changes every 25 ms
@@ -201,8 +201,8 @@ describe('Rate-limited', function () {
     })
 
     it('Should notify after nothing happens for the timeout period using notifyWhenChangesStop method', function () {
-      let subscribable = new koSubscribable().extend({ rateLimit: { method: 'notifyWhenChangesStop', timeout: 50 } })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const subscribable = new koSubscribable().extend({ rateLimit: { method: 'notifyWhenChangesStop', timeout: 50 } })
+      const notifySpy = jasmine.createSpy('notifySpy')
       subscribable.subscribe(notifySpy)
 
       // Push 10 changes every 25 ms
@@ -221,8 +221,8 @@ describe('Rate-limited', function () {
     })
 
     it('Should use latest settings when applied multiple times', function () {
-      let subscribable = new koSubscribable().extend({ rateLimit: 250 }).extend({ rateLimit: 500 })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const subscribable = new koSubscribable().extend({ rateLimit: 250 }).extend({ rateLimit: 500 })
+      const notifySpy = jasmine.createSpy('notifySpy')
       subscribable.subscribe(notifySpy)
 
       subscribable.notifySubscribers('a')
@@ -238,7 +238,7 @@ describe('Rate-limited', function () {
       // This test describes the current behavior for the given scenario but is not a contract for that
       // behavior, which could change in the future if convenient.
       let subscribable = new koSubscribable().extend({ rateLimit: 250 })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const notifySpy = jasmine.createSpy('notifySpy')
       subscribable.subscribe(notifySpy)
 
       subscribable.notifySubscribers('a') // Pending notification
@@ -260,10 +260,10 @@ describe('Rate-limited', function () {
 
   describe('Observable', function () {
     it('Should delay change notifications', function () {
-      let observable = koObservable().extend({ rateLimit: 500 })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const observable = koObservable().extend({ rateLimit: 500 })
+      const notifySpy = jasmine.createSpy('notifySpy')
       observable.subscribe(notifySpy)
-      let beforeChangeSpy = jasmine.createSpy('beforeChangeSpy').andCallFake(function (value) {
+      const beforeChangeSpy = jasmine.createSpy('beforeChangeSpy').andCallFake(function (value) {
         expect(observable()).toBe(value)
       })
       observable.subscribe(beforeChangeSpy, null, 'beforeChange')
@@ -285,7 +285,7 @@ describe('Rate-limited', function () {
     })
 
     it('Should notify "spectator" subscribers whenever the value changes', function () {
-      let observable = koObservable('A').extend({ rateLimit: 500 }),
+      const observable = koObservable('A').extend({ rateLimit: 500 }),
         spectateSpy = jasmine.createSpy('notifySpy'),
         notifySpy = jasmine.createSpy('notifySpy')
 
@@ -310,10 +310,10 @@ describe('Rate-limited', function () {
     })
 
     it('Should suppress change notification when value is changed/reverted', function () {
-      let observable = koObservable('original').extend({ rateLimit: 500 })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const observable = koObservable('original').extend({ rateLimit: 500 })
+      const notifySpy = jasmine.createSpy('notifySpy')
       observable.subscribe(notifySpy)
-      let beforeChangeSpy = jasmine.createSpy('beforeChangeSpy')
+      const beforeChangeSpy = jasmine.createSpy('beforeChangeSpy')
       observable.subscribe(beforeChangeSpy, null, 'beforeChange')
 
       observable('new') // change value
@@ -336,8 +336,8 @@ describe('Rate-limited', function () {
     })
 
     it('Should support notifications from nested update', function () {
-      let observable = koObservable('a').extend({ rateLimit: 500 })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const observable = koObservable('a').extend({ rateLimit: 500 })
+      const notifySpy = jasmine.createSpy('notifySpy')
       observable.subscribe(notifySpy)
 
       // Create a one-time subscription that will modify the observable
@@ -361,8 +361,8 @@ describe('Rate-limited', function () {
     })
 
     it('Should suppress notifications when value is changed/reverted from nested update', function () {
-      let observable = koObservable('a').extend({ rateLimit: 500 })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const observable = koObservable('a').extend({ rateLimit: 500 })
+      const notifySpy = jasmine.createSpy('notifySpy')
       observable.subscribe(notifySpy)
 
       // Create a one-time subscription that will modify the observable and then revert the change
@@ -387,7 +387,7 @@ describe('Rate-limited', function () {
     })
 
     it('Should not notify future subscribers', function () {
-      let observable = koObservable('a').extend({ rateLimit: 500 }),
+      const observable = koObservable('a').extend({ rateLimit: 500 }),
         notifySpy1 = jasmine.createSpy('notifySpy1'),
         notifySpy2 = jasmine.createSpy('notifySpy2'),
         notifySpy3 = jasmine.createSpy('notifySpy3')
@@ -409,8 +409,8 @@ describe('Rate-limited', function () {
     })
 
     it('Should delay update of dependent computed observable', function () {
-      let observable = koObservable().extend({ rateLimit: 500 })
-      let computed = koComputed(observable)
+      const observable = koObservable().extend({ rateLimit: 500 })
+      const computed = koComputed(observable)
 
       // Check initial value
       expect(computed()).toBeUndefined()
@@ -430,8 +430,8 @@ describe('Rate-limited', function () {
     })
 
     it('Should delay update of dependent pure computed observable', function () {
-      let observable = koObservable().extend({ rateLimit: 500 })
-      let computed = koPureComputed(observable)
+      const observable = koObservable().extend({ rateLimit: 500 })
+      const computed = koPureComputed(observable)
 
       // Check initial value
       expect(computed()).toBeUndefined()
@@ -451,11 +451,11 @@ describe('Rate-limited', function () {
     })
 
     it('Should not update dependent computed created after last update', function () {
-      let observable = koObservable('a').extend({ rateLimit: 500 })
+      const observable = koObservable('a').extend({ rateLimit: 500 })
       observable('b')
 
-      let evalSpy = jasmine.createSpy('evalSpy')
-      let computed = koComputed(function () {
+      const evalSpy = jasmine.createSpy('evalSpy')
+      const computed = koComputed(function () {
         return evalSpy(observable())
       })
       expect(evalSpy).toHaveBeenCalledWith('b')
@@ -506,8 +506,8 @@ describe('Rate-limited', function () {
 
   describe('Computed Observable', function () {
     it('Should delay running evaluator where there are no subscribers', function () {
-      let observable = koObservable()
-      let evalSpy = jasmine.createSpy('evalSpy')
+      const observable = koObservable()
+      const evalSpy = jasmine.createSpy('evalSpy')
       koComputed(function () {
         evalSpy(observable())
         return observable()
@@ -526,15 +526,15 @@ describe('Rate-limited', function () {
     })
 
     it('Should delay change notifications and evaluation', function () {
-      let observable = koObservable()
-      let evalSpy = jasmine.createSpy('evalSpy')
-      let computed = koComputed(function () {
+      const observable = koObservable()
+      const evalSpy = jasmine.createSpy('evalSpy')
+      const computed = koComputed(function () {
         evalSpy(observable())
         return observable()
       }).extend({ rateLimit: 500 })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const notifySpy = jasmine.createSpy('notifySpy')
       computed.subscribe(notifySpy)
-      let beforeChangeSpy = jasmine.createSpy('beforeChangeSpy').andCallFake(function (value) {
+      const beforeChangeSpy = jasmine.createSpy('beforeChangeSpy').andCallFake(function (value) {
         expect(computed()).toBe(value)
       })
       computed.subscribe(beforeChangeSpy, null, 'beforeChange')
@@ -567,9 +567,9 @@ describe('Rate-limited', function () {
       // This behavior means that code using rate-limited computeds doesn't need to care if the
       // computed also has deferEvaluation. For example, the preceding test ('Should delay change
       // notifications and evaluation') will pass just as well if using deferEvaluation.
-      let observable = koObservable('a')
-      let evalSpy = jasmine.createSpy('evalSpy')
-      let computed = koComputed({
+      const observable = koObservable('a')
+      const evalSpy = jasmine.createSpy('evalSpy')
+      const computed = koComputed({
         read: function () {
           evalSpy(observable())
           return observable()
@@ -578,16 +578,16 @@ describe('Rate-limited', function () {
       }).extend({ rateLimit: 500 })
       expect(evalSpy).not.toHaveBeenCalled()
 
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const notifySpy = jasmine.createSpy('notifySpy')
       computed.subscribe(notifySpy)
       expect(evalSpy).toHaveBeenCalledWith('a')
       expect(notifySpy).not.toHaveBeenCalled()
     })
 
     it('Should run initial evaluation when observable is accessed when using deferEvaluation', function () {
-      let observable = koObservable('a')
-      let evalSpy = jasmine.createSpy('evalSpy')
-      let computed = koComputed({
+      const observable = koObservable('a')
+      const evalSpy = jasmine.createSpy('evalSpy')
+      const computed = koComputed({
         read: function () {
           evalSpy(observable())
           return observable()
@@ -601,13 +601,13 @@ describe('Rate-limited', function () {
     })
 
     it('Should suppress change notifications when value is changed/reverted', function () {
-      let observable = koObservable('original')
-      let computed = koComputed(function () {
+      const observable = koObservable('original')
+      const computed = koComputed(function () {
         return observable()
       }).extend({ rateLimit: 500 })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const notifySpy = jasmine.createSpy('notifySpy')
       computed.subscribe(notifySpy)
-      let beforeChangeSpy = jasmine.createSpy('beforeChangeSpy')
+      const beforeChangeSpy = jasmine.createSpy('beforeChangeSpy')
       computed.subscribe(beforeChangeSpy, null, 'beforeChange')
 
       observable('new') // change value
@@ -630,9 +630,9 @@ describe('Rate-limited', function () {
     })
 
     it('Should not re-evaluate if computed is disposed before timeout', function () {
-      let observable = koObservable('a')
-      let evalSpy = jasmine.createSpy('evalSpy')
-      let computed = koComputed(function () {
+      const observable = koObservable('a')
+      const evalSpy = jasmine.createSpy('evalSpy')
+      const computed = koComputed(function () {
         evalSpy(observable())
         return observable()
       }).extend({ rateLimit: 500 })
@@ -651,7 +651,7 @@ describe('Rate-limited', function () {
     })
 
     it('Should be able to re-evaluate a computed that previously threw an exception', function () {
-      let observableSwitch = koObservable(true),
+      const observableSwitch = koObservable(true),
         observableValue = koObservable(1),
         computed = koComputed(function () {
           if (!observableSwitch()) {
@@ -688,9 +688,9 @@ describe('Rate-limited', function () {
     })
 
     it('Should delay update of dependent computed observable', function () {
-      let observable = koObservable()
-      let rateLimitComputed = koComputed(observable).extend({ rateLimit: 500 })
-      let dependentComputed = koComputed(rateLimitComputed)
+      const observable = koObservable()
+      const rateLimitComputed = koComputed(observable).extend({ rateLimit: 500 })
+      const dependentComputed = koComputed(rateLimitComputed)
 
       // Check initial value
       expect(dependentComputed()).toBeUndefined()
@@ -710,9 +710,9 @@ describe('Rate-limited', function () {
     })
 
     it('Should delay update of dependent pure computed observable', function () {
-      let observable = koObservable()
-      let rateLimitComputed = koComputed(observable).extend({ rateLimit: 500 })
-      let dependentComputed = koPureComputed(rateLimitComputed)
+      const observable = koObservable()
+      const rateLimitComputed = koComputed(observable).extend({ rateLimit: 500 })
+      const dependentComputed = koPureComputed(rateLimitComputed)
 
       // Check initial value
       expect(dependentComputed()).toBeUndefined()
@@ -778,8 +778,8 @@ describe('Deferred', function () {
 
   describe('Observable', function () {
     it('Should delay notifications', function () {
-      let observable = koObservable().extend({ deferred: true })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const observable = koObservable().extend({ deferred: true })
+      const notifySpy = jasmine.createSpy('notifySpy')
       observable.subscribe(notifySpy)
 
       observable('A')
@@ -792,7 +792,7 @@ describe('Deferred', function () {
     it('Should throw if you attempt to turn off deferred', function () {
       // As of commit 6d5d786, the 'deferred' option cannot be deactivated (once activated for
       // a given observable).
-      let observable = koObservable()
+      const observable = koObservable()
 
       observable.extend({ deferred: true })
       expect(function () {
@@ -803,8 +803,8 @@ describe('Deferred', function () {
     })
 
     it('Should notify subscribers about only latest value', function () {
-      let observable = koObservable().extend({ notify: 'always', deferred: true }) // include notify:'always' to ensure notifications weren't suppressed by some other means
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const observable = koObservable().extend({ notify: 'always', deferred: true }) // include notify:'always' to ensure notifications weren't suppressed by some other means
+      const notifySpy = jasmine.createSpy('notifySpy')
       observable.subscribe(notifySpy)
 
       observable('A')
@@ -815,8 +815,8 @@ describe('Deferred', function () {
     })
 
     it('Should suppress notification when value is changed/reverted', function () {
-      let observable = koObservable('original').extend({ deferred: true })
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const observable = koObservable('original').extend({ deferred: true })
+      const notifySpy = jasmine.createSpy('notifySpy')
       observable.subscribe(notifySpy)
 
       observable('new')
@@ -829,7 +829,7 @@ describe('Deferred', function () {
     })
 
     it('Should not notify future subscribers', function () {
-      let observable = koObservable('a').extend({ deferred: true }),
+      const observable = koObservable('a').extend({ deferred: true }),
         notifySpy1 = jasmine.createSpy('notifySpy1'),
         notifySpy2 = jasmine.createSpy('notifySpy2'),
         notifySpy3 = jasmine.createSpy('notifySpy3')
@@ -851,11 +851,11 @@ describe('Deferred', function () {
     })
 
     it('Should not update dependent computed created after last update', function () {
-      let observable = koObservable('a').extend({ deferred: true })
+      const observable = koObservable('a').extend({ deferred: true })
       observable('b')
 
-      let evalSpy = jasmine.createSpy('evalSpy')
-      let computed = koComputed(function () {
+      const evalSpy = jasmine.createSpy('evalSpy')
+      const computed = koComputed(function () {
         return evalSpy(observable())
       })
       expect(evalSpy).toHaveBeenCalledWith('b')
@@ -869,8 +869,8 @@ describe('Deferred', function () {
       this.restoreAfter(options, 'deferUpdates')
       options.deferUpdates = true
 
-      let observable = koObservable()
-      let notifySpy = jasmine.createSpy('notifySpy')
+      const observable = koObservable()
+      const notifySpy = jasmine.createSpy('notifySpy')
       observable.subscribe(notifySpy)
 
       observable('A')
@@ -980,7 +980,7 @@ describe('Deferred', function () {
     })
 
     it('Should notify first change of computed with deferEvaluation if value is changed to undefined', function () {
-      let data = koObservable('A'),
+      const data = koObservable('A'),
         computed = koComputed(data, null, { deferEvaluation: true }).extend({ deferred: true }),
         notifySpy = jasmine.createSpy('notifySpy')
 
@@ -1025,7 +1025,7 @@ describe('Deferred', function () {
     })
 
     it('Should delay update of dependent computed observable', function () {
-      let data = koObservable('A'),
+      const data = koObservable('A'),
         deferredComputed = koComputed(data).extend({ deferred: true }),
         dependentComputed = koComputed(deferredComputed)
 
@@ -1043,7 +1043,7 @@ describe('Deferred', function () {
     })
 
     it('Should delay update of dependent pure computed observable', function () {
-      let data = koObservable('A'),
+      const data = koObservable('A'),
         deferredComputed = koComputed(data).extend({ deferred: true }),
         dependentComputed = koPureComputed(deferredComputed)
 
@@ -1112,7 +1112,7 @@ describe('Deferred', function () {
     })
 
     it('Should *not* delay update of dependent rate-limited computed observable', function () {
-      let data = koObservable('A'),
+      const data = koObservable('A'),
         deferredComputed = koComputed(data).extend({ deferred: true }),
         dependentComputed = koComputed(deferredComputed).extend({ rateLimit: 500 }),
         notifySpy = jasmine.createSpy('notifySpy')
@@ -1138,7 +1138,7 @@ describe('Deferred', function () {
       this.restoreAfter(options, 'deferUpdates')
       options.deferUpdates = true
 
-      let data = koObservable('A'),
+      const data = koObservable('A'),
         computed = koComputed(data),
         notifySpy = jasmine.createSpy('notifySpy')
 
@@ -1156,7 +1156,7 @@ describe('Deferred', function () {
       this.restoreAfter(options, 'deferUpdates')
       options.deferUpdates = true
 
-      let data = koObservable('A'),
+      const data = koObservable('A'),
         deferredComputed = koComputed(data),
         dependentComputed = koComputed(function () {
           return 'R' + deferredComputed()
@@ -1184,7 +1184,7 @@ describe('Deferred', function () {
       this.restoreAfter(options, 'deferUpdates')
       options.deferUpdates = true
 
-      let a = koObservable('a'),
+      const a = koObservable('a'),
         b = koPureComputed(function b() {
           return 'b' + a()
         }),
@@ -1281,7 +1281,7 @@ describe('Deferred', function () {
       this.restoreAfter(options, 'deferUpdates')
       options.deferUpdates = true
 
-      let obs = koObservable('somevalue'),
+      const obs = koObservable('somevalue'),
         isTruthy = koPureComputed(function () {
           return !!obs()
         }),

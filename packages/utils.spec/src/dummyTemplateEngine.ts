@@ -84,9 +84,9 @@ export class DummyTemplateEngine extends TemplateEngineBase {
       return renderTemplate(templateName, data, rt_options)
     })
 
-    let evalHandler = function (match, script) {
+    const evalHandler = function (match, script) {
       try {
-        let evalResult = eval(script)
+        const evalResult = eval(script)
         return evalResult === null || evalResult === undefined ? '' : evalResult.toString()
       } catch (ex: any) {
         throw new Error('Error evaluating script: [js: ' + script + ']\n\nException: ' + ex.toString())
@@ -113,7 +113,7 @@ export class DummyTemplateEngine extends TemplateEngineBase {
 
   rewriteTemplate(template, rewriterCallback, templateDocument) {
     // Only rewrite if the template isn't a function (can't rewrite those)
-    let templateSource = this.makeTemplateSource(template, templateDocument)
+    const templateSource = this.makeTemplateSource(template, templateDocument)
 
     // TODO
     // if (typeof templateSource?.text() != "function")

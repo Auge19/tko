@@ -1,7 +1,7 @@
 import { arrayForEach, parseHtmlFragment, options } from '../src'
 
 describe('Parse HTML fragment', function () {
-  let supportsTemplateTag = options.useTemplateTag && 'content' in document.createElement('template')
+  const supportsTemplateTag = options.useTemplateTag && 'content' in document.createElement('template')
 
   let testNode: HTMLElement
   beforeEach(function () {
@@ -70,7 +70,7 @@ describe('Parse HTML fragment', function () {
           }
         }
 
-        let parsedNodes = parseHtmlFragment(data.html, document)
+        const parsedNodes = parseHtmlFragment(data.html, document)
 
         // Assert that we have the expected collection of elements (not just the correct .innerHTML string)
         expect(parsedNodes.length).toEqual(data.parsed.length)
@@ -88,9 +88,9 @@ describe('Parse HTML fragment', function () {
   )
 
   it('returns copies of the nodes', function () {
-    let html = '<div><i></i></div>'
-    let parsedNodes1 = parseHtmlFragment(html, document)
-    let parsedNodes2 = parseHtmlFragment(html, document)
+    const html = '<div><i></i></div>'
+    const parsedNodes1 = parseHtmlFragment(html, document)
+    const parsedNodes2 = parseHtmlFragment(html, document)
     expect(parsedNodes1).not.toEqual(parsedNodes2)
     expect(parsedNodes1[0]).not.toEqual(parsedNodes2[0])
     // We need to test for deep inequality
@@ -114,7 +114,7 @@ describe('Parse HTML fragment', function () {
     let isfired = false
 
     try {
-      let html = '<div><i>' + makeString(options.templateSizeLimit) + '</i></div>'
+      const html = '<div><i>' + makeString(options.templateSizeLimit) + '</i></div>'
       parseHtmlFragment(html, document)
     } catch (e: any) {
       expect(e.message).toContain('Template is too long')
@@ -127,7 +127,7 @@ describe('Parse HTML fragment', function () {
   it('template contains script-tag', function () {
     if (options.allowScriptTagsInTemplates) return
 
-    let htmlArray = new Array()
+    const htmlArray = new Array()
     htmlArray.push('<script type="application/javascript">console.log(\'oups\')</script>')
     htmlArray.push(
       '<div><i><script crossorigin="anonymous" defer="defer" type="application/javascript" src="https://github.githubassets.com/assets/vendors-node_modules_github_filter-input-element_dist_index_js-node_modules_github_remote-inp-b5f1d7-a1760ffda83d.js"></script></i></div>'
@@ -141,7 +141,7 @@ describe('Parse HTML fragment', function () {
       let isfired = false
 
       try {
-        let ret = parseHtmlFragment(html, document)
+        const ret = parseHtmlFragment(html, document)
         console.log(ret)
       } catch (e: any) {
         expect(e.message).toContain('detected')
